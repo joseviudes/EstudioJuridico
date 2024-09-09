@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+
+
+{% block content %}
+<h1>Profesionales</h1>
+
+<h3>Agregar Profesionales</h3>
+
+<form>
+    {% csrf_token %}
+    {{form.as_p}}
+</form>
+
+{% endblock content %}
+
+

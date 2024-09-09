@@ -1,0 +1,14 @@
+{% extends "main.html" %}
+
+
+{% block content %}
+<h1>Clientes</h1>
+
+<h3>Agregar Cliente</h3>
+
+<form>
+    {% csrf_token %}
+    {{form.as_p}}
+</form>
+
+{% endblock content %}
