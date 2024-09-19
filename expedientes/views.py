@@ -69,3 +69,9 @@ def deleteExpediente(request, pk):
     context = {'object': expediente}
     return render(request, 'expedientes/delete-expediente.html', context)
     
+
+lista_de_expedientes  = ListExpediente.as_view()
+expediente            = singleExpediente
+crear_expedientes     = createExpediente
+actualizar_expediente = updateExpediente
+eliminar_expediente   = deleteExpediente

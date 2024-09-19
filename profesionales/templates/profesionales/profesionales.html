@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+
+
+{% block content %}
+<br>
+<h1>Gestion de Profesionales</h1>
+<br>
+
+<a href={% url "crear-profesional" %} class='boton'>Agregar Profesional</a>
+<hr>
+
+<div class="container">
+    <h2>Lista de profesionales</h2>
+    <table class="expedientes-table">
+        <thead>
+            <tr>
+                <th>Nº Matricula</th>
+                <th>Apellido</th>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Estado</th>
+                
+                {% comment %} <th>Estado</th> {% endcomment %}
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profesional in profesionales %}
+            <tr>
+                <td>{{profesional.idMatriculaProf}}</td>
+                <td>{{profesional.apellido}}</td>
+                <td>{{profesional.nombre}}</td>
+                <td>{{profesional.dni}}</td>
+                <td>Activo</td>
+
+                <td>
+                    <a href="{% url 'profesional' profesional.pk %}">
+                        <button class="btn ver">Ver</button>
+                    </a>
+                    <a href="{% url 'actualizar-profesional' profesional.pk %}">
+                        <button class="btn editar">Editar</button>
+                    </a>
+                    <a href="{% url 'eliminar-profesional' profesional.pk  %}">
+                        <button class="btn eliminar">Eliminar</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

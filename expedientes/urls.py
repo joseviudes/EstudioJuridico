@@ -1,11 +1,13 @@
 from django.urls import path
 
-from .views import ListExpediente, singleExpediente, createExpediente, updateExpediente, deleteExpediente
+from .views import lista_de_expedientes, expediente, crear_expedientes, actualizar_expediente, eliminar_expediente
 
 urlpatterns = [
-    path("", ListExpediente.as_view(), name="expedientes"),
-    path("expedientes/<int:pk>/", singleExpediente, name='expediente'),
-    path("create-expediente/", createExpediente, name="create-expediente"),
-    path("update-expediente/", updateExpediente, name="update-expediente"),
-    path("delete-expediente/", deleteExpediente, name="delete-expediente"),
+    path("", lista_de_expedientes, name="expedientes"),
+    path("expediente/<int:pk>/", expediente, name='expediente'),
+    path("crear-expediente/", crear_expedientes, name="crear-expediente"),
+    path("actualizar-expediente/<int:pk>/", actualizar_expediente, name="actualizar-expediente"),
+    path("eliminar-expediente/<int:pk>/", eliminar_expediente, name="eliminar-expediente"),
 ]
+
+

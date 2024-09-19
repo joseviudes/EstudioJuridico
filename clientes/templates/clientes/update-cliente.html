@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+
+{% block content %}
+<br>
+<h1>Clientes</h1>
+<br>
+
+<div class="form-container">
+    <h3>Editar cliente</h3>
+
+    <form method="POST" class="styled-form">
+        {% csrf_token %}
+        {{form.as_p}}
+        
+        <div class="button-container">
+            <button type="submit" class="btn-save">Guardar cambios</button>
+            <a href="{% url 'profesionales' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+

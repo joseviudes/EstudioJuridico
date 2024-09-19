@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<br>
+<h1>Gestión de Clientes</h1>
+<br>
+
+<a href="{% url 'crear-cliente' %}" class="boton">Agregar cliente</a>
+<hr>
+
+<div class="container">
+    <h2>Lista de clientes</h2>
+    <table class="expedientes-table">
+        <thead>
+            <tr>
+                <th>Apellido</th>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Telefono</th>
+                {% comment %} <th>Estado</th> {% endcomment %}
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{cliente.apellido}}</td>
+                <td>{{cliente.nombre}}</td>
+                <td>{{cliente.dni}}</td>
+                <td>{{cliente.telefono}}</td>
+
+                <td>
+                    <a href="{% url 'cliente' cliente.pk %}">
+                        <button class="btn ver">Ver</button>
+                    </a>
+                    <a href="{% url 'actualizar-cliente' cliente.pk %}">
+                        <button class="btn editar">Editar</button>
+                    </a>
+                    <a href="{% url 'eliminar-cliente' cliente.pk  %}">
+                        <button class="btn eliminar">Eliminar</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+
+
+

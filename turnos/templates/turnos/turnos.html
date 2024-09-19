@@ -1,0 +1,56 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<br>
+<h1>Gestion de turnos</h1>
+<br>
+
+<a href="{% url "crear-turno" %}" class="boton">Crear Turno</a>
+<hr>
+
+
+
+<div class="container">
+    <h2>Lista de turnos</h2>
+    <table class="expedientes-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Profesional</th>
+                <th>Dia</th>
+                <th>Horario</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for turno in turnos %}
+            <tr>
+                <td>{{turno.id_turno}}</td>
+                <td>{{turno.cliente}}</td>
+                <td>{{turno.profesional}} </td>
+                <td>{{turno.dia}}</td>
+                <td>{{turno.horario}}</td>
+                <td>{{turno.motivo}}</td>
+                <td><span class="status en-curso">ACTIVO</span></td>
+                <td>
+                    <a href="{% url 'turno' turno.pk %}">
+                        <button class="btn ver">Ver</button>
+                    </a>
+                    {% comment %} <a href="{% url 'actualizar-expediente' expediente.pk %}">
+                        <button class="btn editar">Editar</button>
+                    </a> {% endcomment %}
+                    <a href="{% url 'eliminar-turno' turno.pk  %}">
+                        <button class="btn eliminar">Eliminar</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

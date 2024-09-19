@@ -2,13 +2,20 @@
 
 
 {% block content %}
-<h1>Turnos</h1>
+    <br>
+    <h1>Gestion de turnos</h1>
 
-<h3>Crear turno</h3>
+    <h3>Crear turno</h3>
 
-<form>
-    {% csrf_token %}
-    {{form.as_p}}
-</form>
+    <form method="POST" class="styled-form">
+        {% csrf_token %}
+        {{form.as_p}}
+        
+        <div class="button-container">
+            <button type="submit" class="btn-save">Crear</button>
+            <a href="{% url 'turnos' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
 
 {% endblock content %}
+

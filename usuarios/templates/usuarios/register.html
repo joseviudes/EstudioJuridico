@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<br>
+<h1>Registro de usuario</h1>
+
+<form method="POST" class="styled-form">
+    {% csrf_token %}
+    {{form.as_p}}
+    
+    <div class="button-container">
+        <button type="submit" class="btn-save">Registrase</button>
+        <a href="{% url 'index' %}" class="btn-cancel">Volver</a>
+    </div>
+</form>
+
+{% endblock content %}

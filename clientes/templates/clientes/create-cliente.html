@@ -2,13 +2,19 @@
 
 
 {% block content %}
+<br>
 <h1>Clientes</h1>
 
 <h3>Agregar Cliente</h3>
 
-<form>
+<form method="POST" class="styled-form">
     {% csrf_token %}
     {{form.as_p}}
+    
+    <div class="button-container">
+        <button type="submit" class="btn-save">Crear</button>
+        <a href="{% url 'clientes' %}" class="btn-cancel">Cancelar</a>
+    </div>
 </form>
 
 {% endblock content %}

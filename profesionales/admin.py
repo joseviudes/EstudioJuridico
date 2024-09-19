@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Profesional, Contacto
+from .models import Profesional
 # Register your models here.
 
 admin.site.register(Profesional)
-admin.site.register(Contacto)

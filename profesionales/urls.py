@@ -1,11 +1,11 @@
 from django.urls import path
 
-from .views import ListProfesional, singleProfesional, createProfesional, updateProfesional, deleteProfesional
+from .views import lista_de_profesionales, profesional, crear_profesional, actualizar_profesional, eliminar_profesional
 
 urlpatterns = [
-    path("", ListProfesional.as_view(), name="profesionales"),
-    path("profesional/<int:pk>/", singleProfesional, name="profesional"),
-    path("create-profesionales/", createProfesional, name="create-profesionales"),
-    path("update-profesional/", updateProfesional, name="update-profesional"),
-    path("delete-profesional/", deleteProfesional, name="delete-profesional")
+    path("", lista_de_profesionales, name="profesionales"),
+    path("profesional/<int:pk>/", profesional, name="profesional"),
+    path("crear-profesional/", crear_profesional, name="crear-profesional"),
+    path("actualizar-profesional/<int:pk>/", actualizar_profesional, name="actualizar-profesional"),
+    path("eliminar-profesional/<int:pk>/", eliminar_profesional, name="eliminar-profesional")
 ]

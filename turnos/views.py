@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import TurnoForm
 from .models import Turno
@@ -48,3 +49,11 @@ def deleteTurno(request, pk):
     
     context = {'object': turno}
     return render(request, 'delete-turno.html', context)
+
+
+
+lista_de_turnos  = ListTurno.as_view()
+turno           = singleTurno
+crear_turno     = createTurno
+#actualizar_turno = updateTurno
+eliminar_turno   = deleteTurno

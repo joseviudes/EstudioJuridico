@@ -68,3 +68,8 @@ def deleteProfesional(request, pk):
     return render(request, 'profesionales/delete-profesional.html', context)
 
 
+lista_de_profesionales  = ListProfesional.as_view()
+profesional            = singleProfesional
+crear_profesional     = createProfesional
+actualizar_profesional = updateProfesional
+eliminar_profesional   = deleteProfesional

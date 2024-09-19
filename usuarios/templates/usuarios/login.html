@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<br>
+<h1>Inicio de sesión</h1>
+
+<form method="POST" class="styled-form">
+    {% csrf_token %}
+    {{form.as_p}}
+    
+    <div class="button-container">
+        <button type="submit" class="btn-save">Login</button>
+        {% comment %} <a href="{% url 'expedientes' %}" class="btn-cancel">Cancelar</a> {% endcomment %}
+    </div>
+</form>
+
+<p>¿No tiene una cuenta todavia? haga click <a href="{% url "register" %}">aqui</a></p>
+
+{% endblock content %}
+
+
+

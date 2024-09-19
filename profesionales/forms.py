@@ -6,5 +6,10 @@ from .models import Profesional
 class ProfesionalForm(ModelForm):
     class Meta:
         model = Profesional
-        fields = ['nombre', 'apellido', 'tipo_matricula', 'num_matricula', 'idMatriculaProf', 'especialidad', 'fecha_ingreso', 'fecha_egreso', 'motivo_egreso']
+        fields = '__all__'
         
+    def __init__(self, *args, **kwargs):
+        super(ProfesionalForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if field.required:
+                field.widget.attrs['class'] = 'required-field'

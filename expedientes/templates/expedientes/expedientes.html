@@ -1,36 +1,55 @@
-{% extends "navbar.html" %}
+{% extends "main.html" %}
 
 {% block content %}
 
-<h1>Expedientes</h1>
 
+<br>
+<h1>Gestion de Expedientes</h1>
+<br>
 
-<a href="{% url 'create-expediente' %}">Crear expediente</a>
+<a href="{% url 'crear-expediente' %}" class="boton">Crear expediente</a>
+<hr>
 
-<h1>Lista de Expedientes</h1>
-
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Detalles</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for expediente in expedientes %}
+<div class="container">
+    <h2>Lista de expedientes</h2>
+    <table class="expedientes-table">
+        <thead>
             <tr>
-                <td>{{ expediente.id }}</td>
-                <td>{{ expediente.nombre }}</td> <!-- Ajusta según los campos de tu modelo -->
-                <td><a href="{% url 'expediente-detail' expediente.pk %}">Ver Detalles</a></td>
+                <th>Fecha de Inicio</th>
+                <th>Responsable</th>
+                <th>Cliente</th>
+                <th>Asunto</th>
+                <th>Abogado</th>
+                <th>Nº Expediente</th>
+                <th>Estado</th>
+                <th>Opciones</th>
             </tr>
-        {% empty %}
+        </thead>
+        <tbody>
+            {% for expediente in expedientes %}
             <tr>
-                <td colspan="3">No hay expedientes disponibles.</td>
+                <td>{{expediente.fecha_inicio}}</td>
+                <td>-</td>
+                <td>{{expediente.cliente}}</td>
+                <td>---</td>
+                <td>{{expediente.profesional}} </td>
+                <td>{{expediente.numero_expediente}}</td>
+                <td><span class="status en-curso">ACTIVO</span></td>
+                <td>
+                    <a href="{% url 'expediente' expediente.pk %}">
+                        <button class="btn ver">Ver</button>
+                    </a>
+                    <a href="{% url 'actualizar-expediente' expediente.pk %}">
+                        <button class="btn editar">Editar</button>
+                    </a>
+                    <a href="{% url 'eliminar-expediente' expediente.pk  %}">
+                        <button class="btn eliminar">Eliminar</button>
+                    </a>
+                </td>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock content %}

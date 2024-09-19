@@ -3,8 +3,9 @@ from django.forms import ModelForm, widgets
 from django import forms
 from .models import Turno
 
+
 class TurnoForm(ModelForm):
     class Meta:
         model = Turno
-        fields = '__all__'
+        fields = ['profesional', 'dia', 'horario', 'motivo']
         

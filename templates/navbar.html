@@ -1,13 +1,58 @@
+{% load static %}
 
-<nav>
-    <ul>
-        <li><a href="{% url 'create-profesionales' %}">Profesionales</a></li>
-        <li><a href="{% url 'create-turno' %}">Turnos</a></li>
-        <li><a href="{% url 'expedientes' %}">Expedientes</a></li>
-    </ul>
-</nav>
+<header class="header">
+    <div class="container">
+        <a href="{% url 'index' %}" class="header__logo">
+            <img src="{% static 'images/07-01.jpg' %}" alt="EstudioJuridicoLogo" />
+        </a>
 
-{% block content %}
+        <nav class="navbar">
+            <ul class="navbar__list">
+                <li><a href="{% url 'profesionales' %}" class="navbar__link">Profesionales</a></li>
+                <li><a href="{% url 'clientes' %}" class="navbar__link">Clientes</a></li> 
+                <li><a href="{% url 'expedientes' %}" class="navbar__link">Expedientes</a></li>
+                <li><a href="{% url 'turnos' %}" class="navbar__link">Turnos</a></li>
+                <li><a href="" class="navbar__link">Agenda</a></li> 
+                <li><a href="" class="navbar__link">Informes</a></li> 
+                <li><a href="{% url 'login' %}" class="navbar__link"><i class="fas fa-sign-in-alt"></i></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-{% endblock content %}
+
+{% comment %} {% load static %}
+
+<!-- Header Section -->
+<header class="header">
+    <div class="container container--narrow">
+        <a href="{% url 'profiles' %}" class="header__logo">
+            <img src="{% static 'images/logo.svg' %} " alt="DevSearch Logo" />
+        </a>
+
+        <nav class="header__nav">
+            <input type="checkbox" id="responsive-menu" />
+            <label for="responsive-menu" class="toggle-menu">
+                <span>Menu</span>
+                <div class="toggle-menu__lines"></div>
+            </label>
+            <ul class="header__menu">
+                <li class="header__menuItem"><a href="{% url 'profiles' %}">Developers</a></li>
+                <li class="header__menuItem"><a href="{% url 'projects' %}">Projects</a></li>
+
+
+
+                {% if request.user.is_authenticated %}
+                <li class="header__menuItem"><a href="{% url 'inbox' %}">Inbox</a></li>
+                <li class="header__menuItem"><a href="{% url 'account' %}">Account</a></li>
+                <li class="header__menuItem"><a href="{% url 'logout' %}" class="btn btn--sub">Logout</a></li>
+                {% else %}
+                <li class="header__menuItem"><a href="{% url 'login' %}" class="btn btn--sub">Login/Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header> {% endcomment %}
+
+
 
