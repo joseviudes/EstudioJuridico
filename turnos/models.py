@@ -22,7 +22,7 @@ class Turno(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='turnos')
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos')
     
-    dia = models.DateField(help_text="Ingrese un dia para el turno.", null=True)
+    dia = models.DateField(null=True)
     horario = models.CharField(max_length=10, choices=HORARIOS, null=True)
     motivo = models.TextField(max_length=500)  # Motivo del turno
     id_turno = models.AutoField(primary_key=True)  # ID del turno, se genera automáticamente

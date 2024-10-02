@@ -3,43 +3,43 @@
 {% block content %}
 
 <br>
-<h1>Gestión de Clientes</h1>
+<h1 class="text-start">Gestión de Clientes</h1>
 <br>
 
-<a href="{% url 'crear-cliente' %}" class="boton">Agregar cliente</a>
+<!-- Botón para crear un nuevo expediente, ahora en verde -->
+<a href="{% url 'crear-cliente' %}" class="btn btn-success mb-3">Agregar Cliente</a>
 <hr>
 
+<!-- Contenedor principal -->
 <div class="container">
-    <h2>Lista de clientes</h2>
-    <table class="expedientes-table">
-        <thead>
+    <h2 class="mb-4">Lista de clientes</h2>
+
+    <!-- Tabla de expedientes -->
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
             <tr>
+                <th>DNI</th>
                 <th>Apellido</th>
                 <th>Nombre</th>
-                <th>DNI</th>
                 <th>Telefono</th>
-                {% comment %} <th>Estado</th> {% endcomment %}
+                <th>Estado</th>
                 <th>Opciones</th>
             </tr>
         </thead>
         <tbody>
             {% for cliente in clientes %}
             <tr>
+                <td>{{cliente.dni}}</td>
                 <td>{{cliente.apellido}}</td>
                 <td>{{cliente.nombre}}</td>
-                <td>{{cliente.dni}}</td>
                 <td>{{cliente.telefono}}</td>
-
                 <td>
-                    <a href="{% url 'cliente' cliente.pk %}">
-                        <button class="btn ver">Ver</button>
-                    </a>
-                    <a href="{% url 'actualizar-cliente' cliente.pk %}">
-                        <button class="btn editar">Editar</button>
-                    </a>
-                    <a href="{% url 'eliminar-cliente' cliente.pk  %}">
-                        <button class="btn eliminar">Eliminar</button>
-                    </a>
+                    <span class="badge bg-success">ACTIVO</span>
+                </td>
+                <td>
+                    <a href="{% url 'cliente' cliente.pk %}" class="btn btn-info btn-sm">Ver</a>
+                    <a href="{% url 'actualizar-cliente' cliente.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'eliminar-cliente' cliente.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
                 </td>
             </tr>
             {% endfor %}

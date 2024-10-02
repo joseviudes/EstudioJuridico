@@ -29,7 +29,7 @@ def validar_dni(value):
 class Profesional(models.Model):
     nombre = models.CharField(max_length=60)
     apellido = models.CharField(max_length=60)
-    dni = models.CharField('Dni', max_length=8, primary_key=True, unique=True, validators=[validar_dni]) #  PK y de valor unico
+    dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni]) #  PK y de valor unico
     idMatriculaProf = models.IntegerField('Numero de matricula del profesional',unique=True)
     especialidad = models.CharField(max_length=200, choices=ESPECIALIDADES)
     fecha_ingreso = models.DateField('Fecha de ingreso')  
@@ -39,7 +39,7 @@ class Profesional(models.Model):
     # Contacto
     direccion = models.CharField(max_length=250, null=True, blank=True)
     cod_postal = models.CharField(max_length=4, null=True, blank=True)
-    telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono], help_text="ej: 3794541234")
+    telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
     email = models.EmailField(max_length=250, null=True, blank=True)
     
     class Meta:  

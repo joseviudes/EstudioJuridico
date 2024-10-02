@@ -7,8 +7,12 @@ body {
 }
 
 .container {
+    display: block;
+    justify-content: space-between;
+    align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
 h2 {
@@ -104,46 +108,81 @@ tbody tr:hover {
 
 /* Estilos para el header */
 .header {
-    background-color: #0b3d91; /* Azul oscuro */
+    display: block;
+    background-color: #f8f9fa; /* Fondo claro */
     padding: 15px 0;
-    border-bottom: 2px solid #e3e3e3; /* Línea inferior */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+/* Asegurar que el logo y la lista estén correctamente alineados */
+.header__logo {
+    display: flex;
+    align-items: center; /* Alinea el logo con el texto */
+    margin-right: auto; /* Hace que el logo se alinee a la izquierda */
 }
 
 .header__logo img {
-    height: 60px;
-    vertical-align: middle;
+    height: 60px; /* Ajusta la altura si es necesario */
+    vertical-align: bottom; /* Alinea verticalmente el logo con el texto */
 }
+
 
 /* Estilos para la barra de navegación */
 .navbar {
-    float: right;
+    display: flex;
+    align-items: end; /* Alinea verticalmente el contenido */
+    justify-content: flex-end; /* Alinea los elementos a la derecha */
+    width: 100%;
 }
 
 .navbar__list {
     list-style: none;
     display: flex;
-    gap: 30px;
+    gap: 30px; /* Espaciado entre los links */
+    margin: 0;
+    padding: 0;
 }
 
 .navbar__link {
-    color: #040404;
     text-decoration: none;
+    color: #333; /* Color del texto */
     font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    padding: 10px;
-    transition: color 0.3s ease;
-    
+    font-family: 'Poppins', sans-serif; /* Tipografía minimalista */
+    padding: 10px 15px;
+    transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 .navbar__link:hover {
-    color: #f8b400; /* Color de hover (amarillo dorado) */
+    color: #007bff; /* Azul en hover */
+    background-color: rgba(0, 123, 255, 0.1); /* Fondo sutil en hover */
+    border-radius: 5px; /* Bordes redondeados */
 }
 
-/* Estilo para hacer el logo y la navegación en línea */
-.header__logo {
-    float: left;
+/* Icono de login */
+.navbar__link i {
+    font-size: 20px;
 }
+
+.navbar__link i:hover {
+    color: #007bff; /* Azul al hacer hover en el icono */
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 768px) {
+    .navbar__list {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .header {
+        padding: 10px;
+    }
+
+    .header__logo img {
+        height: 40px;
+    }
+}
+
 
 /* General form styling */
 .form-container {
@@ -213,9 +252,39 @@ h3 {
     background-color: #d32f2f;
 }
 
-/* Asterisco rojo para campos obligatorios */
-.styled-form label.required::after {
+label.required::after {
     content: " *";
-    color: red;
+    color: red !important; /* Esto lo hará rojo */
     font-weight: bold;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.icon-check {
+    background-color: #155724;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.icon-check::before {
+    content: '✔'; /* Esto agrega el ícono de check (marca) */
+    font-size: 14px;
 }

@@ -2,18 +2,27 @@
 
 {% block content %}
     <br>
-    <h1>Profesionales</h1>
- 
-    <h3>Editar profesional</h3>
+    <h1 class="text-start">Gestión de Profesionales</h1>
+    <br>
 
-    <form method="POST" class="styled-form">
+    <h3 class="mb-4">Editar profesional</h3>
+
+    <!-- Formulario con Bootstrap -->
+    <form method="POST" class="mb-5">
         {% csrf_token %}
         {{ form.as_p }}
-        <div class="button-container">
-            <button type="submit" class="btn-save">Guardar cambios</button>
-            <a href="{% url 'profesionales' %}" class="btn-cancel">Cancelar</a>
+
+        <!-- Botones alineados con Bootstrap -->
+        <div class="d-flex justify-content-start mt-4">
+            <!-- Botón Guardar -->
+            <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
+            
+            <!-- Botón Cancelar -->
+            <a href="{% url 'profesionales' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 
 {% endblock content %}
+
+
 

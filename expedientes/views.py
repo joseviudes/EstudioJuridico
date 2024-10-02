@@ -26,10 +26,10 @@ def createExpediente(request):
         form = ExpedienteForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success("Se ha creado un expediente.")
+            messages.success(request, "Se ha creado un expediente.")
             return redirect('expedientes')
         else:
-            messages.error("Hubo un error al crear el expediente. Por favor verifique los datos")
+            messages.error(request, "Hubo un error al crear el expediente. Por favor verifique los datos")
     else:
         form = ExpedienteForm()
         
@@ -60,18 +60,13 @@ def updateExpediente(request, pk):
 
 def deleteExpediente(request, pk):
     
-    expediente = Expediente.objects.get(id=pk)
+    expediente = Expediente.objects.get(pk=pk)
     
     if request.method == 'POST':
         expediente.delete()
         return redirect('expedientes')
     
-    context = {'object': expediente}
+    context = {'expediente': expediente}
     return render(request, 'expedientes/delete-expediente.html', context)
     
 
-lista_de_expedientes  = ListExpediente.as_view()
-expediente            = singleExpediente
-crear_expedientes     = createExpediente
-actualizar_expediente = updateExpediente
-eliminar_expediente   = deleteExpediente

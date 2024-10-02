@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
 
+
 from .forms import ClienteForm
 from .models import Cliente
 
@@ -24,10 +25,10 @@ def createCliente(request):
         form = ClienteForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success("Se ha creado un cliente.")
+            messages.success(request, "Se ha añadido un cliente correctamente.")
             return redirect('clientes')
         else:
-            messages.error("Hubo un error al crear el cliente. Por favor verifique los datos")
+            messages.error(request, "Hubo un error al crear el cliente. Por favor verifique los datos")
     else:
         form = ClienteForm()
         
@@ -58,18 +59,11 @@ def updateCliente(request, pk):
 
 def deleteCliente(request, pk):
     
-    cliente = Cliente.objects.get(id=pk)
+    cliente = Cliente.objects.get(pk=pk)
     
     if request.method == 'POST':
         cliente.delete()
         return redirect('clientes')
     
-    context = {'object': cliente}
+    context = {'cliente': cliente}
     return render(request, 'clientes/delete-cliente.html', context)
-
-
-lista_de_clientes  = ListCliente.as_view()
-cliente            = singleCliente
-crear_cliente      = createCliente
-actualizar_cliente = updateCliente
-eliminar_cliente   = deleteCliente

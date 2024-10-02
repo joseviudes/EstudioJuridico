@@ -2,20 +2,25 @@
 
 {% block content %}
 
-<br>
 <h1>Inicio de sesión</h1>
+<br>
+<form method="POST" action="{% url "login" %}">
 
-<form method="POST" class="styled-form">
     {% csrf_token %}
-    {{form.as_p}}
-    
-    <div class="button-container">
-        <button type="submit" class="btn-save">Login</button>
-        {% comment %} <a href="{% url 'expedientes' %}" class="btn-cancel">Cancelar</a> {% endcomment %}
-    </div>
-</form>
 
-<p>¿No tiene una cuenta todavia? haga click <a href="{% url "register" %}">aqui</a></p>
+    <div class="mb-3">
+      <input type="text" class="form-control" name="username" placeholder="Ingrese su usuario">
+      {% comment %} <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> {% endcomment %}
+    </div>
+
+    <div class="mb-3">
+      <input type="password" class="form-control" name="password" placeholder="Ingrese su contraseña">
+    </div>
+
+    <button type="submit" class="btn btn-secondary">Login</button>
+  </form>
+  <br>
+  <p>¿No tiene una cuenta todavia? haga click <a href="{% url "register" %}">aqui</a></p>
 
 {% endblock content %}
 

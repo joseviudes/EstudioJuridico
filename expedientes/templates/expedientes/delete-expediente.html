@@ -1,16 +1,48 @@
 {% extends "main.html" %}
 
-
 {% block content %}
-<h1>Expedientes</h1>
+<br>
+<h1 class="text-start">Gestión de Expedientes</h1>
+<br>
 
-<h3>Eliminar expediente</h3>
+<h3 class="mb-4">¿Desea eliminar este expediente?</h3>
 
-{% comment %} <form>
+<!-- Tabla con Bootstrap -->
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nº Expediente</th>
+            <th>Cliente</th>
+            <th>Abogado</th>
+            <th>Responsable</th>
+            <th>Fecha de Inicio</th>
+            <th>Asunto</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ expediente.numero_expediente }}</td>
+            <td>{{ expediente.cliente }}</td>
+            <td>{{ expediente.profesional }}</td>
+            <td>-</td>
+            <td>{{ expediente.fecha_inicio }}</td>
+            <td>Anses</td>
+            <td>Activo</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Formulario de confirmación con Bootstrap -->
+<form method="POST">
     {% csrf_token %}
-    {{form.as_p}}
-</form>
-<button type="submit" value="Crear">Guardar cambios</button>
-<button type="submit" value="Cancelar">Cancelar</button>
 
-{% endblock content %} {% endcomment %}
+    <div class="d-flex justify-content-start mt-4">
+        <!-- Botón de Eliminar con estilo de alerta -->
+        <button type="submit" class="btn btn-danger me-2">Eliminar</button>
+        <!-- Botón de Cancelar -->
+        <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+{% endblock content %}

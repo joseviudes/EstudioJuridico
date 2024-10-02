@@ -25,10 +25,10 @@ def createProfesional(request):
         form = ProfesionalForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success("Se ha agregado un profesional.")
+            messages.success(request, "Se ha agregado un profesional.")
             return redirect('profesionales')
         else:
-            messages.error("Hubo un error al crear el profesional. Por favor verifique los datos")
+            messages.error(request, "Hubo un error al crear el profesional. Por favor verifique los datos")
     else:
         form = ProfesionalForm()
         
@@ -58,18 +58,11 @@ def updateProfesional(request, pk):
 
 def deleteProfesional(request, pk):
     
-    profesional = Profesional.objects.get(id=pk)
+    profesional = Profesional.objects.get(pk=pk)
     
     if request.method == 'POST':
         profesional.delete()
         return redirect('profesionales')
     
-    context = {'object': profesional}
+    context = {'profesional': profesional}
     return render(request, 'profesionales/delete-profesional.html', context)
-
-
-lista_de_profesionales  = ListProfesional.as_view()
-profesional            = singleProfesional
-crear_profesional     = createProfesional
-actualizar_profesional = updateProfesional
-eliminar_profesional   = deleteProfesional
