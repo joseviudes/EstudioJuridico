@@ -1,0 +1,81 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Calendario -->
+        <div class="col-md-4">
+            <div id="calendar"></div>
+        </div>
+        
+        <!-- Turnos -->
+        <div class="col-md-8">
+            <h3>Turnos Futuros</h3>
+            <ul>
+                {% for turno in turnos_futuros %}
+                    <li>{{ turno.cliente }} - {{ turno.dia }} a las {{ turno.horario }}</li>
+                {% empty %}
+                    <li>No hay turnos futuros.</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Turnos Pasados</h3>
+            <ul>
+                {% for turno in turnos_pasados %}
+                    <li>{{ turno.cliente }} - {{ turno.dia }} a las {{ turno.horario }}</li>
+                {% empty %}
+                    <li>No hay turnos pasados.</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Turnos del Día Seleccionado</h3>
+            <ul>
+                {% for turno in turnos_dia %}
+                    <li>{{ turno.cliente }} - {{ turno.dia }} a las {{ turno.horario }}</li>
+                {% empty %}
+                    <li>No hay turnos para este día.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar CSS -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+
+<!-- FullCalendar JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            dateClick: function(info) {
+                // Redirige para mostrar turnos de ese día
+                window.location.href = '?dia=' + info.dateStr;
+            },
+            events: function(fetchInfo, successCallback, failureCallback) {
+                $.ajax({
+                    url: '{% url "get-turnos" %}',  // Cambia la URL si necesitas un endpoint para obtener los turnos
+                    method: 'GET',
+                    success: function(data) {
+                        var events = data.map(function(turno) {
+                            return {
+                                title: turno.cliente,
+                                start: turno.dia
+                            };
+                        });
+                        successCallback(events);
+                    },
+                    error: function() {
+                        failureCallback();
+                    }
+                });
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

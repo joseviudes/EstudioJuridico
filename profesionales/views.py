@@ -13,8 +13,14 @@ class ListProfesional(ListView):
     paginate_by = 10  #paginación
     
     
-def singleProfesional(request, pk):
-    profesional = get_object_or_404(Profesional, pk=pk)  # Obtiene el profesional o devuelve 404 si no existe
+# def singleProfesional(request, pk):
+#     profesional = get_object_or_404(Profesional, pk=pk)  # Obtiene el profesional o devuelve 404 si no existe
+    
+#     context = {'profesional': profesional,}
+#     return render(request, 'profesionales/profesional.html', context)
+
+def detailProfesional(request, pk):
+    profesional = get_object_or_404(Profesional, pk=pk)
     
     context = {'profesional': profesional,}
     return render(request, 'profesionales/profesional.html', context)

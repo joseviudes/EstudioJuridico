@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
-
+from django.db.models import Q
 
 from .forms import ClienteForm
 from .models import Cliente
@@ -12,6 +12,23 @@ class ListCliente(ListView):
     template_name = 'clientes/clientes.html'
     context_object_name = 'clientes'  # nombre del objeto en el contexto 
     paginate_by = 10  #paginación
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+
+        if query:
+            queryset = queryset.filter(
+                Q(nombre__icontains=query) |
+                Q(apellido__icontains=query) |
+                Q(dni__icontains=query)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')  # Añade la consulta al contexto para mantenerla en el formulario
+        return context
     
 def singleCliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)  # Obtiene el cliente o devuelve 404 si no existe

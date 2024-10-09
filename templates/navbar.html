@@ -2,6 +2,24 @@
 
 {% block content %}
 <header class="header">
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-dark bg-dark py-2">
+        <div class="container d-flex justify-content-between text-white">
+            <div>
+                <i class="fa fa-home"></i>    Av. Juan Bautista Alberdi 1988 - Corrientes Capital
+            </div>
+            <div>
+                <i class="fa fa-envelope"></i> 
+                <a href="#" class="text-white">estudiojuridicoDraAquino@hotmail.com</a>
+            </div>
+            <div>
+                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <!-- Logo -->
@@ -21,48 +39,42 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'profesionales' %}">Profesionales</a>
                     </li>
+                    <li class="nav-item divider"></li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
                     </li>
+                    <li class="nav-item divider"></li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'expedientes' %}">Expedientes</a>
                     </li>
+                    <li class="nav-item divider"></li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'turnos' %}">Turnos</a>
                     </li>
+                    <li class="nav-item divider"></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Agenda</a>
+                        <a class="nav-link" href="{% url 'agenda' %}">Agenda</a>
                     </li>
+                    <li class="nav-item divider"></li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Informes</a>
                     </li>
+                    <li class="nav-item divider"></li>
                     {% endif %}
                     
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">
-                            {% comment %} <i class="fas fa-sign-out-alt"></i> {% endcomment %}
-                            Cerrar sesión
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'logout' %}">Cerrar sesión</a>
+                        </li>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">
-                            {% comment %} <i class="fas fa-sign-in-alt"></i> {% endcomment %}
-                            Login
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'login' %}">Inicio de sesión</a>
+                        </li>
                     {% endif %}
-
-
                 </ul>
             </div>
         </div>
     </nav>
 </header>
+<hr>
 {% endblock content %}
-
-
-
-
-

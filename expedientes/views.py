@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
+from django.db.models import Q
 
 from .forms import ExpedienteForm
 from .models import Expediente
@@ -12,6 +13,25 @@ class ListExpediente(ListView):
     template_name = 'expedientes/expedientes.html'
     context_object_name = 'expedientes'  # nombre del objeto en el contexto 
     paginate_by = 10  #paginación
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+
+        if query:
+            queryset = queryset.filter(
+                Q(cliente__nombre__icontains=query) |
+                Q(cliente__apellido__icontains=query) |
+                Q(profesional__nombre__icontains=query) |
+                Q(profesional__apellido__icontains=query) |
+                Q(numero_expediente__icontains=query)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')  # Añade la consulta al contexto para mantenerla en el formulario
+        return context
 
 
 def singleExpediente(request, pk):

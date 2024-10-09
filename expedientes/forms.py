@@ -7,6 +7,10 @@ class ExpedienteForm(ModelForm):
     class Meta:
         model = Expediente
         fields = '__all__'
+        widgets = {
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_finalizacion': forms.DateInput(attrs={'type': 'date'}),
+        }
         
     def __init__(self, *args, **kwargs):
         super(ExpedienteForm, self).__init__(*args, **kwargs)

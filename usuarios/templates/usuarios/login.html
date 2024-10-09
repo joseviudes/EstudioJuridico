@@ -4,25 +4,49 @@
 
 <h1>Inicio de sesión</h1>
 <br>
-<form method="POST" action="{% url "login" %}">
 
-    {% csrf_token %}
+<!-- Contenedor para controlar el ancho del formulario -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6"> <!-- Ocupa la mitad del ancho en pantallas medianas o más grandes -->
+            <form method="POST" action="{% url "login" %}" id="loginForm">
+                {% csrf_token %}
 
-    <div class="mb-3">
-      <input type="text" class="form-control" name="username" placeholder="Ingrese su usuario">
-      {% comment %} <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> {% endcomment %}
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="username" placeholder="Ingrese su usuario">
+                </div>
+
+                <div class="mb-3">
+                    <input type="password" class="form-control" name="password" placeholder="Ingrese su contraseña">
+                </div>
+
+                <button type="submit" class="btn btn-secondary" id="loginButton">
+                    <span id="buttonText">Login</span>
+                    <div id="progressBar"></div>
+                </button>
+            </form>
+            <br>
+            <p>¿No tiene una cuenta todavía? haga click <a href="{% url "register" %}">aqui</a></p>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-      <input type="password" class="form-control" name="password" placeholder="Ingrese su contraseña">
-    </div>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function (event) {
+    var loginButton = document.getElementById('loginButton');
+    var progressBar = document.getElementById('progressBar');
+    var buttonText = document.getElementById('buttonText');
 
-    <button type="submit" class="btn btn-secondary">Login</button>
-  </form>
-  <br>
-  <p>¿No tiene una cuenta todavia? haga click <a href="{% url "register" %}">aqui</a></p>
+    loginButton.disabled = true; // Deshabilitar el botón durante la carga
+    buttonText.innerText = "Cargando..."; // Cambiar el texto a "Cargando..."
+
+    progressBar.style.width = "100%";
+
+    setTimeout(function () {
+      loginButton.innerText = "¡Cargado!";
+      loginButton.style.backgroundColor = "#28a745"; // Cambia el color del botón a verde completo
+    }, 2000);
+  });
+</script>
 
 {% endblock content %}
-
-
-

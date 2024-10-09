@@ -2,26 +2,33 @@
 
 {% block content %}
 <br>
-<h1 class="text-start">Gestión de Expedientes</h1>
+<h2 class="text-start"><strong>Gestión de Expedientes</strong></h2>
 <br>
 
 <h3 class="mb-4">Crear expediente</h3>
 
-<!-- Formulario con clases de Bootstrap -->
-<form method="POST" class="mb-5">
-    {% csrf_token %}
-    
-    <!-- Renderiza el formulario de Django con clases de Bootstrap -->
-    {{ form.as_p }}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded">
+                    {% csrf_token %}
+                    
+                    <!-- Renderiza el formulario de Django con clases de Bootstrap -->
+                    {{ form.as_p }}
 
-    <!-- Contenedor de los botones -->
-    <div class="d-flex justify-content-start">
-        <!-- Botón de Crear -->
-        <button type="submit" class="btn btn-success me-2">Crear</button>
-        <!-- Botón de Cancelar -->
-        <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+                    <!-- Contenedor de los botones -->
+                    <div class="d-flex justify-content-start">
+                        <!-- Botón de Crear -->
+                        <button type="submit" class="btn btn-success me-2">Crear</button>
+                        <!-- Botón de Cancelar -->
+                        <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</form>
+
+
 
 {% endblock content %}
 

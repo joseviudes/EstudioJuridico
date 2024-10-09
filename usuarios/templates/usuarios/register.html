@@ -2,18 +2,17 @@
 
 {% block content %}
 
+<h1>Registro de Usuario</h1>
 <br>
-<h1>Registro de usuario</h1>
+<form method="POST" action="{% url "register" %}">
 
-<form method="POST" class="styled-form">
     {% csrf_token %}
     {{form.as_p}}
-    
-    <div class="button-container">
-        <button type="submit" class="btn-save">Registrase</button>
-        <a href="{% url 'index' %}" class="btn-cancel">Volver</a>
-    </div>
+
+    <button type="submit" class="btn btn-secondary">Registrase</button>
+    <a href="{% url 'index' %}" class="btn-cancel">Volver</a>
 </form>
 
-<p>¿Ya tiene una cuenta? haga click <a href="{% url "login" %}">aqui</a></p>
+<br>
+
 {% endblock content %}

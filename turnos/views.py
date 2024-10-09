@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
@@ -53,3 +55,48 @@ def deleteTurno(request, pk):
     
     context = {'object': turno}
     return render(request, 'delete-turno.html', context)
+
+
+def agendaView(request):
+    today = timezone.now().date()
+    turnos_futuros = Turno.objects.filter(dia__gt=today).order_by('dia', 'horario')
+    turnos_pasados = Turno.objects.filter(dia__lt=today).order_by('-dia', '-horario')
+    
+    dia_seleccionado = request.GET.get('dia')
+    turnos_dia = []
+    
+    if dia_seleccionado:
+        turnos_dia = Turno.objects.filter(dia=dia_seleccionado).order_by('horario')
+
+    return render(request, 'turnos/agenda.html', {
+        'turnos_futuros': turnos_futuros,
+        'turnos_pasados': turnos_pasados,
+        'turnos_dia': turnos_dia,
+    })
+
+    
+    
+# def get_turnos(request):
+    
+#     turnos = Turno.objects.all().values('id_turno', 'cliente__nombre', 'dia', 'horario')
+    
+#     eventos = []
+    
+#     for turno in turnos:
+#         eventos.append({
+#             'id': turno['id_turno'],
+#             'title': turno['cliente__nombre'],  # Asegúrate de que esto refleje lo que deseas mostrar
+#             'start': f"{turno['dia']}T{turno['horario']}",
+#             'allDay': False  # Cambia esto si deseas que sea un evento de día completo
+#         })
+#     return JsonResponse(eventos, safe=False)
+
+
+def get_turnos(request):
+    turnos = Turno.objects.all().values('id_turno', 'cliente__nombre', 'dia', 'horario')
+    
+    eventos = [{
+        'title': str(turno.cliente),
+        'start': turno.dia.isoformat(),  # Formato ISO para FullCalendar
+    } for turno in turnos]
+    return JsonResponse(eventos, safe=False)

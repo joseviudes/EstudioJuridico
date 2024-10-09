@@ -21,6 +21,7 @@ class Expediente(models.Model):
     
     numero_expediente = models.CharField(max_length=50, primary_key=True, unique=True)
     tipo_expediente = models.CharField(max_length=50, choices=TIPOS_EXPEDIENTES)
+    apoderado = models.CharField(max_length=250, null=True, blank=True)
     fecha_inicio = models.DateField()
     fecha_finalizacion = models.DateField(null=True, blank=True)
     asunto = models.TextField(max_length=250)

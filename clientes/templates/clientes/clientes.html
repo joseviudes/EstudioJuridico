@@ -3,25 +3,42 @@
 {% block content %}
 
 <br>
-<h1 class="text-start">Gestión de Clientes</h1>
+<h2 class="text-start"><strong>Gestión de Clientes</strong></h2>
 <br>
 
-<!-- Botón para crear un nuevo expediente, ahora en verde -->
-<a href="{% url 'crear-cliente' %}" class="btn btn-success mb-3">Agregar Cliente</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Botón para crear un nuevo cliente, ahora en verde -->
+    <a href="{% url 'crear-cliente' %}" class="btn btn-success">Agregar Cliente</a>
+
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{% url 'clientes' %}" class="d-flex">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por DNI, apellido, nombre..." value="{{ q }}">
+            <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
+                <i class="bi bi-search"></i>
+            </button>
+            <a href="{% url 'clientes' %}" class="btn btn-danger ms-1 rounded" aria-label="Limpiar">
+                <i class="bi bi-x-circle"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+
 <hr>
 
 <!-- Contenedor principal -->
 <div class="container">
-    <h2 class="mb-4">Lista de clientes</h2>
+    <h2 class="mb-4">Lista de Clientes</h2>
 
-    <!-- Tabla de expedientes -->
+    <!-- Tabla de clientes -->
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
                 <th>DNI</th>
                 <th>Apellido</th>
                 <th>Nombre</th>
-                <th>Telefono</th>
+                <th>Teléfono</th>
                 <th>Estado</th>
                 <th>Opciones</th>
             </tr>
@@ -29,12 +46,16 @@
         <tbody>
             {% for cliente in clientes %}
             <tr>
-                <td>{{cliente.dni}}</td>
-                <td>{{cliente.apellido}}</td>
-                <td>{{cliente.nombre}}</td>
-                <td>{{cliente.telefono}}</td>
+                <td>{{ cliente.dni }}</td>
+                <td>{{ cliente.apellido }}</td>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.telefono }}</td>
                 <td>
-                    <span class="badge bg-success">ACTIVO</span>
+                    {% if cliente.estado %}
+                        <span class="badge bg-success">ACTIVO</span>
+                    {% else %}
+                        <span class="badge bg-secondary">INACTIVO</span>
+                    {% endif %}
                 </td>
                 <td>
                     <a href="{% url 'cliente' cliente.pk %}" class="btn btn-info btn-sm">Ver</a>
@@ -42,12 +63,73 @@
                     <a href="{% url 'eliminar-cliente' cliente.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
                 </td>
             </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No se encontraron clientes.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if clientes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ clientes.previous_page_number }}" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+            {% endif %}
+
+            <!-- Número de páginas -->
+            {% for num in clientes.paginator.page_range %}
+                {% if clientes.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > clientes.number|add:'-3' and num < clientes.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if clientes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ clientes.next_page_number }}" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ clientes.paginator.num_pages }}" aria-label="Última">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 
 {% endblock content %}
+
 
 
 

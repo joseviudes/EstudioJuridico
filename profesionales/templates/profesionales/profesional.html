@@ -1,10 +1,46 @@
 {% extends "main.html" %}
 
 {% block content %}
+
 <br>
-<h1>Gestión de Profesionales</h1>
+<h2 class="text-start"><strong>Perfil del Profesional</strong></h2>
 <br>
 
-<p>Single profesional</p>
+<div class="container mt-5">
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ profesional.foto.url}}" class="img-fluid rounded-start" alt="Foto de {{ profesional.nombre }}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ profesional.nombre }} {{ profesional.apellido }}</h5>
+                    <p class="card-text"><strong>DNI:</strong> {{ profesional.dni }}</p>
+                    <p class="card-text"><strong>Matricula Profesional:</strong> {{ profesional.idMatriculaProf }}</p>
+                    <p class="card-text"><strong>Especialidad:</strong> {{ profesional.especialidad }}</p>
+                    <p class="card-text"><strong>Fecha de ingreso:</strong> {{ profesional.fecha_ingreso }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5><b>Información de contacto</b></h5>
+                    <p class="card-text"><strong>Teléfono:</strong> {{ profesional.telefono }}</p>
+                    <p class="card-text"><strong>Direccion:</strong> {{ profesional.direccion }}</p>
+                    <p class="card-text"><strong>Codigo Postal:</strong> {{ profesional.cod_postal }}</p>
+                    <p class="card-text"><strong>Email:</strong> {{ profesional.email }}</p>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 {% endblock content %}

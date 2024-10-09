@@ -3,12 +3,28 @@
 {% block content %}
 
 <br>
-<h1 class="text-start">Gestión de Expedientes</h1>
+<h2 class="text-start"><strong>Gestión de Expedientes</strong></h2>
 <br>
 
-<!-- Botón para crear un nuevo expediente, ahora en verde -->
-<a href="{% url 'crear-expediente' %}" class="btn btn-success mb-3">Crear expediente</a>
-<hr>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Botón para crear un nuevo cliente, ahora en verde -->
+    <a href="{% url 'crear-expediente' %}" class="btn btn-success">Crear Expediente</a>
+
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{% url 'expedientes' %}" class="d-flex">
+        <div class="input-group w-150">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por Nº Exp, cliente, profesional..." value="{{ q }}">
+            <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
+                <i class="bi bi-search"></i>
+            </button>
+            <a href="{% url 'expedientes' %}" class="btn btn-danger ms-1 rounded" aria-label="Limpiar">
+                <i class="bi bi-x-circle"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+
 
 <!-- Contenedor principal -->
 <div class="container">
@@ -21,7 +37,7 @@
                 <th>Nº Expediente</th>
                 <th>Cliente</th>
                 <th>Abogado</th>
-                <th>Responsable</th>
+                <th>Apoderado</th>
                 <th>Fecha de Inicio</th>
                 <th>Asunto</th>
                 <th>Estado</th>
@@ -34,7 +50,7 @@
                 <td>{{ expediente.numero_expediente }}</td>
                 <td>{{ expediente.cliente }}</td>
                 <td>{{ expediente.profesional }}</td>
-                <td>-</td>            
+                <td>{{ expediente.apoderado }}</td>            
                 <td>{{ expediente.fecha_inicio }}</td>
                 <td>---</td>
                 <td>
@@ -49,6 +65,63 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if expedientes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.previous_page_number }}" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+            {% endif %}
+
+            <!-- Número de páginas -->
+            {% for num in expedientes.paginator.page_range %}
+                {% if expedientes.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > expedientes.number|add:'-3' and num < expedientes.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if expedientes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.next_page_number }}" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.paginator.num_pages }}" aria-label="Última">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
 </div>
 
 {% endblock content %}

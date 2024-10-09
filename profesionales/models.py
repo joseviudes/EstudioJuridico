@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ValidationError
+from PIL import Image
 
 # Create your models here.
 
@@ -11,6 +12,11 @@ from django.forms import ValidationError
 ESPECIALIDADES = (
     ("Familia", "Familia"),
     ("Laboral", "Laboral")
+)
+
+ESTADOS = (
+    ('Activo', 'Activo'),
+    ('Baja', 'Baja')
 )
 
 def validar_telefono(value):
@@ -31,14 +37,27 @@ class Profesional(models.Model):
     apellido = models.CharField(max_length=60)
     dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni]) #  PK y de valor unico
     idMatriculaProf = models.IntegerField('Numero de matricula del profesional',unique=True)
+    foto = models.ImageField('Foto', upload_to='images/', null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        img = Image.open(self.foto.path)
+
+        if img.height > 150 or img.width > 150:
+            output_size = (150, 150)
+            img.thumbnail(output_size)
+            img.save(self.foto.path)
+            
     especialidad = models.CharField(max_length=200, choices=ESPECIALIDADES)
+    estado = models.CharField(max_length=10, choices=ESTADOS, default='Activo')
     fecha_ingreso = models.DateField('Fecha de ingreso')  
     fecha_egreso = models.DateField('Fecha de egreso',null=True, blank=True)  # es opcional
     motivo_egreso = models.TextField('Motivo de egreso', max_length=250, null=True, blank=True)
     
     # Contacto
     direccion = models.CharField(max_length=250, null=True, blank=True)
-    cod_postal = models.CharField(max_length=4, null=True, blank=True)
+    cod_postal = models.CharField('Codigo Postal',max_length=4, null=True, blank=True)
     telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
     email = models.EmailField(max_length=250, null=True, blank=True)
     

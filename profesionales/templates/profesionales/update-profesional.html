@@ -2,13 +2,13 @@
 
 {% block content %}
     <br>
-    <h1 class="text-start">Gestión de Profesionales</h1>
+    <h2 class="text-start"><strong>Gestión de Profesionales</strong></h2>
     <br>
 
     <h3 class="mb-4">Editar profesional</h3>
 
     <!-- Formulario con Bootstrap -->
-    <form method="POST" class="mb-5">
+    <form method="POST" class="mb-5" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
 

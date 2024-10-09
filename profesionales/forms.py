@@ -8,7 +8,20 @@ class ProfesionalForm(ModelForm):
         model = Profesional
         fields = '__all__'
         widgets = {
-             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su nombre'})}
+             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su nombre'}),
+             'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+             'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '3795 123456', 'pattern': '\(\d{4}\)-\d{6}'}),
+             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correodeejemplo@gmail.com'}),
+            }
+             
+        
+        
+    foto = forms.ImageField(widget=forms.ClearableFileInput(attrs={
+        'class': 'form-control',  
+        'placeholder': 'Seleccione una imagen',  
+        'accept': 'image/*',  
+    }))
                 
     def __init__(self, *args, **kwargs):
         super(ProfesionalForm, self).__init__(*args, **kwargs)

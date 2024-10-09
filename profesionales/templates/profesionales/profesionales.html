@@ -3,7 +3,7 @@
 {% block content %}
 
 <br>
-<h1 class="text-start">Gestión de Profesionales</h1>
+<h2 class="text-start"><strong>Gestión de Profesionales</strong></h2>
 <br>
 
 <!-- Botón para crear un nuevo expediente, ahora en verde -->
@@ -33,9 +33,7 @@
                 <td>{{profesional.apellido}}</td>
                 <td>{{profesional.nombre}}</td>
                 <td>{{profesional.dni}}</td>
-                <td>
-                    <span class="badge bg-success">ACTIVO</span>
-                </td>
+                <td>{{profesional.estado}}</td>
                 <td>
                     <a href="{% url 'profesional' profesional.pk %}" class="btn btn-info btn-sm">Ver</a>
                     <a href="{% url 'actualizar-profesional' profesional.pk %}" class="btn btn-warning btn-sm">Editar</a>
