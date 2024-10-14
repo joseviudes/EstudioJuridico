@@ -11,15 +11,15 @@ from profesionales.models import Profesional
     
     
 HORARIOS = (
-        ("1", "07:00 a 07:30"),
-        ("2", "07:30 a 08:00"),
-        ("3", "08:00 a 08:30"),
-        ("4", "08:30 a 09:00"),
-        ("5", "09:00 a 09:30"),
-        ("6", "09:30 a 10:00"),
-        ("7", "10:00 a 10:30"),
-        ("8", "10:30 a 11:00"),
-        ("9", "11:00 a 11:30"),
+        ("07:00 a 07:30", "07:00 a 07:30"),
+        ("07:30 a 08:00", "07:30 a 08:00"),
+        ("08:00 a 08:30", "08:00 a 08:30"),
+        ("08:30 a 09:00", "08:30 a 09:00"),
+        ("09:00 a 09:30", "09:00 a 09:30"),
+        ("09:30 a 10:00", "09:30 a 10:00"),
+        ("10:00 a 10:30", "10:00 a 10:30"),
+        ("10:30 a 11:00", "10:30 a 11:00"),
+        ("11:00 a 11:30", "11:00 a 11:30"),
     )    
     
 def validar_dia(value):
@@ -37,14 +37,19 @@ class Turno(models.Model):
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos')
     
     dia = models.DateField(null=True, validators=[validar_dia])
-    horario = models.CharField(max_length=10, choices=HORARIOS, null=True)
+    horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
     motivo = models.TextField(max_length=500)  # Motivo del turno
     id_turno = models.AutoField(primary_key=True)  # ID del turno, se genera automáticamente
     
     class Meta:
+        verbose_name = 'Turno'
+        verbose_name_plural = 'Turnos'
         constraints = [
-            UniqueConstraint(fields=['dia', 'horario'], name='unique_dia_horario')
+            models.UniqueConstraint(
+                fields=['dia', 'horario', 'profesional'],
+                name='unique_turno_profesional'
+            )
         ]
 
     def __str__(self):
-        return f"Turno para {self.cliente} el {self.dia} a las {self.horario}"
+        return f"Turno {self.id_turno} - {self.cliente.get_full_name()} con {self.profesional.get_full_name()} de {self.horario}"

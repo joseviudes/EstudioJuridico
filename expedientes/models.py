@@ -16,12 +16,12 @@ TIPOS_EXPEDIENTES = (
 
 class Expediente(models.Model):
     
-    cliente = models.ForeignKey(Cliente, on_delete=models.DO_NOTHING, related_name="expedientes")
-    profesional = models.ForeignKey(Profesional, on_delete=models.DO_NOTHING, related_name="expedientes")
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="expedientes")
+    profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name="expedientes")
     
     numero_expediente = models.CharField(max_length=50, primary_key=True, unique=True)
     tipo_expediente = models.CharField(max_length=50, choices=TIPOS_EXPEDIENTES)
-    apoderado = models.CharField(max_length=250, null=True, blank=True)
+    apoderado = models.CharField(max_length=250, null=True, blank=True, default="-")
     fecha_inicio = models.DateField()
     fecha_finalizacion = models.DateField(null=True, blank=True)
     asunto = models.TextField(max_length=250)
@@ -32,10 +32,11 @@ class Expediente(models.Model):
     
 class Movimientos(models.Model):
     
+    id_mov = models.AutoField(primary_key=True)
     expediente = models.ForeignKey(Expediente, on_delete=models.CASCADE)
-    estado = models.CharField(max_length=50, choices=ESTADOS)
-    ubicacion = models.CharField(max_length=100)
-    observaciones = models.TextField()
+    estado = models.CharField(max_length=50, choices=ESTADOS, null=True, blank=True)
+    ubicacion = models.CharField(max_length=100, null=True, blank=True)
+    observaciones = models.TextField(null=True, blank=True)
     archivos = models.ImageField(upload_to='archivos/', null=True, blank=True)
 
     class Meta:

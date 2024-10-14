@@ -30,6 +30,9 @@ def validar_codPostal(value):
 
 
 class Cliente(models.Model):
+    
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, null=True)
+    
     nombre = models.CharField(max_length=60)
     apellido = models.CharField(max_length=60)
     dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni])  # PK y de valor único
@@ -45,7 +48,10 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
     email = models.EmailField(max_length=250, null=True, blank=True)
 
+    def get_full_name(self):
+        return f"{self.nombre} {self.apellido}"
+
     def __str__(self):
-        return f"{self.apellido} {self.nombre}"
+        return self.get_full_name()
     
     

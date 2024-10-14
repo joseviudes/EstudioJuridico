@@ -33,11 +33,25 @@
                 <td>{{profesional.apellido}}</td>
                 <td>{{profesional.nombre}}</td>
                 <td>{{profesional.dni}}</td>
-                <td>{{profesional.estado}}</td>
                 <td>
-                    <a href="{% url 'profesional' profesional.pk %}" class="btn btn-info btn-sm">Ver</a>
-                    <a href="{% url 'actualizar-profesional' profesional.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar-profesional' profesional.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    {% if profesional.estado == 'activo' %}
+                        <span class="text-success">{{ profesional.estado }}</span>
+                    {% elif profesional.estado == 'inactivo' %}
+                        <span class="text-danger">{{ profesional.estado }}</span>
+                    {% else %}
+                        <span>{{ profesional.estado }}</span>  {# Para otros estados que no sean activos o inactivos #}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'profesional' profesional.pk %}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'actualizar-profesional' profesional.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a href="{% url 'eliminar-profesional' profesional.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}

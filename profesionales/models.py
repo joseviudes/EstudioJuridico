@@ -2,6 +2,8 @@ from django.db import models
 from django.forms import ValidationError
 from PIL import Image
 
+from usuarios.models import Usuario
+
 # Create your models here.
 
 # TIPO_DE_MATRICULA = (
@@ -16,7 +18,7 @@ ESPECIALIDADES = (
 
 ESTADOS = (
     ('Activo', 'Activo'),
-    ('Baja', 'Baja')
+    ('Inactivo', 'Inactivo')
 )
 
 def validar_telefono(value):
@@ -33,6 +35,9 @@ def validar_dni(value):
 
 
 class Profesional(models.Model):
+    
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, null=True)
+    
     nombre = models.CharField(max_length=60)
     apellido = models.CharField(max_length=60)
     dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni]) #  PK y de valor unico
@@ -64,5 +69,8 @@ class Profesional(models.Model):
     class Meta:  
         verbose_name_plural = 'Profesionales'  # Nombre en plural
     
+    def get_full_name(self):
+        return f"{self.nombre} {self.apellido}"
+
     def __str__(self):
-        return f"{self.apellido} " + f"{self.nombre}"
+        return self.get_full_name()

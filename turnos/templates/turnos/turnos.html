@@ -6,10 +6,25 @@
 <h2 class="text-start"><strong>Gestión de Turnos</strong></h2>
 <br>
 
-<!-- Botón para crear un nuevo expediente, ahora en verde -->
-<a href="{% url 'crear-turno' %}" class="btn btn-success mb-3">Agendar turno</a>
-<hr>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    
+    <a href="{% url 'crear-turno' %}" class="btn btn-success mb-3">Agendar turno</a>
 
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{% url 'turnos' %}" class="d-flex">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por cliente, profesional, dia, motivo..." value="{{ q }}">
+            <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
+                <i class="bi bi-search"></i>
+            </button>
+            <a href="{% url 'turnos' %}" class="btn btn-danger ms-1 rounded" aria-label="Limpiar">
+                <i class="bi bi-x-circle"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<hr>
 <!-- Contenedor principal -->
 <div class="container">
     <h2 class="mb-4">Lista de turnos</h2>
@@ -25,15 +40,17 @@
                 <th>Horario</th>
                 <th>Motivo</th>
                 <th>Estado</th>
+                {% if  user.rol == 'admin' %}
                 <th>Opciones</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for turno in turnos %}
             <tr>
                 <td>{{turno.id_turno}}</td>
-                <td>{{turno.cliente}}</td>
-                <td>{{turno.profesional}} </td>
+                <td>{{turno.cliente.get_full_name}}</td>
+                <td>{{turno.profesional.get_full_name}} </td>
                 <td>{{turno.dia}}</td>
                 <td>{{turno.horario}}</td>
                 <td>{{turno.motivo}}</td>
@@ -41,9 +58,15 @@
                     <span class="badge bg-success">ACTIVO</span>
                 </td>
                 <td>
-                    <a href="{% url 'turno' turno.pk %}" class="btn btn-info btn-sm">Ver</a>
-                    <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar-turno' turno.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    {% comment %} <a href="{% url 'turno' turno.pk %}" class="btn btn-info btn-sm">Ver</a> {% endcomment %}
+                    {% if user.rol == 'admin' or user == turno.cliente or user == turno.profesional %}
+                    <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a href="{% url 'eliminar-turno' turno.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

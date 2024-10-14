@@ -9,15 +9,70 @@ from django.contrib.auth.decorators import login_required
 from .forms import TurnoForm
 from .models import Turno
 from clientes.models import Cliente
+from profesionales.models import Profesional
 
 # Create your views here.
 
 
-class ListTurno(ListView):
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+from django.views.generic import ListView
+from .models import Turno, Cliente, Profesional  # Asegúrate de importar tus modelos
+
+class ListTurno(LoginRequiredMixin, ListView):
     model = Turno
     template_name = 'turnos/turnos.html'
-    context_object_name = 'turnos'  # nombre del objeto en el contexto 
-    paginate_by = 10  #paginación
+    context_object_name = 'turnos'  
+    paginate_by = 10  
+    
+    def get_queryset(self):
+        user = self.request.user
+        queryset = None
+        
+        if user.rol == 'admin':
+            # Administradores ven todos los turnos
+            queryset = Turno.objects.all()
+        elif user.rol == 'cliente':
+            try:
+                # Obtener la instancia del cliente relacionado con el usuario
+                cliente = Cliente.objects.get(usuario=user)
+                # Filtrar turnos por cliente
+                queryset = Turno.objects.filter(cliente=cliente)
+            except Cliente.DoesNotExist:
+                # Si no hay cliente asociado, retorna un queryset vacío
+                return Turno.objects.none()
+        elif user.rol == 'abogado':
+            try:
+                # Obtener la instancia del profesional relacionado con el usuario
+                profesional = Profesional.objects.get(usuario=user)
+                queryset = Turno.objects.filter(profesional=profesional)
+            except Profesional.DoesNotExist:
+                return Turno.objects.none()
+        else:
+            # Otros roles no tienen acceso a turnos
+            return Turno.objects.none()
+        
+        # Filtrar por la consulta de búsqueda
+        query = self.request.GET.get('q', '')
+        if query:
+            queryset = queryset.annotate(
+                full_name_cliente=Concat('cliente__nombre', Value(' '), 'cliente__apellido'),
+                full_name_profesional=Concat('profesional__nombre', Value(' '), 'profesional__apellido')
+            ).filter(
+                Q(full_name_cliente__icontains=query) |  # Filtrar por nombre completo del cliente
+                Q(full_name_profesional__icontains=query) |  # Filtrar por nombre completo del profesional
+                Q(dia__icontains=query) |
+                Q(motivo__icontains=query)
+            )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')  # Añade la consulta al contexto para mantenerla en el formulario
+        return context
+
+    
 
 @login_required  
 def singleTurno(request, pk):
@@ -26,37 +81,63 @@ def singleTurno(request, pk):
     context = {'turno': turno}
     return render(request, 'turnos/turno.html', context)
 
-@login_required  # Asegúrate de que el usuario esté autenticado
+@login_required
 def createTurno(request):
     if request.method == 'POST':
         form = TurnoForm(request.POST)
         if form.is_valid():
-            # Asigna automáticamente el cliente basado en el usuario autenticado
-            cliente = Cliente.objects.get(usuario=request.user)  # Asegúrate de que haya una relación entre Cliente y Usuario
-            turno = form.save(commit=False)  # No guardes aún
-            turno.cliente = cliente  # Asigna el cliente
-            turno.save()  # Ahora guarda el turno
-            return redirect('turnos')  # Redirige a la lista de turnos o a donde necesites
+            # Intenta obtener el cliente asociado al usuario
+            try:
+                cliente = Cliente.objects.get(usuario=request.user)  
+            except Cliente.DoesNotExist:
+                messages.error(request, "No se ha encontrado un cliente asociado con el usuario.")
+                return redirect('crear-turno')  # Redirige o maneja el error
+
+            # Si el cliente es encontrado, crea el turno
+            turno = form.save(commit=False)  
+            turno.cliente = cliente  
+            turno.save()  
+            return redirect('turnos')  # Redirige a la lista de turnos
     else:
         form = TurnoForm()
-        
+
     context = {'form': form}
     return render(request, 'turnos/create-turno.html', context)
+
+@login_required
+def updateTurno(request, pk):
+    
+    turno = get_object_or_404(Turno, pk=pk)
+
+    if request.method == 'POST':
+        form = TurnoForm(request.POST, instance=turno)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "El turno se ha modificado correctamente.")
+            return redirect('turnos') 
+        else:
+            messages.error(request, "Hubo un error al actualizar el profesional. Por favor verifique los datos.")
+    else:
+        
+        form = TurnoForm(instance=turno)
+
+    context = {'form': form, 'turno': turno}
+    return render(request, 'turnos/update-turno.html', context)
 
 
 @login_required
 def deleteTurno(request, pk):
     
-    turno = Turno.objects.get(id=pk)
+    turno = Turno.objects.get(pk=pk)
     
     if request.method == 'POST':
         turno.delete()
         return redirect('turnos')
     
-    context = {'object': turno}
-    return render(request, 'delete-turno.html', context)
+    context = {'turno': turno}
+    return render(request, 'turnos/delete-turno.html', context)
 
-
+@login_required
 def agendaView(request):
     today = timezone.now().date()
     turnos_futuros = Turno.objects.filter(dia__gt=today).order_by('dia', 'horario')
@@ -73,23 +154,6 @@ def agendaView(request):
         'turnos_pasados': turnos_pasados,
         'turnos_dia': turnos_dia,
     })
-
-    
-    
-# def get_turnos(request):
-    
-#     turnos = Turno.objects.all().values('id_turno', 'cliente__nombre', 'dia', 'horario')
-    
-#     eventos = []
-    
-#     for turno in turnos:
-#         eventos.append({
-#             'id': turno['id_turno'],
-#             'title': turno['cliente__nombre'],  # Asegúrate de que esto refleje lo que deseas mostrar
-#             'start': f"{turno['dia']}T{turno['horario']}",
-#             'allDay': False  # Cambia esto si deseas que sea un evento de día completo
-#         })
-#     return JsonResponse(eventos, safe=False)
 
 
 def get_turnos(request):

@@ -39,10 +39,37 @@
 
     <div class="d-flex justify-content-start mt-4">
         <!-- Botón de Eliminar con estilo de alerta -->
-        <button type="submit" class="btn btn-danger me-2">Eliminar</button>
+        <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+            Eliminar
+        </button>
         <!-- Botón de Cancelar -->
         <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
     </div>
+</form>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmación de Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de que desea eliminar este expediente?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger" form="deleteExpedienteForm">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario de confirmación con Bootstrap -->
+<form method="POST" id="deleteExpedienteForm">
+    {% csrf_token %}
+    <!-- Este formulario se enviará cuando se confirme la eliminación -->
 </form>
 
 {% endblock content %}

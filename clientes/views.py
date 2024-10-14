@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ClienteForm
 from .models import Cliente
 
 
-class ListCliente(ListView):
+class ListCliente(LoginRequiredMixin, ListView):
     model = Cliente
     template_name = 'clientes/clientes.html'
     context_object_name = 'clientes'  # nombre del objeto en el contexto 
@@ -29,13 +31,15 @@ class ListCliente(ListView):
         context = super().get_context_data(**kwargs)
         context['q'] = self.request.GET.get('q', '')  # Añade la consulta al contexto para mantenerla en el formulario
         return context
-    
+
+@login_required
 def singleCliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)  # Obtiene el cliente o devuelve 404 si no existe
     
     context = {'cliente': cliente,}
     return render(request, 'clientes/cliente.html', context)
 
+@login_required
 def createCliente(request):
     
     if request.method == 'POST':
@@ -52,7 +56,7 @@ def createCliente(request):
     context = {'form': form}
     return render(request, 'clientes/create-cliente.html', context)
 
-
+@login_required
 def updateCliente(request, pk):
     # Obtenemos el cliente a actualizar o muestra un error 404 si no existe
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -73,7 +77,7 @@ def updateCliente(request, pk):
     context = {'form': form, 'cliente': cliente}
     return render(request, 'clientes/update-cliente.html', context)
 
-
+@login_required
 def deleteCliente(request, pk):
     
     cliente = Cliente.objects.get(pk=pk)

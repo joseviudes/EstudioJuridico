@@ -1,0 +1,54 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<br>
+<h2 class="text-start"><strong>Gestión de usuarios</strong></h2>
+<br>
+
+<!-- Botón para crear un nuevo expediente, ahora en verde -->
+<a href="{% url 'create-user' %}" class="btn btn-success mb-3">Crear usuario</a>
+<hr>
+
+<!-- Contenedor principal -->
+<div class="container">
+    <h2 class="mb-4">Lista de usuarios</h2>
+
+    <!-- Tabla de expedientes -->
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Fecha de creacion</th>
+                
+                <th>Estado</th>
+
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{usuario.email}}</td>
+                <td>{{usuario.rol}}</td>
+                <td>{{usuario.fecha_ingreso}}</td>
+                <td>estado-poner</td>
+                <td>
+                    <a href="{% url 'expediente' usuario.pk %}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'actualizar-expediente' usuario.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a href="{% url 'eliminar-expediente' usuario.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

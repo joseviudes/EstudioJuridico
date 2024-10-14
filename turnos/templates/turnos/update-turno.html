@@ -1,0 +1,34 @@
+{% extends "main.html" %}
+
+{% block content %}
+<br>
+<h2 class="text-start"><strong>Gestión de Turnos</strong></h2>
+<br>
+
+<h5 class="mb-4">Editar turno</h5>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded">
+                    {% csrf_token %}
+                    
+                    <!-- Renderiza el formulario de Django con clases de Bootstrap -->
+                    {{ form.as_p }}
+
+                    <!-- Contenedor de los botones -->
+                    <div class="d-flex justify-content-start">
+                        <!-- Botón de Crear -->
+                        <button type="submit" class="btn btn-success me-2">Guardar</button>
+                        <!-- Botón de Cancelar -->
+                        <a href="{% url 'turnos' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock content %}
+

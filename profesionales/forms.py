@@ -11,7 +11,7 @@ class ProfesionalForm(ModelForm):
              'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su nombre'}),
              'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
              'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '3795 123456', 'pattern': '\(\d{4}\)-\d{6}'}),
+             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '3795 123456', 'pattern': '\d{10}'}),
              'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correodeejemplo@gmail.com'}),
             }
              

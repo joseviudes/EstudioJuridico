@@ -9,7 +9,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <!-- Botón para crear un nuevo cliente, ahora en verde -->
     <a href="{% url 'crear-expediente' %}" class="btn btn-success">Crear Expediente</a>
-
+    
     <!-- Formulario de búsqueda -->
     <form method="GET" action="{% url 'expedientes' %}" class="d-flex">
         <div class="input-group w-150">
@@ -24,7 +24,7 @@
     </form>
 </div>
 
-
+<hr>
 
 <!-- Contenedor principal -->
 <div class="container">
@@ -41,6 +41,7 @@
                 <th>Fecha de Inicio</th>
                 <th>Asunto</th>
                 <th>Estado</th>
+                <th>Movimientos</th>
                 <th>Opciones</th>
             </tr>
         </thead>
@@ -57,9 +58,18 @@
                     <span class="badge bg-success">ACTIVO</span>
                 </td>
                 <td>
-                    <a href="{% url 'expediente' expediente.pk %}" class="btn btn-info btn-sm">Ver</a>
-                    <a href="{% url 'actualizar-expediente' expediente.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar-expediente' expediente.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    <a href="{% url "movimientos" expediente.numero_expediente %}"><i class="bi bi-box-arrow-up-right"></i></i></a>
+                </td>
+                <td>
+                    <a href="{% url 'expediente' expediente.pk %}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'actualizar-expediente' expediente.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a href="{% url 'eliminar-expediente' expediente.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
