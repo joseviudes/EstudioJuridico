@@ -3,12 +3,12 @@
 {% block content %}
 
 <br>
-<h2 class="text-start"><strong>Gestión de Expedientes</strong></h2>
+<h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
 <br>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <!-- Botón para crear un nuevo cliente, ahora en verde -->
-    <a href="{% url 'crear-expediente' %}" class="btn btn-success">Crear Expediente</a>
+    <a href="{% url 'crear-expediente' %}" class="btn btn-success">Crear expediente</a>
     
     <!-- Formulario de búsqueda -->
     <form method="GET" action="{% url 'expedientes' %}" class="d-flex">
@@ -40,7 +40,6 @@
                 <th>Apoderado</th>
                 <th>Fecha de Inicio</th>
                 <th>Asunto</th>
-                <th>Estado</th>
                 <th>Movimientos</th>
                 <th>Opciones</th>
             </tr>
@@ -55,21 +54,21 @@
                 <td>{{ expediente.fecha_inicio }}</td>
                 <td>---</td>
                 <td>
-                    <span class="badge bg-success">ACTIVO</span>
-                </td>
-                <td>
                     <a href="{% url "movimientos" expediente.numero_expediente %}"><i class="bi bi-box-arrow-up-right"></i></i></a>
                 </td>
                 <td>
-                    <a href="{% url 'expediente' expediente.pk %}" class="btn btn-info btn-sm">
+                    
+                    <a href="{% url 'expediente' expediente.numero_expediente %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="{% url 'actualizar-expediente' expediente.pk %}" class="btn btn-warning btn-sm">
+                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
+                    <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-expediente' expediente.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'eliminar-expediente' expediente.numero_expediente %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
                     </a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

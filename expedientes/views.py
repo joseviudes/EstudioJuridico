@@ -2,12 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import ExpedienteForm, MovimientosForm
 from .models import Expediente, Movimientos
 
+
+
+def is_admin_or_abogado(user):
+    return user.is_authenticated and (user.is_superuser or user.rol == 'abogado')
+
+class SoloAdminYAbogadoMixin(UserPassesTestMixin):
+    def test_func(self):
+        # Comprobamos si el usuario es admin o abogado
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'abogado')
 
 
 class ListExpediente(LoginRequiredMixin, ListView):
@@ -36,13 +45,14 @@ class ListExpediente(LoginRequiredMixin, ListView):
         return context
 
 @login_required
-def singleExpediente(request, pk):
-    expediente = get_object_or_404(Expediente, pk=pk)  # Obtiene el expediente o devuelve 404 si no existe
+def singleExpediente(request, numero_expediente):
+    expediente = get_object_or_404(Expediente, numero_expediente=numero_expediente)  # Obtiene el expediente o devuelve 404 si no existe
     
     context = {'expediente': expediente,}
     return render(request, 'expedientes/expediente.html', context)
 
 @login_required
+@user_passes_test(is_admin_or_abogado)
 def createExpediente(request):
     if request.method == 'POST':
         form = ExpedienteForm(request.POST)
@@ -59,9 +69,10 @@ def createExpediente(request):
     return render(request, 'expedientes/create-expediente.html', context)
 
 @login_required
-def updateExpediente(request, pk):
+@user_passes_test(is_admin_or_abogado)
+def updateExpediente(request, numero_expediente):
     # Obtenemos el expediente a actualizar o muestra un error 404 si no existe
-    expediente = get_object_or_404(Expediente, pk=pk)
+    expediente = get_object_or_404(Expediente, numero_expediente=numero_expediente)
 
     if request.method == 'POST':
         form = ExpedienteForm(request.POST, instance=expediente)
@@ -80,9 +91,10 @@ def updateExpediente(request, pk):
     return render(request, 'expedientes/update-expediente.html', context)
 
 @login_required
-def deleteExpediente(request, pk):
+@user_passes_test(is_admin_or_abogado)
+def deleteExpediente(request, numero_expediente):
     
-    expediente = Expediente.objects.get(pk=pk)
+    expediente = Expediente.objects.get(numero_expediente=numero_expediente)
     
     if request.method == 'POST':
         expediente.delete()
@@ -109,11 +121,12 @@ def ListMovimientos(request, numero_expediente):
 
 
 @login_required
+@user_passes_test(is_admin_or_abogado)
 def createMovimiento(request, numero_expediente):
     expediente = get_object_or_404(Expediente, numero_expediente=numero_expediente)
     
     if request.method == 'POST':
-        form = MovimientosForm(request.POST)
+        form = MovimientosForm(request.POST, request.FILES, instance=movimiento)
         if form.is_valid():
             movimiento = form.save(commit=False)
             movimiento.expediente = expediente  # Relacionar con el expediente
@@ -129,13 +142,13 @@ def createMovimiento(request, numero_expediente):
 
     
 @login_required
+@user_passes_test(is_admin_or_abogado)
 def updateMovimiento(request, id_mov):
-    
     movimiento = get_object_or_404(Movimientos, id_mov=id_mov)
     expediente = movimiento.expediente  
 
     if request.method == 'POST':
-        form = MovimientosForm(request.POST, instance=movimiento)
+        form = MovimientosForm(request.POST, request.FILES, instance=movimiento)
         if form.is_valid():
             form.save()
             messages.success(request, "Los datos del movimiento del expediente se han actualizado correctamente.")
@@ -153,7 +166,9 @@ def updateMovimiento(request, id_mov):
     
     return render(request, 'expedientes/update-movimiento.html', context)
 
+
 @login_required
+@user_passes_test(is_admin_or_abogado)
 def deleteMovimiento(request, id_mov):
 
     movimiento = get_object_or_404(Movimientos, id_mov=id_mov)

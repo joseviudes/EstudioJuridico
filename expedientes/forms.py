@@ -32,6 +32,9 @@ class MovimientosForm(ModelForm):
         model = Movimientos
         fields = '__all__'
         exclude = ['expediente']
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 
     def __init__(self, *args, **kwargs):

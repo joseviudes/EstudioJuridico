@@ -5,18 +5,14 @@ from django.contrib import messages
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 
 from .forms import TurnoForm
 from .models import Turno
 from clientes.models import Cliente
 from profesionales.models import Profesional
 
-# Create your views here.
-
-
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
-from django.views.generic import ListView
 from .models import Turno, Cliente, Profesional  # Asegúrate de importar tus modelos
 
 class ListTurno(LoginRequiredMixin, ListView):
@@ -59,8 +55,8 @@ class ListTurno(LoginRequiredMixin, ListView):
                 full_name_cliente=Concat('cliente__nombre', Value(' '), 'cliente__apellido'),
                 full_name_profesional=Concat('profesional__nombre', Value(' '), 'profesional__apellido')
             ).filter(
-                Q(full_name_cliente__icontains=query) |  # Filtrar por nombre completo del cliente
-                Q(full_name_profesional__icontains=query) |  # Filtrar por nombre completo del profesional
+                Q(full_name_cliente__icontains=query) | 
+                Q(full_name_profesional__icontains=query) |  
                 Q(dia__icontains=query) |
                 Q(motivo__icontains=query)
             )
@@ -76,7 +72,7 @@ class ListTurno(LoginRequiredMixin, ListView):
 
 @login_required  
 def singleTurno(request, pk):
-    turno = get_object_or_404(Turno, pk=pk)  # Obtiene el turno o devuelve 404 si no existe
+    turno = get_object_or_404(Turno, pk=pk)
     
     context = {'turno': turno}
     return render(request, 'turnos/turno.html', context)
@@ -86,14 +82,12 @@ def createTurno(request):
     if request.method == 'POST':
         form = TurnoForm(request.POST)
         if form.is_valid():
-            # Intenta obtener el cliente asociado al usuario
             try:
                 cliente = Cliente.objects.get(usuario=request.user)  
             except Cliente.DoesNotExist:
                 messages.error(request, "No se ha encontrado un cliente asociado con el usuario.")
-                return redirect('crear-turno')  # Redirige o maneja el error
+                return redirect('crear-turno') 
 
-            # Si el cliente es encontrado, crea el turno
             turno = form.save(commit=False)  
             turno.cliente = cliente  
             turno.save()  
@@ -156,11 +150,17 @@ def agendaView(request):
     })
 
 
-def get_turnos(request):
-    turnos = Turno.objects.all().values('id_turno', 'cliente__nombre', 'dia', 'horario')
+def obtenerTurnos(request):
     
-    eventos = [{
-        'title': str(turno.cliente),
-        'start': turno.dia.isoformat(),  # Formato ISO para FullCalendar
-    } for turno in turnos]
+    turnos = Turno.objects.all()
+    eventos = []
+    
+    for turno in turnos:
+        eventos.append({
+            'title': turno.cliente.nombre,
+            'start': turno.dia.isoformat(),
+            'end': turno.horario.isoformat(),
+            # Puedes agregar más campos si es necesario
+        })
+        
     return JsonResponse(eventos, safe=False)

@@ -10,7 +10,7 @@ class TurnoForm(ModelForm):
         widgets = {
             'profesional': forms.Select(attrs={'class': 'form-control'}),
             'dia': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la fecha', 'type': 'date'}),
-            'horario': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Ingrese el horario'}), 
+            'horario': forms.DateTimeInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el horario'}),
             'motivo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el motivo de la consulta'}),
         }
 

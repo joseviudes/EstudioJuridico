@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2 class="text-start"><strong>Movimientos del expediente: {{expediente.numero_expediente}} </strong></h2>
+<h2 class="text-start"><strong>Movimientos del expediente:</strong> {{expediente.numero_expediente}}</h2>
 <br>
 <a href="{% url 'crear-movimiento' expediente.numero_expediente %}" class="btn btn-success">Añadir movimiento</a>
 <hr>
@@ -13,41 +13,45 @@
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <th>Nº Expediente</th>
-                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Sit. Actual</th>
+                <th>Tipo</th>
+                <th>Detalle</th>
                 <th>Ubicacion</th>
-                <th>Observaciones</th>
                 <th>Archivos</th>
+                {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
                 <th>Opciones</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for movimiento in movimientos %}
             <tr>
-                <td>{{movimiento.expediente.numero_expediente}}</td>
-                <td>{{movimiento.estado}}</td>
+                <td>{{movimiento.fecha}}</td>
+                <td>{{movimiento.sit_actual}}</td>    
+                <td>{{movimiento.tipo}}</td>
+                <td>{{movimiento.detalle}}</td>
                 <td>{{movimiento.ubicacion}}</td>
-                <td>{{movimiento.observaciones}}</td>
-                <td>{{movimiento.archivos}}</td>
-                {% comment %} <td>
-                    {% if profesional.estado == 'activo' %}
-                        <span class="text-success">{{ profesional.estado }}</span>
-                    {% elif profesional.estado == 'inactivo' %}
-                        <span class="text-danger">{{ profesional.estado }}</span>
+                <td>
+                    {% if movimiento.archivos %}
+                        <a href="{{ movimiento.archivos.url }}">{{ movimiento.archivos.name }}</a>
                     {% else %}
-                        <span>{{ profesional.estado }}</span>  {# Para otros estados que no sean activos o inactivos #}
+                        No hay archivo
                     {% endif %}
-                </td> {% endcomment %}
+                </td>
+
                <td>
                     {% comment %} <a href="{% url 'profesional' .pk %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a> {% endcomment %}
+                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
                     <a href="{% url 'actualizar-movimiento' movimiento.id_mov %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
                     <a href="{% url 'eliminar-movimiento' movimiento.id_mov %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
                     </a> 
+                    {% endif %}
                 </td> 
             </tr>
             {% endfor %}

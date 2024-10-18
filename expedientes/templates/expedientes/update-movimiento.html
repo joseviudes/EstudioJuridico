@@ -11,6 +11,10 @@
     {% csrf_token %}
     {{ form.as_p }}
 
+    {% if movimiento.archivos %}
+    <p>Archivo actual: <a href="{{ movimiento.archivos.url }}">{{ movimiento.archivos.name }}</a></p>
+    {% endif %}
+
     <!-- Botones alineados con Bootstrap -->
     <div class="d-flex justify-content-start mt-4">
         <!-- Botón Guardar -->

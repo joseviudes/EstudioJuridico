@@ -12,9 +12,9 @@ from usuarios.models import Usuario
 # )
 
 ESPECIALIDADES = (
-    ("Familia", "Familia"),
-    ("Laboral", "Laboral")
-)
+     ("Familia", "Familia"),
+     ("Laboral", "Laboral")
+ )
 
 ESTADOS = (
     ('Activo', 'Activo'),
@@ -47,15 +47,16 @@ class Profesional(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        img = Image.open(self.foto.path)
+        if self.foto and hasattr(self.foto, 'path'):
+            img = Image.open(self.foto.path)
 
-        if img.height > 150 or img.width > 150:
-            output_size = (150, 150)
-            img.thumbnail(output_size)
-            img.save(self.foto.path)
+            if img.height > 150 or img.width > 150:
+                output_size = (150, 150)
+                img.thumbnail(output_size)
+                img.save(self.foto.path)
             
     especialidad = models.CharField(max_length=200, choices=ESPECIALIDADES)
-    estado = models.CharField(max_length=10, choices=ESTADOS, default='Activo')
+    estado = models.BooleanField(default=True)
     fecha_ingreso = models.DateField('Fecha de ingreso')  
     fecha_egreso = models.DateField('Fecha de egreso',null=True, blank=True)  # es opcional
     motivo_egreso = models.TextField('Motivo de egreso', max_length=250, null=True, blank=True)

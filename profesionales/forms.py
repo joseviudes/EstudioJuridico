@@ -7,21 +7,24 @@ class ProfesionalForm(ModelForm):
     class Meta:
         model = Profesional
         fields = '__all__'
+        exclude = ('usuario',)
         widgets = {
-             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su nombre'}),
-             'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-             'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '3795 123456', 'pattern': '\d{10}'}),
-             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correodeejemplo@gmail.com'}),
-            }
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su nombre'}),
+            'apellido': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su apellido'}),
+            'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '3795 123456'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correodeejemplo@gmail.com'}),
+        }
              
-        
-        
-    foto = forms.ImageField(widget=forms.ClearableFileInput(attrs={
-        'class': 'form-control',  
-        'placeholder': 'Seleccione una imagen',  
-        'accept': 'image/*',  
-    }))
+    foto = forms.ImageField(
+        required=False,  
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control',  
+            'placeholder': 'Seleccione una imagen',  
+            'accept': 'image/*',  
+        })
+    )
                 
     def __init__(self, *args, **kwargs):
         super(ProfesionalForm, self).__init__(*args, **kwargs)

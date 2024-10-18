@@ -36,6 +36,7 @@ class Cliente(models.Model):
     nombre = models.CharField(max_length=60)
     apellido = models.CharField(max_length=60)
     dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni])  # PK y de valor único
+    estado = models.BooleanField(default=True)
     fecha_nacimiento = models.DateField('Fecha de nacimiento', blank=True, null=True)
     nacionalidad = models.CharField('Nacionalidad', max_length=50)
     ocupacion = models.CharField('Ocupación', max_length=50, blank=True, null=True)

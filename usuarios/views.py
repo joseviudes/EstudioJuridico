@@ -6,10 +6,15 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import Usuario
 from .forms import UsuarioForm
+
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.rol == 'admin'
 
 
 def loginUser(request):
@@ -35,11 +40,7 @@ def logoutUser(request):
     return redirect("index")
 
 
-class AdminRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.rol == 'admin'
-
-class ListUsuarios(LoginRequiredMixin, ListView):
+class ListUsuarios(LoginRequiredMixin, AdminRequiredMixin, ListView):
     model = Usuario
     template_name = 'usuarios/usuarios.html'
     context_object_name = 'usuarios'  # nombre del objeto en el contexto 

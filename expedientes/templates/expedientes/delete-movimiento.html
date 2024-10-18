@@ -10,20 +10,28 @@
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
-            <th>Nº Expediente</th>
-            <th>Estado</th>
-            <th>Ubicación</th>
-            <th>Observaciones</th>
+            <th>Fecha</th>
+            <th>Sit. Actual</th>
+            <th>Tipo</th>
+            <th>Detalle</th>
+            <th>Ubicacion</th>
             <th>Archivos</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>{{ movimiento.expediente.numero_expediente }}</td>
-            <td>{{ movimiento.estado }}</td>
-            <td>{{ movimiento.ubicacion }}</td>
-            <td>{{ movimiento.observaciones }}</td>
-            <td>{{ movimiento.archivos }}</td>
+            <td>{{movimiento.fecha}}</td>
+            <td>{{movimiento.sit_actual}}</td>    
+            <td>{{movimiento.tipo}}</td>
+            <td>{{movimiento.detalle}}</td>
+            <td>{{movimiento.ubicacion}}</td>
+            <td>
+                {% if movimiento.archivos %}
+                    <a href="{{ movimiento.archivos.url }}">{{ movimiento.archivos.name }}</a>
+                {% else %}
+                    No hay archivo
+                {% endif %}
+            </td>
         </tr>
     </tbody>
 </table>

@@ -37,7 +37,8 @@ class Turno(models.Model):
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos')
     
     dia = models.DateField(null=True, validators=[validar_dia])
-    horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
+    # horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
+    horario = models.DateTimeField(null=True)
     motivo = models.TextField(max_length=500)  # Motivo del turno
     id_turno = models.AutoField(primary_key=True)  # ID del turno, se genera automáticamente
     

@@ -1,0 +1,28 @@
+
+En JWT (JSON Web Token) Authentication con Django Rest Framework (DRF), se utilizan dos tipos de tokens: Access Token y Refresh Token. Cada uno tiene un propósito diferente en el proceso de autenticación y autorización. A continuación te explico para qué sirve cada uno:
+
+1. Access Token
+Propósito: El Access Token es el token que se utiliza para autenticar solicitudes a la API. Este token se incluye en el encabezado de las solicitudes HTTP (generalmente en el encabezado Authorization con el formato Bearer <token>).
+Tiempo de vida: Tiene un tiempo de vida relativamente corto (por ejemplo, 5 a 15 minutos). Este corto tiempo de expiración ayuda a mitigar riesgos en caso de que el token sea comprometido.
+Uso: Cuando un usuario autenticado realiza una solicitud a un endpoint protegido, este token se envía con la solicitud para verificar la autenticidad del usuario y permitir el acceso a los recursos.
+2. Refresh Token
+Propósito: El Refresh Token se utiliza para obtener un nuevo Access Token sin necesidad de que el usuario vuelva a autenticarse (es decir, sin pedirle de nuevo las credenciales). Este mecanismo ayuda a mantener la sesión del usuario activa por un tiempo más prolongado sin tener que autenticarlo repetidamente.
+Tiempo de vida: Tiene un tiempo de vida mucho más largo que el Access Token (puede ser días, semanas, o incluso más, dependiendo de la configuración).
+Uso: Cuando el Access Token expira, el usuario puede enviar el Refresh Token a un endpoint específico (por ejemplo, /api/token/refresh/) para obtener un nuevo Access Token. Esto le permite seguir accediendo a los recursos protegidos sin necesidad de volver a iniciar sesión.
+Ejemplo de Flujo
+Autenticación inicial:
+
+El usuario envía sus credenciales (nombre de usuario y contraseña) a un endpoint de autenticación (por ejemplo, /api/token/).
+El servidor valida las credenciales y, si son correctas, devuelve un par de tokens: el Access Token y el Refresh Token.
+Acceso a recursos:
+
+El usuario usa el Access Token para acceder a los recursos protegidos de la API.
+Cada solicitud a la API incluirá el Access Token en el encabezado Authorization.
+Renovación del Access Token:
+
+Cuando el Access Token expira, el usuario puede enviar el Refresh Token al endpoint de renovación (por ejemplo, /api/token/refresh/).
+El servidor valida el Refresh Token y, si es válido, emite un nuevo Access Token (y en algunos casos, un nuevo Refresh Token).
+Resumen
+Access Token: Para acceder a los recursos de la API, con un tiempo de vida corto.
+Refresh Token: Para renovar el Access Token cuando este expira, sin necesidad de re-autenticación, con un tiempo de vida más largo.
+Este mecanismo proporciona un equilibrio entre seguridad y usabilidad, permitiendo que los usuarios mantengan sesiones activas sin necesidad de autenticarse continuamente, mientras se limita el tiempo de vida de los tokens de acceso para reducir el riesgo de compromisos

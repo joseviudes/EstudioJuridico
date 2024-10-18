@@ -3,16 +3,49 @@
 {% block content %}
 
 <br>
-<h2 class="text-start"><strong>Gestión de Profesionales</strong></h2>
+<h2 class="text-start"><strong>Gestión de profesionales</strong></h2>
 <br>
 
-<!-- Botón para crear un nuevo expediente, ahora en verde -->
-<a href="{% url 'crear-profesional' %}" class="btn btn-success mb-3">Agregar Profesional</a>
+<div class="d-flex justify-content-start align-items-center mb-3">
+
+    <a href="{% url 'crear-profesional' %}" class="btn btn-success me-2">Agregar profesional</a>
+    <a href="{% url 'profesionales-inactivos' %}" class="btn btn-danger">Profesionales inactivos</a>
+
+
+    <!-- Botón desplegable de filtrado -->
+    <div class="dropdown ms-2">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Filtrar por
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="?sort=fecha_ingreso">Fecha de ingreso</a></li>
+            <li><a class="dropdown-item" href="?sort=nombre_asc">Orden alfabético (A-Z)</a></li>
+            <li><a class="dropdown-item" href="?sort=nombre_desc">Orden alfabético (Z-A)</a></li>
+        </ul>
+    </div>
+
+
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{% url 'profesionales' %}" class="d-flex ms-auto">
+
+        <div class="input-group">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por DNI, apellido, nombre..." value="{{ q }}">
+            <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
+                <i class="bi bi-search"></i>
+            </button>
+            <a href="{% url 'profesionales' %}" class="btn btn-danger ms-1 rounded" aria-label="Limpiar">
+                <i class="bi bi-x-circle"></i>
+            </a>
+        </div>
+        
+    </form>
+</div>
+
 <hr>
 
 <!-- Contenedor principal -->
 <div class="container">
-    <h2 class="mb-4">Lista de profesionales</h2>
+    <h2 class="mb-4">Nómina de profesionales</h2>
 
     <!-- Tabla de expedientes -->
     <table class="table table-striped table-bordered">
@@ -34,12 +67,10 @@
                 <td>{{profesional.nombre}}</td>
                 <td>{{profesional.dni}}</td>
                 <td>
-                    {% if profesional.estado == 'activo' %}
-                        <span class="text-success">{{ profesional.estado }}</span>
-                    {% elif profesional.estado == 'inactivo' %}
-                        <span class="text-danger">{{ profesional.estado }}</span>
+                    {% if profesional.estado %}
+                        <span class="text-success">Activo</span>
                     {% else %}
-                        <span>{{ profesional.estado }}</span>  {# Para otros estados que no sean activos o inactivos #}
+                        <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
@@ -49,14 +80,87 @@
                     <a href="{% url 'actualizar-profesional' profesional.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-profesional' profesional.pk %}" class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash-fill"></i>
-                    </a>
+                    <!-- Formulario para dar de baja -->
+                    <form action="{% url 'dar-de-baja-profesional' profesional.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary btn-sm" title="Dar de baja" onclick="return confirm('¿Estás seguro de dar de baja a este profesional?');">
+                            <i class="bi bi-arrow-down-circle"></i>
+                        </button>
+                    </form>
+                    <!-- Formulario para eliminar -->
+                    <form action="{% url 'eliminar-profesional' profesional.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar a este profesional? Esta acción es irreversible.');">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </form>
                 </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No se encontraron profesionales activos.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if profesionales.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.previous_page_number }}" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+            {% endif %}
+
+            <!-- Número de páginas -->
+            {% for num in profesionales.paginator.page_range %}
+                {% if profesionales.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > profesionales.number|add:'-3' and num < profesionales.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if profesionales.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.next_page_number }}" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.paginator.num_pages }}" aria-label="Última">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+
 </div>
 
 {% endblock content %}

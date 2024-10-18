@@ -1,0 +1,43 @@
+1. Crea un repositorio en GitHub
+Primero, necesitas crear un nuevo repositorio en GitHub.
+
+2. Inicializa Git en tu proyecto
+Si tu proyecto no tiene un repositorio Git inicializado, debes inicializarlo:
+
+Ejecuta los siguientes comandos:
+
+1- git init
+2- git add .
+3- git commit -m "Initial commit"
+
+git init: Inicializa un nuevo repositorio Git en tu carpeta del proyecto.
+git add .: Añade todos los archivos en tu proyecto al área de preparación (staging).
+git commit -m "Initial commit": Crea un commit inicial con un mensaje descriptivo.
+
+3. Conecta tu repositorio local con GitHub
+
+Copia la URL de tu repositorio en GitHub. Puedes encontrarla en la página de tu repositorio bajo "Quick setup"
+
+bash
+Copiar código
+
+1- git remote add origin https://github.com/tu-usuario/nombre-del-repositorio.git
+2- git branch -M main
+3- git push -u origin main
+
+git remote add origin <URL>: Conecta tu repositorio local con el repositorio remoto en GitHub.
+git branch -M main: Renombra la rama principal a main (si no lo has hecho ya).
+git push -u origin main: Sube tu código a GitHub.
+
+
+SUBIR CAMBIOS 
+
+1- Verifica los cambios: git status
+
+2- Agregar los cambios: git add .
+
+3- git commit -m "Descripción del cambio realizado"
+
+4- Subir los cambios al repositorio remoto: git push origin main
+	
+

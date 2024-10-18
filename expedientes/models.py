@@ -1,12 +1,17 @@
 from django.db import models
+from django.forms import ValidationError
 from profesionales.models import Profesional 
 from clientes.models import Cliente
 # Create your models here.
 
 ESTADOS = (
-    ("Activo", "Activo"),
+    ("En letra", "En letra"),
+    ("A despacho", "A despacho"),
     ("Giro", "Giro"),
-    ("Paralizado", "Paralizado"),
+    ("En fiscalía", "En fiscalía"),
+    ("Prearchivado", "Prearchivado"),
+    ("Archivado", "Archivado"),
+    
 )
 
 TIPOS_EXPEDIENTES = (
@@ -30,14 +35,23 @@ class Expediente(models.Model):
         return f"Exp. Nº{self.numero_expediente}"
     
     
+def validar_tipo_archivo(archivos):
+    tipos_permitidos = ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt']
+    extension = archivos.name.split('.')[-1].lower()
+    if extension not in tipos_permitidos:
+        raise ValidationError(f'El archivo debe ser de los siguientes tipos: {", ".join(tipos_permitidos)}')
+  
+
 class Movimientos(models.Model):
     
     id_mov = models.AutoField(primary_key=True)
     expediente = models.ForeignKey(Expediente, on_delete=models.CASCADE)
-    estado = models.CharField(max_length=50, choices=ESTADOS, null=True, blank=True)
-    ubicacion = models.CharField(max_length=100, null=True, blank=True)
-    observaciones = models.TextField(null=True, blank=True)
-    archivos = models.ImageField(upload_to='archivos/', null=True, blank=True)
+    fecha = models.DateField(default="-", null=True, blank=True)
+    sit_actual = models.CharField('Situación actual', max_length=50, choices=ESTADOS, null=True, blank=True, default="-")
+    tipo = models.CharField(default="-", max_length=150, null=True, blank=True)
+    detalle = models.TextField(default="-", max_length=500, null=True, blank=True)
+    ubicacion = models.CharField(default="-", max_length=100, null=True, blank=True)
+    archivos = models.FileField(upload_to='documentos/', null=True, blank=True, validators=[validar_tipo_archivo])
 
     class Meta:
         verbose_name_plural = 'Movimientos'
