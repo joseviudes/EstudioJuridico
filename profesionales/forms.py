@@ -7,14 +7,14 @@ class ProfesionalForm(ModelForm):
     class Meta:
         model = Profesional
         fields = '__all__'
-        exclude = ('usuario',)
+        exclude = ('usuario','estado')
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su nombre'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese su apellido'}),
-            'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '3795 123456'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correodeejemplo@gmail.com'}),
+            'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            'fecha_egreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 3795 123456'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo@gmail.com'}),
         }
              
     foto = forms.ImageField(
@@ -27,7 +27,12 @@ class ProfesionalForm(ModelForm):
     )
                 
     def __init__(self, *args, **kwargs):
+        
         super(ProfesionalForm, self).__init__(*args, **kwargs)
+        
+        self.fields['fecha_ingreso'].input_formats = ['%Y-%m-%d']
+        self.fields['fecha_egreso'].input_formats = ['%Y-%m-%d']
+        
         for field in self.fields:
             if self.fields[field].required:
                 self.fields[field].widget.attrs.update({

@@ -14,22 +14,26 @@ ESTADOS = (
     
 )
 
-TIPOS_EXPEDIENTES = (
-    ("Alimentos", "Alimentos"),
-    ("Division de bienes", "Division de bienes"),
-)
+# TIPOS_EXPEDIENTES = (
+#     ("Alimentos", "Alimentos"),
+#     ("Division de bienes", "Division de bienes"),
+# )
 
 class Expediente(models.Model):
     
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="expedientes")
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name="expedientes")
     
-    numero_expediente = models.CharField(max_length=50, primary_key=True, unique=True)
-    tipo_expediente = models.CharField(max_length=50, choices=TIPOS_EXPEDIENTES)
-    apoderado = models.CharField(max_length=250, null=True, blank=True, default="-")
-    fecha_inicio = models.DateField()
+    numero_expediente = models.CharField('Nº del expediente', max_length=50, primary_key=True, unique=True)
+    # tipo_expediente = models.CharField(max_length=50, choices=TIPOS_EXPEDIENTES)
+    caratula = models.TextField(max_length=500, null=True, blank=True)
+    jurisdiccion = models.CharField('Jurisdicción', max_length=250, null=True, blank=True)
+    dependencia = models.CharField(max_length=250, null=True, blank=True)
+    apoderado = models.CharField(max_length=250, null=True, blank=True)
+    fecha_inicio = models.DateField(null=True, blank=True)
     fecha_finalizacion = models.DateField(null=True, blank=True)
-    asunto = models.TextField(max_length=250)
+    asunto = models.TextField(max_length=250, null=True, blank=True)
+    estado = models.BooleanField(default=True)
     
     def __str__(self):
         return f"Exp. Nº{self.numero_expediente}"
@@ -46,11 +50,11 @@ class Movimientos(models.Model):
     
     id_mov = models.AutoField(primary_key=True)
     expediente = models.ForeignKey(Expediente, on_delete=models.CASCADE)
-    fecha = models.DateField(default="-", null=True, blank=True)
+    fecha = models.DateField(null=True, blank=True)
     sit_actual = models.CharField('Situación actual', max_length=50, choices=ESTADOS, null=True, blank=True, default="-")
-    tipo = models.CharField(default="-", max_length=150, null=True, blank=True)
-    detalle = models.TextField(default="-", max_length=500, null=True, blank=True)
-    ubicacion = models.CharField(default="-", max_length=100, null=True, blank=True)
+    tipo = models.CharField(max_length=150, null=True, blank=True)
+    detalle = models.TextField(max_length=500, null=True, blank=True)
+    ubicacion = models.CharField(max_length=100, null=True, blank=True)
     archivos = models.FileField(upload_to='documentos/', null=True, blank=True, validators=[validar_tipo_archivo])
 
     class Meta:

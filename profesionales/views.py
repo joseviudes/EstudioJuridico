@@ -49,6 +49,7 @@ class SoloAdminYAbogadoMixin(UserPassesTestMixin):
 
 
 class ListProfesional(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
+    
     model = Profesional
     template_name = 'profesionales/profesionales.html'
     context_object_name = 'profesionales'
@@ -67,11 +68,11 @@ class ListProfesional(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
                 Q(dni__icontains=query)
             )
 
-        # Aplica el filtro de orden
-        if order == 'nombre':
-            queryset = queryset.order_by('nombre')
-        elif order == 'apellido':
+        # filtros
+        if order == 'apellido_asc':
             queryset = queryset.order_by('apellido')
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-apellido')
         elif order == 'fecha_ingreso':
             queryset = queryset.order_by('fecha_ingreso')
 
@@ -164,7 +165,7 @@ def deleteProfesional(request, pk):
     
     if request.method == 'POST':
         profesional.delete()
-        return redirect('profesionales')
+        return redirect('profesionales-inactivos')
     
     context = {'profesional': profesional}
     return render(request, 'profesionales/delete-profesional.html', context)
@@ -180,7 +181,7 @@ def darDeBajaProfesional(request, dni):
     if profesional.estado:
         profesional.estado = False
         profesional.save()
-        messages.success(request, f"Profesional {profesional.get_full_name()} dado de baja correctamente.")
+        messages.success(request, f"Profesional {profesional.get_full_name()} fué dado de baja correctamente.")
     else:
         messages.info(request, f"Profesional {profesional.get_full_name()} ya se encuentra dado baja.")
         
@@ -197,7 +198,7 @@ def darDeAltaProfesional(request, dni):
     if not profesional.estado:
         profesional.estado = True
         profesional.save()
-        messages.success(request, f"Profesional {profesional.get_full_name()} dado de alta exitosamente.")
+        messages.success(request, f"Profesional {profesional.get_full_name()} fué dado de alta exitosamente.")
     else:
         messages.info(request, f"Profesional {profesional.get_full_name()} ya está activo.")
         

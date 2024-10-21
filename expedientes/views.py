@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import ExpedienteForm, MovimientosForm
 from .models import Expediente, Movimientos
-
+from .filters import ExpedienteFilter
 
 
 def is_admin_or_abogado(user):
@@ -26,8 +26,9 @@ class ListExpediente(LoginRequiredMixin, ListView):
     paginate_by = 10  #paginación
     
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(estado=True) 
         query = self.request.GET.get('q')
+        order = self.request.GET.get('order')
 
         if query:
             queryset = queryset.filter(
@@ -37,12 +38,66 @@ class ListExpediente(LoginRequiredMixin, ListView):
                 Q(profesional__apellido__icontains=query) |
                 Q(numero_expediente__icontains=query)
             )
+            
+        # filtros
+        if order == 'apellido_asc':
+            queryset = queryset.order_by('cliente__apellido') 
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-cliente__apellido') 
+        elif order == 'fecha_inicio':
+            queryset = queryset.order_by('fecha_inicio')  
+
         return queryset
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['q'] = self.request.GET.get('q', '')  # Añade la consulta al contexto para mantenerla en el formulario
+        context['q'] = self.request.GET.get('q', '')  
+        context['order'] = self.request.GET.get('order', '')
         return context
+
+
+class ListExpedienteInactivo(LoginRequiredMixin, ListView):
+    model = Expediente
+    template_name = 'expedientes/expedientes-inactivos.html'
+    context_object_name = 'expedientes' 
+    paginate_by = 10  
+    
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(estado=False) 
+        query = self.request.GET.get('q')
+        order = self.request.GET.get('order')
+
+        if query:
+            queryset = queryset.filter(
+                Q(cliente__nombre__icontains=query) |
+                Q(cliente__apellido__icontains=query) |
+                Q(profesional__nombre__icontains=query) |
+                Q(profesional__apellido__icontains=query) |
+                Q(numero_expediente__icontains=query)
+            )
+            
+        # filtros
+        if order == 'apellidoCli_asc':
+            queryset = queryset.order_by('cliente__apellido') 
+        elif order == 'apellidoCli_desc':
+            queryset = queryset.order_by('-cliente__apellido') 
+        elif order == 'apellidoPro_desc':
+            queryset = queryset.order_by('-profesional__apellido') 
+        elif order == 'apellidoPro_desc':
+            queryset = queryset.order_by('-profesional__apellido') 
+        elif order == 'fecha_inicio':
+            queryset = queryset.order_by('fecha_inicio')  
+
+        return queryset
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')  
+        context['order'] = self.request.GET.get('order', '')
+        return context
+
 
 @login_required
 def singleExpediente(request, numero_expediente):
@@ -102,6 +157,39 @@ def deleteExpediente(request, numero_expediente):
     
     context = {'expediente': expediente}
     return render(request, 'expedientes/delete-expediente.html', context)
+
+
+@login_required
+@permission_required('expedientes.change_expediente', raise_exception=True)
+@user_passes_test(is_admin_or_abogado)
+def darDeBajaExpediente(request, numero_expediente):
+    
+    expediente = get_object_or_404(Expediente, pk=numero_expediente)
+    
+    if expediente.estado:
+        expediente.estado = False
+        expediente.save()
+        messages.success(request, f"Expediente Nº{expediente.numero_expediente} fué dado de baja correctamente.")
+    else:
+        messages.info(request, f"Expediente Nº{expediente.numero_expediente} ya se encuentra dado baja.")
+        
+    return redirect('expedientes-inactivos')
+
+@login_required
+@permission_required('expedientes.change_expediente', raise_exception=True)
+@user_passes_test(is_admin_or_abogado)
+def darDeAltaExpediente(request, numero_expediente):
+    
+    expediente = get_object_or_404(Expediente, pk=numero_expediente)
+    
+    if not expediente.estado:
+        expediente.estado = True
+        expediente.save()
+        messages.success(request, f"Expediente Nº{expediente.numero_expediente} fué dado de alta exitosamente.")
+    else:
+        messages.info(request, f"Expediente Nº{expediente.numero_expediente} ya está activo.")
+        
+    return redirect('expedientes')  
     
     
 # ----------------- Movimientos -------------------

@@ -11,6 +11,6 @@ urlpatterns = [
     path("eliminar-cliente/<int:pk>/", deleteCliente, name="eliminar-cliente"),
     
     path("dar-de-baja/<int:dni>/", darDeBajaCliente, name="dar-de-baja-cliente"),
-    path("dar-de-alta/<int:dni>/", darDeAltaCliente, name="dar-de-alta-cliente")
+    path("dar-de-alta/<int:dni>/", darDeAltaCliente, name="dar-de-alta-cliente"),
     
 ]

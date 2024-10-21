@@ -39,6 +39,7 @@
                 <th>DNI</th>
                 <th>Apellido</th>
                 <th>Nombre</th>
+                <th>Fecha de ingreso</th>
                 <th>Teléfono</th>
                 <th>Estado</th>
                 <th>Opciones</th>
@@ -50,12 +51,13 @@
                 <td>{{ cliente.dni }}</td>
                 <td>{{ cliente.apellido }}</td>
                 <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.fecha_ingreso }}</td>
                 <td>{{ cliente.telefono }}</td>
                 <td>
                     {% if cliente.estado %}
-                        <span class="badge bg-success">ACTIVO</span>
+                        <span class="text-success">Activo</span>
                     {% else %}
-                        <span class="badge bg-secondary">INACTIVO</span>
+                        <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
@@ -73,18 +75,17 @@
                         </button>
                     </form>
                     <!-- Formulario para eliminar -->
-                    <form action="{% url 'eliminar-cliente' cliente.pk %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar a este cliente? Esta acción es irreversible.');">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </form>
+                    <a href="{% url 'eliminar-cliente' cliente.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
                 </td>
             </tr>
+
             {% empty %}
             <tr>
                 <td colspan="6" class="text-center">No se encontraron clientes inactivos.</td>
             </tr>
+            
             {% endfor %}
         </tbody>
     </table>

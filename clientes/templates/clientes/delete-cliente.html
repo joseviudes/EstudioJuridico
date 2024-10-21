@@ -14,6 +14,7 @@
             <th>DNI</th>
             <th>Apellido</th>
             <th>Nombre</th>
+            <th>Fecha de ingreso</th>
             <th>Telefono</th>
             <th>Estado</th>
         </tr>
@@ -23,13 +24,27 @@
             <td>{{cliente.dni}}</td>
             <td>{{cliente.apellido}}</td>
             <td>{{cliente.nombre}}</td>
+            <td>{{ cliente.fecha_ingreso }}</td>
             <td>{{cliente.telefono}}</td>
             <td>
-                <span class="badge bg-success">ACTIVO</span>
+                {% if cliente.estado %}
+                    <span class="text-success">Activo</span>
+                {% else %}
+                    <span class="text-danger">Inactivo</span>
+                {% endif %}
             </td>
         </tr>
     </tbody>
 </table>
+
+<br>
+
+<div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span class="ms-2">Si se elimina el cliente, se eliminará de <strong>forma permanente</strong> de la base de datos.</span>
+</div>
+
+<br>
 
 <!-- Formulario de confirmación con Bootstrap -->
 <form method="POST">

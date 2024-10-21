@@ -7,12 +7,30 @@
 <br>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <!-- Botón para crear un nuevo cliente, ahora en verde -->
-    <a href="{% url 'crear-expediente' %}" class="btn btn-success">Crear expediente</a>
     
-    <!-- Formulario de búsqueda -->
-    <form method="GET" action="{% url 'expedientes' %}" class="d-flex">
-        <div class="input-group w-150">
+    <!-- Sección de botones alineados a la izquierda -->
+    <div class="d-flex">
+        <a href="{% url 'crear-expediente' %}" class="btn btn-success me-2">Crear expediente</a>
+        <a href="{% url 'expedientes-inactivos' %}" class="btn btn-danger me-2">Expedientes inactivos</a>
+
+        <!-- Botón desplegable de filtrado -->
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                Filtrar por
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de inicio (ASC)</a></li>
+                <li><a class="dropdown-item" href="?order=apellido_asc">Apellido del cliente (A-Z)</a></li>
+                <li><a class="dropdown-item" href="?order=apellido_desc">Apellido del cliente (Z-A)</a></li>
+                <li><a class="dropdown-item" href="?order=apellido_pro_asc">Apellido del profesional (A-Z)</a></li>
+                <li><a class="dropdown-item" href="?order=apellido_pro_desc">Apellido del profesional (Z-A)</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Formulario de búsqueda alineado a la derecha -->
+    <form method="GET" action="{% url 'expedientes' %}" class="d-flex ml-auto">
+        <div class="input-group">
             <input type="text" name="q" class="form-control me-2" placeholder="Buscar por Nº Exp, cliente, profesional..." value="{{ q }}">
             <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
                 <i class="bi bi-search"></i>
@@ -22,7 +40,9 @@
             </a>
         </div>
     </form>
+
 </div>
+
 
 <hr>
 
@@ -39,7 +59,8 @@
                 <th>Abogado</th>
                 <th>Apoderado</th>
                 <th>Fecha de Inicio</th>
-                <th>Asunto</th>
+                <th>Estado</th>
+                {% comment %} <th>Asunto</th> {% endcomment %}
                 <th>Movimientos</th>
                 <th>Opciones</th>
             </tr>
@@ -52,7 +73,13 @@
                 <td>{{ expediente.profesional }}</td>
                 <td>{{ expediente.apoderado }}</td>            
                 <td>{{ expediente.fecha_inicio }}</td>
-                <td>---</td>
+                <td>
+                    {% if expediente.estado %}
+                        <span class="text-success">Activo</span>
+                    {% else %}
+                        <span class="text-danger">Inactivo</span>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="{% url "movimientos" expediente.numero_expediente %}"><i class="bi bi-box-arrow-up-right"></i></i></a>
                 </td>
@@ -65,9 +92,16 @@
                     <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-expediente' expediente.numero_expediente %}" class="btn btn-danger btn-sm">
+                    <!-- Formulario para dar de baja -->
+                    <form action="{% url 'dar-de-baja-expediente' expediente.pk %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary btn-sm" title="Dar de baja" onclick="return confirm('¿Estás seguro de dar de baja a este expediente?');">
+                            <i class="bi bi-arrow-down-circle"></i>
+                        </button>
+                    </form>
+                    {% comment %} <a href="{% url 'eliminar-expediente' expediente.numero_expediente %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a>
+                    </a> {% endcomment %}
                     {% endif %}
                 </td>
             </tr>

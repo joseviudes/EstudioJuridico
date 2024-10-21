@@ -7,9 +7,12 @@ class ExpedienteForm(ModelForm):
     class Meta:
         model = Expediente
         fields = '__all__'
+        exclude = ('tipo_expediente','estado')
         widgets = {
-            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_finalizacion': forms.DateInput(attrs={'type': 'date'}),
+            'cliente': forms.Select(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
+            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            'fecha_finalizacion': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            'caratula' : forms.TextInput(attrs={'class': 'form-control'})
         }
         
     def __init__(self, *args, **kwargs):
@@ -33,7 +36,7 @@ class MovimientosForm(ModelForm):
         fields = '__all__'
         exclude = ['expediente']
         widgets = {
-            'fecha': forms.DateInput(attrs={'type': 'date'}),
+            'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
         }
 
 
@@ -44,7 +47,6 @@ class MovimientosForm(ModelForm):
                 self.fields[field].widget.attrs.update({
                     'class': 'form-control'
                 })
-                    # Añadir clase 'required' a los labels de los campos requeridos
                 self.fields[field].label_suffix = ' *'
             else:
                 self.fields[field].widget.attrs.update({

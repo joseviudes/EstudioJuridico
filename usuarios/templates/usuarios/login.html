@@ -5,47 +5,56 @@
 <h1>Inicio de sesión</h1>
 <br>
 
-<!-- Contenedor para controlar el ancho del formulario -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-6"> <!-- Ocupa la mitad del ancho en pantallas medianas o más grandes -->
-            <form method="POST" action="{% url "login" %}" id="loginForm">
-                {% csrf_token %}
+<!-- Verifica si el usuario ya está autenticado -->
+{% if user.is_authenticated %}
+    <div class="alert alert-info">
+        Ya has iniciado sesión como {{ user.username }}.
+    </div>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Cerrar sesión</a> <!-- Botón para cerrar sesión -->
+{% else %}
+    <!-- Contenedor para controlar el ancho del formulario -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form method="POST" action="{% url "login" %}" id="loginForm">
+                    {% csrf_token %}
 
-                <div class="mb-3">
-                    <input type="text" class="form-control" name="username" placeholder="Ingrese su usuario">
-                </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="username" placeholder="Ingrese su usuario">
+                    </div>
 
-                <div class="mb-3">
-                    <input type="password" class="form-control" name="password" placeholder="Ingrese su contraseña">
-                </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="password" placeholder="Ingrese su contraseña">
+                    </div>
 
-                <button type="submit" class="btn btn-secondary" id="loginButton">
-                    <span id="buttonText">Login</span>
-                    <div id="progressBar"></div>
-                </button>
-            </form>
-            <br>
+                    <button type="submit" class="btn btn-secondary" id="loginButton">
+                        <span id="buttonText">Login</span>
+                        <div id="progressBar"></div>
+                    </button>
+                </form>
+                <br>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-  document.getElementById('loginForm').addEventListener('submit', function (event) {
-    var loginButton = document.getElementById('loginButton');
-    var progressBar = document.getElementById('progressBar');
-    var buttonText = document.getElementById('buttonText');
+    <script>
+      document.getElementById('loginForm').addEventListener('submit', function (event) {
+        var loginButton = document.getElementById('loginButton');
+        var progressBar = document.getElementById('progressBar');
+        var buttonText = document.getElementById('buttonText');
 
-    loginButton.disabled = true; // Deshabilitar el botón durante la carga
-    buttonText.innerText = "Cargando..."; // Cambiar el texto a "Cargando..."
+        loginButton.disabled = true; // Deshabilitar el botón durante la carga
+        buttonText.innerText = "Cargando..."; // Cambiar el texto a "Cargando..."
 
-    progressBar.style.width = "100%";
+        progressBar.style.width = "100%";
 
-    setTimeout(function () {
-      loginButton.innerText = "¡Cargado!";
-      loginButton.style.backgroundColor = "#28a745"; // Cambia el color del botón a verde completo
-    }, 2000);
-  });
-</script>
+        setTimeout(function () {
+          loginButton.innerText = "¡Cargado!";
+          loginButton.style.backgroundColor = "#28a745"; // Cambia el color del botón a verde completo
+        }, 2000);
+      });
+    </script>
+{% endif %}
 
 {% endblock content %}
+    

@@ -37,6 +37,8 @@ class Cliente(models.Model):
     apellido = models.CharField(max_length=60)
     dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni])  # PK y de valor único
     estado = models.BooleanField(default=True)
+    
+    fecha_ingreso = models.DateField('Fecha de ingreso')
     fecha_nacimiento = models.DateField('Fecha de nacimiento', blank=True, null=True)
     nacionalidad = models.CharField('Nacionalidad', max_length=50)
     ocupacion = models.CharField('Ocupación', max_length=50, blank=True, null=True)
@@ -44,7 +46,7 @@ class Cliente(models.Model):
     años_aportes = models.IntegerField('Años de aportes', default=None, blank=True, null=True)
     
     # contacto
-    direccion = models.CharField(max_length=250, null=True, blank=True)
+    domicilio = models.CharField(max_length=250, null=True, blank=True)
     cod_postal = models.CharField('Codigo postal', max_length=4, null=True, blank=True, validators=[validar_codPostal])
     telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
     email = models.EmailField(max_length=250, null=True, blank=True)

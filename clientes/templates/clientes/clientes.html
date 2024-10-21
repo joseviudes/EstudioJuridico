@@ -9,9 +9,27 @@
 <br>
 
 <div class="d-flex justify-content-start align-items-center mb-3">
-    <!-- Botones para crear y ver clientes inactivos -->
+    
     <a href="{% url 'crear-cliente' %}" class="btn btn-success me-2">Agregar cliente</a>
     <a href="{% url 'clientes-inactivos' %}" class="btn btn-danger">Clientes inactivos</a>
+
+
+    <!-- Botón desplegable de filtrado -->
+    <div class="dropdown ms-2">
+
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Filtrar por
+        </button>
+
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+            <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de ingreso (ASC)</a></li>
+            <li><a class="dropdown-item" href="?order=apellido_asc">Apellido (A-Z)</a></li>
+            <li><a class="dropdown-item" href="?order=apellido_desc">Apellido (Z-A)</a></li>
+
+        </ul>
+
+    </div>
 
 
     <!-- Formulario de búsqueda -->
@@ -43,6 +61,7 @@
                 <th>DNI</th>
                 <th>Apellido</th>
                 <th>Nombre</th>
+                <th>Fecha de ingreso</th>
                 <th>Teléfono</th>
                 <th>Estado</th>
                 <th>Opciones</th>
@@ -54,6 +73,7 @@
                 <td>{{ cliente.dni }}</td>
                 <td>{{ cliente.apellido }}</td>
                 <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.fecha_ingreso }}</td>
                 <td>{{ cliente.telefono }}</td>
                 <td>
                     {% if cliente.estado %}
@@ -77,12 +97,12 @@
                         </button>
                     </form>
                     <!-- Formulario para eliminar -->
-                    <form action="{% url 'eliminar-cliente' cliente.pk %}" method="post" style="display:inline;">
+                    {% comment %} <form action="{% url 'eliminar-cliente' cliente.pk %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar a este cliente? Esta acción es irreversible.');">
                             <i class="bi bi-trash-fill"></i>
                         </button>
-                    </form>
+                    </form> {% endcomment %}
                 </td>
             </tr>
             {% empty %}

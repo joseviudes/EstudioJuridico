@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import ClienteForm
 from .models import Cliente
+from .filters import ClienteFilter
 
 
 
@@ -29,6 +30,7 @@ class ListCliente(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset().filter(estado=True)
         query = self.request.GET.get('q')
+        order = self.request.GET.get('order')
 
         if query:
             queryset = queryset.filter(
@@ -36,11 +38,23 @@ class ListCliente(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
                 Q(apellido__icontains=query) |
                 Q(dni__icontains=query)
             )
+            
+        # filtros
+        if order == 'apellido_asc':
+            queryset = queryset.order_by('apellido')
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-apellido')
+        elif order == 'fecha_ingreso':
+            queryset = queryset.order_by('fecha_ingreso')
+
+        return queryset
+            
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['q'] = self.request.GET.get('q', '')
+        context['order'] = self.request.GET.get('order', '')
         return context
     
     
@@ -140,11 +154,11 @@ def darDeBajaCliente(request, dni):
     if cliente.estado:
         cliente.estado = False
         cliente.save()
-        messages.success(request, f"Cliente {cliente.get_full_name()} dado de baja correctamente.")
+        messages.success(request, f"Cliente {cliente.get_full_name()} fué dado de baja correctamente.")
     else:
         messages.info(request, f"Cliente {cliente.get_full_name()} ya se encuentra dado baja.")
         
-    return redirect('clientes')
+    return redirect('clientes-inactivos')
 
 @login_required
 @permission_required('clientes.change_cliente', raise_exception=True)
@@ -156,7 +170,7 @@ def darDeAltaCliente(request, dni):
     if not cliente.estado:
         cliente.estado = True
         cliente.save()
-        messages.success(request, f"Cliente {cliente.get_full_name()} dado de alta exitosamente.")
+        messages.success(request, f"Cliente {cliente.get_full_name()} fué dado de alta exitosamente.")
     else:
         messages.info(request, f"Cliente {cliente.get_full_name()} ya está activo.")
         

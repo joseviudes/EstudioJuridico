@@ -36,6 +36,7 @@
                 <th>Apellido</th>
                 <th>Nombre</th>
                 <th>DNI</th>
+                <th>Fecha de ingreso</th>
                 <th>Estado</th>
                 <th>Opciones</th>
             </tr>
@@ -47,11 +48,12 @@
                 <td>{{profesional.apellido}}</td>
                 <td>{{profesional.nombre}}</td>
                 <td>{{profesional.dni}}</td>
+                <td>{{profesional.fecha_ingreso}}</td>
                 <td>
                     {% if profesional.estado %}
-                        <span class="badge bg-success">ACTIVO</span>
+                        <span class="text-success">Activo</span>
                     {% else %}
-                        <span class="badge bg-secondary">INACTIVO</span>
+                        <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
@@ -68,13 +70,10 @@
                             <i class="bi bi-arrow-up-circle"></i>
                         </button>
                     </form>
-                    <!-- Formulario para eliminar -->
-                    <form action="{% url 'eliminar-profesional' profesional.pk %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar a este profesional? Esta acción es irreversible.');">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </form>
+                    
+                    <a href="{% url 'eliminar-profesional' profesional.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
                 </td>
             </tr>
             {% empty %}

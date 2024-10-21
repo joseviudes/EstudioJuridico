@@ -7,28 +7,101 @@
 
 <h5 class="mb-4">Nuevo turno</h5>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded">
-                    {% csrf_token %}
-                    
-                    <!-- Renderiza el formulario de Django con clases de Bootstrap -->
-                    {{ form.as_p }}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded">
+                {% csrf_token %}
 
-                    <!-- Contenedor de los botones -->
-                    <div class="d-flex justify-content-start">
-                        <!-- Botón de Crear -->
-                        <button type="submit" class="btn btn-success me-2">Agendar</button>
-                        <!-- Botón de Cancelar -->
-                        <a href="{% url 'turnos' %}" class="btn btn-secondary">Cancelar</a>
-                    </div>
-                </form>
-            </div>
+                <!-- Renderiza el formulario de Django con clases de Bootstrap -->
+                {{ form.as_p }}
+
+                <!-- Contenedor de los botones -->
+                <div class="d-flex justify-content-start">
+                    <!-- Botón de Crear -->
+                    <button type="submit" class="btn btn-success me-2">Agendar</button>
+                    <!-- Botón de Cancelar -->
+                    <a href="{% url 'turnos' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
         </div>
+
+        <div class="col-md-6">
+            <h5>Horarios ocupados</h5>
+            <ul id="horariosOcupadosList" class="list-group">
+                <!-- Aquí se cargarán los horarios ocupados -->
+            </ul>
+        </div>
+
     </div>
+</div>
 
+<script>
+    document.getElementById('id_dia').addEventListener('change', function () {
+        // Obtener los valores del día seleccionado y el profesional
+        var diaSeleccionado = this.value;
+        var profesionalSeleccionado = document.getElementById('id_profesional').value;
+        
+        // Verificar que ambos campos estén seleccionados
+        if (diaSeleccionado && profesionalSeleccionado) {
+            fetch(`/horarios_ocupados/?dia=${diaSeleccionado}&profesional_dni=${profesionalSeleccionado}`)
+                .then(response => response.json())
+                .then(data => {
+                    var horariosOcupadosList = document.getElementById('horariosOcupadosList');
+                    horariosOcupadosList.innerHTML = '';  // Limpiar la lista actual
 
+                    if (data.horarios_ocupados && data.horarios_ocupados.length > 0) {
+                        data.horarios_ocupados.forEach(function (horario) {
+                            var listItem = document.createElement('li');
+                            listItem.textContent = horario;
+                            listItem.classList.add('list-group-item');
+                            horariosOcupadosList.appendChild(listItem);
+                        });
+                    } else {
+                        var listItem = document.createElement('li');
+                        listItem.textContent = 'No hay horarios ocupados para este día.';
+                        listItem.classList.add('list-group-item');
+                        horariosOcupadosList.appendChild(listItem);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener los horarios ocupados:', error);
+                });
+        }
+    });
+
+    // También actualizar los horarios ocupados si cambia el profesional
+    document.getElementById('id_profesional').addEventListener('change', function () {
+        var profesionalSeleccionado = this.value;
+        var diaSeleccionado = document.getElementById('id_dia').value;
+
+        // Solo realizar la búsqueda si la fecha también está seleccionada
+        if (diaSeleccionado && profesionalSeleccionado) {
+            fetch(`/horarios_ocupados/?dia=${diaSeleccionado}&profesional_dni=${profesionalSeleccionado}`)
+                .then(response => response.json())
+                .then(data => {
+                    var horariosOcupadosList = document.getElementById('horariosOcupadosList');
+                    horariosOcupadosList.innerHTML = '';  // Limpiar la lista actual
+
+                    if (data.horarios_ocupados && data.horarios_ocupados.length > 0) {
+                        data.horarios_ocupados.forEach(function (horario) {
+                            var listItem = document.createElement('li');
+                            listItem.textContent = horario;
+                            listItem.classList.add('list-group-item');
+                            horariosOcupadosList.appendChild(listItem);
+                        });
+                    } else {
+                        var listItem = document.createElement('li');
+                        listItem.textContent = 'No hay horarios ocupados para este día.';
+                        listItem.classList.add('list-group-item');
+                        horariosOcupadosList.appendChild(listItem);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener los horarios ocupados:', error);
+                });
+        }
+    });
+</script>
 
 {% endblock content %}
-

@@ -18,9 +18,10 @@
             Filtrar por
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="?sort=fecha_ingreso">Fecha de ingreso</a></li>
-            <li><a class="dropdown-item" href="?sort=nombre_asc">Orden alfabético (A-Z)</a></li>
-            <li><a class="dropdown-item" href="?sort=nombre_desc">Orden alfabético (Z-A)</a></li>
+            <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de ingreso (ASC)</a></li>
+            <li><a class="dropdown-item" href="?order=apellido_asc">Apellido (A-Z)</a></li>
+            <li><a class="dropdown-item" href="?order=apellido_desc">Apellido (Z-A)</a></li>
+
         </ul>
     </div>
 
@@ -55,6 +56,7 @@
                 <th>Apellido</th>
                 <th>Nombre</th>
                 <th>DNI</th>
+                <th>Fecha de ingreso</th>
                 <th>Estado</th>
                 <th>Opciones</th>
             </tr>
@@ -66,6 +68,7 @@
                 <td>{{profesional.apellido}}</td>
                 <td>{{profesional.nombre}}</td>
                 <td>{{profesional.dni}}</td>
+                <td>{{profesional.fecha_ingreso}}</td>
                 <td>
                     {% if profesional.estado %}
                         <span class="text-success">Activo</span>
@@ -83,17 +86,17 @@
                     <!-- Formulario para dar de baja -->
                     <form action="{% url 'dar-de-baja-profesional' profesional.pk %}" method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-secondary btn-sm" title="Dar de baja" onclick="return confirm('¿Estás seguro de dar de baja a este profesional?');">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Dar de baja" onclick="return confirm('¿Estás seguro de dar de baja a este profesional?');">
                             <i class="bi bi-arrow-down-circle"></i>
                         </button>
                     </form>
                     <!-- Formulario para eliminar -->
-                    <form action="{% url 'eliminar-profesional' profesional.pk %}" method="post" style="display:inline;">
+                    {% comment %} <form action="{% url 'eliminar-profesional' profesional.pk %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar a este profesional? Esta acción es irreversible.');">
                             <i class="bi bi-trash-fill"></i>
                         </button>
-                    </form>
+                    </form> {% endcomment %}
                 </td>
             </tr>
             {% empty %}

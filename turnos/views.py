@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from datetime import datetime
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -150,17 +151,39 @@ def agendaView(request):
     })
 
 
-def obtenerTurnos(request):
+# def obtenerTurnos(request):
     
-    turnos = Turno.objects.all()
-    eventos = []
+#     turnos = Turno.objects.all()
+#     eventos = []
     
-    for turno in turnos:
-        eventos.append({
-            'title': turno.cliente.nombre,
-            'start': turno.dia.isoformat(),
-            'end': turno.horario.isoformat(),
-            # Puedes agregar más campos si es necesario
-        })
+#     for turno in turnos:
+#         eventos.append({
+#             'title': turno.cliente.nombre,
+#             'start': turno.dia.isoformat(),
+#             'end': turno.horario.isoformat(),
+#             # Puedes agregar más campos si es necesario
+#         })
         
-    return JsonResponse(eventos, safe=False)
+#     return JsonResponse(eventos, safe=False)
+
+def horariosOcupados(request):
+    
+    dia = request.GET.get('dia')
+    profesional_dni = request.GET.get('profesional_dni')
+    
+    if dia and profesional_dni:
+        try:
+            # Convertir el string a objeto de fecha
+            dia = datetime.strptime(dia, '%Y-%m-%d').date()
+        except ValueError:
+            return JsonResponse({'error': 'Formato de fecha incorrecto'}, status=400)
+        
+        # Filtrar los turnos para el día y profesional seleccionado
+        turnos = Turno.objects.filter(dia=dia, profesional_dni=profesional_dni)
+        horarios_ocupados = list(turnos.values_list('horario', flat=True))  
+        
+        return JsonResponse({'horarios_ocupados': horarios_ocupados})
+    
+    return JsonResponse({'error': 'Fecha o profesional no válido'}, status=400)
+        
+    
