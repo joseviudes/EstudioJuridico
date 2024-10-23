@@ -46,16 +46,16 @@
 
 <br>
 
-<!-- Formulario de confirmación con Bootstrap -->
+
 <form method="POST">
     {% csrf_token %}
 
     <div class="d-flex justify-content-start mt-4">
-        <!-- Botón de Eliminar con estilo de alerta -->
+        
         <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
             Eliminar
         </button>
-        <!-- Botón de Cancelar -->
+        
         <a href="{% url 'clientes' %}" class="btn btn-secondary">Cancelar</a>
     </div>
 </form>
@@ -79,10 +79,10 @@
     </div>
 </div>
 
-<!-- Formulario de confirmación con Bootstrap -->
+
 <form method="POST" id="deleteClienteForm">
     {% csrf_token %}
-    <!-- Este formulario se enviará cuando se confirme la eliminación -->
+
 </form>
 
 {% endblock content %}

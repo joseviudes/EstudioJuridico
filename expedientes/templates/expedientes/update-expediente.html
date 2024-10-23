@@ -1,24 +1,29 @@
 {% extends "main.html" %}
 
 {% block content %}
-    <br>
-    <h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
-    <br>
+<br>
+<h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
+<br>
 
-    <h3 class="mb-4">Editar expediente</h3>
+<h3 class="mb-4">Editar expedientes</h3>
 
-    <!-- Formulario con Bootstrap -->
-    <form method="POST" class="mb-5">
-        {% csrf_token %}
-        {{ form.as_p }}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
+                {% csrf_token %}
 
-        <!-- Botones alineados con Bootstrap -->
-        <div class="d-flex justify-content-start mt-4">
-            <!-- Botón Guardar -->
-            <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-            
-            <!-- Botón Cancelar -->
-            <a href="{% url 'profesionales' %}" class="btn btn-secondary">Cancelar</a>
+                {{ form.as_p }}
+
+                <div class="d-flex justify-content-start">
+                    <!-- Botón de Crear -->
+                    <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
+                    
+                    <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
+</div>
+
 {% endblock content %}

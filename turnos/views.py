@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,8 +13,8 @@ from .forms import TurnoForm
 from .models import Turno
 from clientes.models import Cliente
 from profesionales.models import Profesional
+ 
 
-from .models import Turno, Cliente, Profesional  # Asegúrate de importar tus modelos
 
 class ListTurno(LoginRequiredMixin, ListView):
     model = Turno
@@ -26,27 +26,24 @@ class ListTurno(LoginRequiredMixin, ListView):
         user = self.request.user
         queryset = None
         
-        if user.rol == 'admin':
-            # Administradores ven todos los turnos
+        if user.rol == 'Admin':
             queryset = Turno.objects.all()
-        elif user.rol == 'cliente':
+        elif user.rol == 'Cliente':
             try:
-                # Obtener la instancia del cliente relacionado con el usuario
+
                 cliente = Cliente.objects.get(usuario=user)
-                # Filtrar turnos por cliente
                 queryset = Turno.objects.filter(cliente=cliente)
             except Cliente.DoesNotExist:
-                # Si no hay cliente asociado, retorna un queryset vacío
+
                 return Turno.objects.none()
-        elif user.rol == 'abogado':
+        elif user.rol == 'Abogado':
             try:
-                # Obtener la instancia del profesional relacionado con el usuario
+
                 profesional = Profesional.objects.get(usuario=user)
                 queryset = Turno.objects.filter(profesional=profesional)
             except Profesional.DoesNotExist:
                 return Turno.objects.none()
         else:
-            # Otros roles no tienen acceso a turnos
             return Turno.objects.none()
         
         # Filtrar por la consulta de búsqueda
@@ -66,7 +63,7 @@ class ListTurno(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['q'] = self.request.GET.get('q', '')  # Añade la consulta al contexto para mantenerla en el formulario
+        context['q'] = self.request.GET.get('q', '')
         return context
 
     
@@ -78,26 +75,55 @@ def singleTurno(request, pk):
     context = {'turno': turno}
     return render(request, 'turnos/turno.html', context)
 
-@login_required
 def createTurno(request):
     if request.method == 'POST':
-        form = TurnoForm(request.POST)
+        form = TurnoForm(request.POST, user=request.user) 
         if form.is_valid():
-            try:
-                cliente = Cliente.objects.get(usuario=request.user)  
-            except Cliente.DoesNotExist:
-                messages.error(request, "No se ha encontrado un cliente asociado con el usuario.")
-                return redirect('crear-turno') 
+            turno = form.save(commit=False)
 
-            turno = form.save(commit=False)  
-            turno.cliente = cliente  
-            turno.save()  
-            return redirect('turnos')  # Redirige a la lista de turnos
+            # Si el usuario está autenticado, se asigna el cliente asociado al usuario
+            if request.user.is_authenticated:
+                try:
+                    cliente = Cliente.objects.get(usuario=request.user)
+                    turno.cliente = cliente
+                except Cliente.DoesNotExist:
+                    messages.error(request, "No se ha encontrado un cliente asociado con el usuario.")
+                    return redirect('crear-turno')  # Redirigir en caso de error
+            else:
+                # Si el usuario no está autenticado, se guarda el nombre completo y dni en el turno
+                turno.nombre_completo = form.cleaned_data['nombre_completo']
+                turno.dni = form.cleaned_data['dni']
+                turno.telefono = form.cleaned_data['telefono']
+                turno.cliente = None  # No hay cliente asociado
+
+            # Verificar si el turno ya está reservado
+            turno_existente = Turno.objects.filter(
+                profesional=turno.profesional,
+                dia=turno.dia,
+                horario=turno.horario,
+                estado='reservado'
+            ).exists()
+
+            if turno_existente:
+                messages.error(request, "El turno ya está reservado. Por favor, elegí otro horario.")
+                return render(request, 'turnos/create-turno.html', {'form': form})
+
+            # Si el turno está libre, se guarda con el estado 'Pendiente de aprobación'
+            turno.estado = 'Pendiente de aprobación'
+            turno.save()
+
+            # Mostrar mensaje de éxito y redirigir al index
+            if not request.user.is_authenticated:
+                messages.success(request, "El turno fue solicitado con éxito. Le llegará un mensaje a su teléfono para confirmar.")
+                return redirect('index')  # Redirigir al index si el usuario no está autenticado
+            else:
+                return redirect('turnos')  # Si está autenticado, redirige a 'turnos'
     else:
-        form = TurnoForm()
-
+        form = TurnoForm(user=request.user)  # Pasamos el usuario al formulario
+    
     context = {'form': form}
     return render(request, 'turnos/create-turno.html', context)
+
 
 @login_required
 def updateTurno(request, pk):
@@ -120,6 +146,20 @@ def updateTurno(request, pk):
     return render(request, 'turnos/update-turno.html', context)
 
 
+def updateEstado(request, pk):
+    
+    if request.method == 'POST':
+        turno = get_object_or_404(Turno, pk=pk)
+        nuevo_estado = request.POST.get('estado')
+        
+        if nuevo_estado in ['Pendiente', 'Aprobado', 'Cancelado', 'Concluido']:
+            turno.estado = nuevo_estado
+            turno.save()
+            return redirect('turnos') 
+        
+    return HttpResponse(status=400)
+
+
 @login_required
 def deleteTurno(request, pk):
     
@@ -131,6 +171,11 @@ def deleteTurno(request, pk):
     
     context = {'turno': turno}
     return render(request, 'turnos/delete-turno.html', context)
+
+
+
+# ----------------------- agenda ------------------------
+
 
 @login_required
 def agendaView(request):

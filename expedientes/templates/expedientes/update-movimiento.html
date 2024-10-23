@@ -6,23 +6,29 @@
 <h2 class="text-start"><strong>Actualizar movimientos del expediente: {{expediente.numero_expediente}} </strong></h2>
 <br>
 
-<!-- Formulario con Bootstrap -->
-<form method="POST" class="mb-5" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
+<div class="container">
+    <form method="POST" class="mb-5" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    {% if movimiento.archivos %}
-    <p>Archivo actual: <a href="{{ movimiento.archivos.url }}">{{ movimiento.archivos.name }}</a></p>
-    {% endif %}
+        {{ form.as_p }}
 
-    <!-- Botones alineados con Bootstrap -->
-    <div class="d-flex justify-content-start mt-4">
-        <!-- Botón Guardar -->
-        <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-        
-        <!-- Botón Cancelar -->
-        <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-secondary">Cancelar</a>
-    </div>
-</form>
+        <!-- Renderiza el formset de documentos -->
+        <h5>Documentos</h5>
+        {{ documento_formset.management_form }}
+        {% for form in documento_formset %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+
+
+        <div class="d-flex justify-content-start mt-4">
+       
+            <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
+            
+            <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
 
 {% endblock content %}

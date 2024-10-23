@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 ROLES = (
-  ('Administrador', 'Administrador'),
+  ('Admin', 'Admin'),
   ('Abogado', 'Abogado'),
   ('Cliente', 'Cliente'),
 )

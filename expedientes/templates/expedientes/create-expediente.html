@@ -7,28 +7,23 @@
 
 <h3 class="mb-4">Crear expediente</h3>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded">
-                    {% csrf_token %}
-                    
-                    <!-- Renderiza el formulario de Django con clases de Bootstrap -->
-                    {{ form.as_p }}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {{ form.as_p }}
 
-                    <!-- Contenedor de los botones -->
-                    <div class="d-flex justify-content-start">
-                        <!-- Botón de Crear -->
-                        <button type="submit" class="btn btn-success me-2">Crear</button>
-                        <!-- Botón de Cancelar -->
-                        <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
-                    </div>
-                </form>
-            </div>
+                <div class="d-flex justify-content-start">
+                    
+                    <button type="submit" class="btn btn-success me-2">Crear</button>
+
+                    <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
         </div>
     </div>
-
-
+</div>
 
 {% endblock content %}
-

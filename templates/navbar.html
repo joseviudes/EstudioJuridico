@@ -35,58 +35,66 @@
             <!-- Menú de navegación -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    
                     {% if user.is_authenticated %}
-                    {% if request.user.rol == "admin" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profesionales' %}">Profesionales</a>
-                    </li>
-                    <li class="nav-item divider"></li>
-                    {% endif %}
-                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
-                    </li>
-                    <li class="nav-item divider"></li>
-                    {% endif %}
-                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'expedientes' %}">Expedientes</a>
-                    </li>
-                    <li class="nav-item divider"></li>
-                    {% endif %}
-                    {% if request.user.rol == "cliente" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'expedientes' %}">Mis expedientes</a>
-                    </li>
-                    <li class="nav-item divider"></li>
+                        {% if request.user.rol == "Admin" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profesionales' %}">Profesionales</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'expedientes' %}">Expedientes</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                        {% if request.user.rol == "Cliente" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'expedientes' %}">Mis expedientes</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'turnos' %}">Turnos</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+            
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'agenda' %}">Agenda</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Informes</a>
+                        </li>
+            
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                        {% if request.user.rol == 'Admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url "usuarios" %}">Usuarios</a>
+                        </li>
+                        <li class="nav-item divider"></li>
+                        {% endif %}
+                    {% else %}
+                        <!-- Opción 'Solicitar turno' para usuarios no autenticados -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'crear-turno' %}">Solicitar turno</a>
+                        </li>
+                        <li class="nav-item divider"></li>
                     {% endif %}
                     
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'turnos' %}">Turnos</a>
-                    </li>
-                    <li class="nav-item divider"></li>
-
-                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agenda' %}">Agenda</a>
-                    </li>
-                    <li class="nav-item divider"></li>
-                    {% endif %}
-                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Informes</a>
-                    </li>
-
-                    </li>
-                    <li class="nav-item divider"></li>
-                    {% endif %}
-                    {% if request.user.rol == 'admin' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url "usuarios" %}">Usuarios</a>
-                    </li>
-                    <li class="nav-item divider"></li>
-                    {% endif %}
-                    {% endif %}
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="{% url 'logout' %}">Cerrar sesión</a>
@@ -96,8 +104,10 @@
                             <a class="nav-link text-dark" href="{% url 'login' %}">Inicio de sesión</a>
                         </li>
                     {% endif %}
+                    
                 </ul>
             </div>
+            
         </div>
     </nav>
 </header>

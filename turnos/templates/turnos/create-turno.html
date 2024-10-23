@@ -12,6 +12,24 @@
         <div class="col-md-6">
             <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded">
                 {% csrf_token %}
+                
+                <!-- Si el usuario no está autenticado, mostramos los campos de nombre completo, DNI y teléfono -->
+                {% comment %} {% if not request.user.is_authenticated %}
+
+                    <div class="mb-3">
+                        <label for="nombre_completo" class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" placeholder="Ingrese su nombre completo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dni" class="form-label">DNI</label>
+                        <input type="text" class="form-control" id="dni" name="dni" placeholder="Ingrese su DNI" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+
+                {% endif %} {% endcomment %}
 
                 <!-- Renderiza el formulario de Django con clases de Bootstrap -->
                 {{ form.as_p }}
@@ -32,7 +50,6 @@
                 <!-- Aquí se cargarán los horarios ocupados -->
             </ul>
         </div>
-
     </div>
 </div>
 

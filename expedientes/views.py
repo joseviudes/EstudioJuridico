@@ -5,18 +5,18 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from .forms import ExpedienteForm, MovimientosForm
-from .models import Expediente, Movimientos
+from .forms import ExpedienteForm, MovimientosForm, DocumentoFormSet
+from .models import Expediente, Movimientos, Documentos
 from .filters import ExpedienteFilter
 
 
 def is_admin_or_abogado(user):
-    return user.is_authenticated and (user.is_superuser or user.rol == 'abogado')
+    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado')
 
 class SoloAdminYAbogadoMixin(UserPassesTestMixin):
     def test_func(self):
-        # Comprobamos si el usuario es admin o abogado
-        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'abogado')
+
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
 
 
 class ListExpediente(LoginRequiredMixin, ListView):
@@ -41,11 +41,17 @@ class ListExpediente(LoginRequiredMixin, ListView):
             
         # filtros
         if order == 'apellido_asc':
-            queryset = queryset.order_by('cliente__apellido') 
+            queryset = queryset.order_by('cliente__apellido')
         elif order == 'apellido_desc':
-            queryset = queryset.order_by('-cliente__apellido') 
-        elif order == 'fecha_inicio':
-            queryset = queryset.order_by('fecha_inicio')  
+            queryset = queryset.order_by('-cliente__apellido')
+        elif order == 'fecha_inicio_asc':
+            queryset = queryset.order_by('fecha_inicio')
+        elif order == 'fecha_inicio_desc':
+            queryset = queryset.order_by('-fecha_inicio')
+        elif order == 'apellido_pro_asc':  
+            queryset = queryset.order_by('profesional__apellido')
+        elif order == 'apellido_pro_desc':  
+            queryset = queryset.order_by('-profesional__apellido')
 
         return queryset
 
@@ -78,16 +84,18 @@ class ListExpedienteInactivo(LoginRequiredMixin, ListView):
             )
             
         # filtros
-        if order == 'apellidoCli_asc':
-            queryset = queryset.order_by('cliente__apellido') 
-        elif order == 'apellidoCli_desc':
-            queryset = queryset.order_by('-cliente__apellido') 
-        elif order == 'apellidoPro_desc':
-            queryset = queryset.order_by('-profesional__apellido') 
-        elif order == 'apellidoPro_desc':
-            queryset = queryset.order_by('-profesional__apellido') 
-        elif order == 'fecha_inicio':
-            queryset = queryset.order_by('fecha_inicio')  
+        if order == 'apellido_asc':
+            queryset = queryset.order_by('cliente__apellido')
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-cliente__apellido')
+        elif order == 'fecha_inicio_asc':
+            queryset = queryset.order_by('fecha_inicio')
+        elif order == 'fecha_inicio_desc':
+            queryset = queryset.order_by('-fecha_inicio')
+        elif order == 'apellido_pro_asc':  
+            queryset = queryset.order_by('profesional__apellido')
+        elif order == 'apellido_pro_desc':  
+            queryset = queryset.order_by('-profesional__apellido')  
 
         return queryset
 
@@ -214,45 +222,76 @@ def createMovimiento(request, numero_expediente):
     expediente = get_object_or_404(Expediente, numero_expediente=numero_expediente)
     
     if request.method == 'POST':
-        form = MovimientosForm(request.POST, request.FILES, instance=movimiento)
-        if form.is_valid():
+        form = MovimientosForm(request.POST)
+        documento_formset = DocumentoFormSet(request.POST, request.FILES)
+        
+        if form.is_valid() and documento_formset.is_valid():
             movimiento = form.save(commit=False)
-            movimiento.expediente = expediente  # Relacionar con el expediente
+            movimiento.expediente = expediente  
             movimiento.save()
-            # return redirect('expedientes', numero_expediente=numero_expediente)
+
+            for documento_form in documento_formset:
+                if documento_form.cleaned_data.get('archivo'):  # Verificar si hay archivo en el formset
+                    documento = documento_form.save(commit=False)
+                    documento.movimiento = movimiento  
+                    documento.save()
+
             return redirect('movimientos', numero_expediente=numero_expediente) 
+
     else:
         form = MovimientosForm()
+        documento_formset = DocumentoFormSet(queryset=Documentos.objects.none()) 
 
-
-    context = {'form': form, 'expediente': expediente}
+    context = {
+        'form': form,
+        'documento_formset': documento_formset,
+        'expediente': expediente
+    }
+    
     return render(request, 'expedientes/create-movimiento.html', context)
+
 
     
 @login_required
 @user_passes_test(is_admin_or_abogado)
 def updateMovimiento(request, id_mov):
     movimiento = get_object_or_404(Movimientos, id_mov=id_mov)
-    expediente = movimiento.expediente  
+    expediente = movimiento.expediente
 
     if request.method == 'POST':
         form = MovimientosForm(request.POST, request.FILES, instance=movimiento)
-        if form.is_valid():
+        documento_formset = DocumentoFormSet(request.POST, request.FILES, instance=movimiento)
+
+        if form.is_valid() and documento_formset.is_valid():
             form.save()
+
+            # Guardar los documentos asociados
+            for documento_form in documento_formset:
+                if documento_form.cleaned_data.get('archivo'):
+                    documento = documento_form.save(commit=False)
+                    documento.movimiento = movimiento
+                    documento.save()
+
+            for documento_form in documento_formset.deleted_forms:
+                documento_form.instance.delete()
+
             messages.success(request, "Los datos del movimiento del expediente se han actualizado correctamente.")
-            return redirect('movimientos', numero_expediente=expediente.numero_expediente) 
+            return redirect('movimientos', numero_expediente=expediente.numero_expediente)
         else:
             messages.error(request, "Hubo un error al actualizar el movimiento del expediente. Por favor verifique los datos.")
     else:
         form = MovimientosForm(instance=movimiento)
+        documento_formset = DocumentoFormSet(instance=movimiento) 
 
     context = {
         'form': form,
+        'documento_formset': documento_formset,
         'movimiento': movimiento,
         'expediente': expediente,
     }
     
     return render(request, 'expedientes/update-movimiento.html', context)
+
 
 
 @login_required

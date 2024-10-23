@@ -18,8 +18,8 @@
                 <th>Tipo</th>
                 <th>Detalle</th>
                 <th>Ubicacion</th>
-                <th>Archivos</th>
-                {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
+                <th>Documentos</th>
+                {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
                 <th>Opciones</th>
                 {% endif %}
             </tr>
@@ -30,13 +30,13 @@
                 <td>{{movimiento.fecha}}</td>
                 <td>{{movimiento.sit_actual}}</td>    
                 <td>{{movimiento.tipo}}</td>
-                <td>{{movimiento.detalle}}</td>
+                <td class="detalle-columna">{{ movimiento.detalle }}</td>
                 <td>{{movimiento.ubicacion}}</td>
                 <td>
-                    {% if movimiento.archivos %}
-                        <a href="{{ movimiento.archivos.url }}">{{ movimiento.archivos.name }}</a>
+                    {% if movimiento.documentos %}
+                        <a href="{{ movimiento.documentos.url }}">{{ movimiento.documentos.name }}</a>
                     {% else %}
-                        No hay archivo
+                        No hay documentos
                     {% endif %}
                 </td>
 
@@ -44,7 +44,7 @@
                     {% comment %} <a href="{% url 'profesional' .pk %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a> {% endcomment %}
-                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
+                    {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
                     <a href="{% url 'actualizar-movimiento' movimiento.id_mov %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>

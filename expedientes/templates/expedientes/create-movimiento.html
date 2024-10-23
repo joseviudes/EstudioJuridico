@@ -9,15 +9,21 @@
         <div class="col-md-6">
             <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
                 {% csrf_token %}
-                
-                <!-- Renderiza el formulario de Django con clases de Bootstrap -->
+
                 {{ form.as_p }}
 
-                <!-- Contenedor de los botones -->
+                <!-- Renderiza el formset de documentos -->
+                {{ documento_formset.management_form }}
+                <h5>Documentos</h5>
+                {% for form in documento_formset %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+
                 <div class="d-flex justify-content-start">
-                    <!-- Botón de Crear -->
                     <button type="submit" class="btn btn-success me-2">Añadir</button>
-                    <!-- Botón de Cancelar -->
+
                     <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
@@ -26,5 +32,6 @@
 </div>
 
 {% endblock content %}
+
 
 

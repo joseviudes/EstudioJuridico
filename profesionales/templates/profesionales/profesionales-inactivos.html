@@ -7,7 +7,27 @@
 <br>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <a href="{% url 'profesionales' %}" class="btn btn-primary">Volver</a>
+
+
+    <div class="d-flex">
+        
+        <a href="{% url 'profesionales' %}" class="btn btn-danger me-2">Volver</a>
+    
+        <!-- Botón desplegable de filtrado -->
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                Filtrar por
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de ingreso (Ascendiente)</a></li>
+                <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de ingreso (Descendiente)</a></li>
+                <li><a class="dropdown-item" href="?order=apellido_asc">Apellido (A-Z)</a></li>
+                <li><a class="dropdown-item" href="?order=apellido_desc">Apellido (Z-A)</a></li>
+    
+            </ul>
+        </div>
+
+    </div>
 
     <!-- Formulario de búsqueda -->
     <form method="GET" action="{% url 'profesionales-inactivos' %}" class="d-flex">
@@ -21,7 +41,9 @@
             </a>
         </div>
     </form>
+
 </div>
+
 
 <hr>
 

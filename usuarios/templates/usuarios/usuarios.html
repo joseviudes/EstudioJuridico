@@ -7,7 +7,7 @@
 <br>
 
 <!-- Botón para crear un nuevo expediente, ahora en verde -->
-<a href="{% url 'create-user' %}" class="btn btn-success mb-3">Crear usuario</a>
+<a href="{% url 'crear-usuario' %}" class="btn btn-success mb-3">Crear usuario</a>
 <hr>
 
 <!-- Contenedor principal -->
@@ -35,13 +35,13 @@
                 <td>{{usuario.fecha_ingreso}}</td>
                 <td>estado-poner</td>
                 <td>
-                    <a href="{% url 'expediente' usuario.pk %}" class="btn btn-info btn-sm">
+                    {% comment %} <a href="{% url 'expediente' usuario.pk %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
-                    </a>
-                    <a href="{% url 'actualizar-expediente' usuario.pk %}" class="btn btn-warning btn-sm">
+                    </a> {% endcomment %}
+                    <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-expediente' usuario.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
                     </a>
                 </td>

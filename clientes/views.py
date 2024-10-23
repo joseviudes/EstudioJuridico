@@ -12,12 +12,12 @@ from .filters import ClienteFilter
 
 
 def is_admin_or_abogado(user):
-    return user.is_authenticated and (user.is_superuser or user.rol == 'abogado')
+    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado')
 
 class SoloAdminYAbogadoMixin(UserPassesTestMixin):
     def test_func(self):
         # Comprobamos si el usuario es admin o abogado
-        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'abogado')
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
 
 
 class ListCliente(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
@@ -44,11 +44,11 @@ class ListCliente(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
             queryset = queryset.order_by('apellido')
         elif order == 'apellido_desc':
             queryset = queryset.order_by('-apellido')
-        elif order == 'fecha_ingreso':
+        elif order == 'fecha_ingreso_asc':
             queryset = queryset.order_by('fecha_ingreso')
+        elif order == 'fecha_ingreso_desc':
+            queryset = queryset.order_by('-fecha_ingreso')
 
-        return queryset
-            
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -68,6 +68,7 @@ class ListClienteInactivo(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset().filter(estado=False) 
         query = self.request.GET.get('q')
+        order = self.request.GET.get('order')
 
         if query:
             queryset = queryset.filter(
@@ -75,11 +76,23 @@ class ListClienteInactivo(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
                 Q(apellido__icontains=query) |
                 Q(dni__icontains=query)
             )
+            
+        # filtros
+        if order == 'apellido_asc':
+            queryset = queryset.order_by('apellido')
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-apellido')
+        elif order == 'fecha_ingreso_asc':
+            queryset = queryset.order_by('fecha_ingreso')
+        elif order == 'fecha_ingreso_desc':
+            queryset = queryset.order_by('-fecha_ingreso')
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['q'] = self.request.GET.get('q', '')  
+        context['order'] = self.request.GET.get('order', '')
         return context    
 
 

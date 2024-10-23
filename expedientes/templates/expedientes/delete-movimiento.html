@@ -15,7 +15,7 @@
             <th>Tipo</th>
             <th>Detalle</th>
             <th>Ubicacion</th>
-            <th>Archivos</th>
+            <th>Documentos</th>
         </tr>
     </thead>
     <tbody>
@@ -23,18 +23,28 @@
             <td>{{movimiento.fecha}}</td>
             <td>{{movimiento.sit_actual}}</td>    
             <td>{{movimiento.tipo}}</td>
-            <td>{{movimiento.detalle}}</td>
+            <td class="detalle-columna">{{ movimiento.detalle }}</td>
             <td>{{movimiento.ubicacion}}</td>
             <td>
-                {% if movimiento.archivos %}
-                    <a href="{{ movimiento.archivos.url }}">{{ movimiento.archivos.name }}</a>
+                {% if movimiento.documentos %}
+                    <a href="{{ movimiento.documentos.url }}">{{ movimiento.documentos.name }}</a>
                 {% else %}
-                    No hay archivo
+                    No hay documentos
                 {% endif %}
             </td>
         </tr>
     </tbody>
 </table>
+
+<br>
+
+<div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span class="ms-2">Si se elimina el cliente, se eliminará de <strong>forma permanente</strong> de la base de datos.</span>
+</div>
+
+<br>
+
 
 <!-- Botón de Eliminar -->
 <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">

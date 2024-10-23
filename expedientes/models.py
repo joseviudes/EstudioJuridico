@@ -51,17 +51,25 @@ class Movimientos(models.Model):
     id_mov = models.AutoField(primary_key=True)
     expediente = models.ForeignKey(Expediente, on_delete=models.CASCADE)
     fecha = models.DateField(null=True, blank=True)
-    sit_actual = models.CharField('Situación actual', max_length=50, choices=ESTADOS, null=True, blank=True, default="-")
+    sit_actual = models.CharField('Situación actual', max_length=50, choices=ESTADOS, null=True, blank=True)
     tipo = models.CharField(max_length=150, null=True, blank=True)
     detalle = models.TextField(max_length=500, null=True, blank=True)
     ubicacion = models.CharField(max_length=100, null=True, blank=True)
-    archivos = models.FileField(upload_to='documentos/', null=True, blank=True, validators=[validar_tipo_archivo])
+    # documentos = models.FileField(upload_to='documentos/', null=True, blank=True, validators=[validar_tipo_archivo])
 
     class Meta:
         verbose_name_plural = 'Movimientos'
 
     def __str__(self):
         return f"Mov {self.id} - {self.expediente.numero_expediente}"
+    
+
+class Documentos(models.Model):
+    movimiento = models.ForeignKey(Movimientos, on_delete=models.CASCADE, related_name='documentos')
+    documentos = models.FileField(upload_to='documentos/', validators=[validar_tipo_archivo])
+
+    def __str__(self):
+        return f"Documento para movimiento {self.movimiento.id_mov}"
 
     
     

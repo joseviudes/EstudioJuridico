@@ -37,13 +37,16 @@
         <thead class="table-dark">
             <tr>
                 <th>ID</th>
+                {% if  user.rol == 'Admin' %}
+                <th>Fecha de creación</th>
+                {% endif %}
                 <th>Cliente</th>
                 <th>Profesional</th>
                 <th>Dia</th>
                 <th>Horario</th>
                 <th>Motivo</th>
                 <th>Estado</th>
-                {% if  user.rol == 'admin' %}
+                {% if  user.rol == 'Admin' %}
                 <th>Opciones</th>
                 {% endif %}
             </tr>
@@ -52,17 +55,34 @@
             {% for turno in turnos %}
             <tr>
                 <td>{{turno.id_turno}}</td>
+                {% if  user.rol == 'Admin' %}
+                <td>{{turno.fecha_creacion}}</td>
+                {% endif %}
                 <td>{{turno.cliente.get_full_name}}</td>
                 <td>{{turno.profesional.get_full_name}} </td>
                 <td>{{turno.dia}}</td>
                 <td>{{turno.horario}}</td>
                 <td>{{turno.motivo}}</td>
+                {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <td>
-                    <span class="badge bg-success">ACTIVO</span>
+                    <form method="POST" action="{% url 'actualizar-estado' turno.pk %}">
+                        {% csrf_token %}
+                        <select class="form-select form-select-sm" name="estado" onchange="this.form.submit()">
+                            <option value="Pendiente" {% if turno.estado == 'Pendiente' %}selected{% endif %}>Pendiente de aprobación</option>
+                            <option value="Aprobado" {% if turno.estado == 'Aprobado' %}selected{% endif %}>Aprobado</option>
+                            <option value="Cancelado" {% if turno.estado == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                            <option value="Concluido" {% if turno.estado == 'Concluido' %}selected{% endif %}>Concluido</option>
+                        </select>
+                    </form>
                 </td>
+                {% else %}
+                <td>{{turno.estado}}</td>
+                {% endif %}
+
+                {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <td>
                     {% comment %} <a href="{% url 'turno' turno.pk %}" class="btn btn-info btn-sm">Ver</a> {% endcomment %}
-                    {% if user.rol == 'admin' or user == turno.cliente or user == turno.profesional %}
+                    {% if user.rol == 'Admin' or user == turno.cliente or user == turno.profesional %}
                     <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
@@ -71,8 +91,11 @@
                     </a>
                     {% endif %}
                 </td>
+                {% endif %}
+
             </tr>
             {% endfor %}
+
         </tbody>
     </table>
 </div>

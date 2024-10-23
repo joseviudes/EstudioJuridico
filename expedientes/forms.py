@@ -1,7 +1,6 @@
-from django.db.models.base import Model
-from django.forms import ModelForm, widgets
+from django.forms import ModelForm, modelformset_factory
 from django import forms
-from .models import Expediente, Movimientos
+from .models import Expediente, Movimientos, Documentos
 
 class ExpedienteForm(ModelForm):
     class Meta:
@@ -22,7 +21,7 @@ class ExpedienteForm(ModelForm):
                 self.fields[field].widget.attrs.update({
                     'class': 'form-control'
                 })
-                    # Añadir clase 'required' a los labels de los campos requeridos
+
                 self.fields[field].label_suffix = ' *'
             else:
                 self.fields[field].widget.attrs.update({
@@ -52,3 +51,15 @@ class MovimientosForm(ModelForm):
                 self.fields[field].widget.attrs.update({
                     'class': 'form-control'
                 })
+
+
+class DocumentosForm(forms.ModelForm):
+    class Meta:
+        model = Documentos
+        fields = ['documentos']
+        widgets = {
+            # 'documentos': forms.ClearableFileInput(attrs={'multiple': True}), 
+        }
+
+# Crear un formset para manejar varios archivos
+DocumentoFormSet = modelformset_factory(Documentos, form=DocumentosForm, extra=1)

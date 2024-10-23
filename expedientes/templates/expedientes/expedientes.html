@@ -19,7 +19,8 @@
                 Filtrar por
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de inicio (ASC)</a></li>
+                <li><a class="dropdown-item" href="?order=fecha_inicio_asc">Fecha de inicio (Ascendiente)</a></li>
+                <li><a class="dropdown-item" href="?order=fecha_inicio_desc">Fecha de inicio (Descendiente)</a></li>
                 <li><a class="dropdown-item" href="?order=apellido_asc">Apellido del cliente (A-Z)</a></li>
                 <li><a class="dropdown-item" href="?order=apellido_desc">Apellido del cliente (Z-A)</a></li>
                 <li><a class="dropdown-item" href="?order=apellido_pro_asc">Apellido del profesional (A-Z)</a></li>
@@ -88,7 +89,7 @@
                     <a href="{% url 'expediente' expediente.numero_expediente %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a>
-                    {% if request.user.rol == "admin" or request.user.rol == "abogado" %}
+                    {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
                     <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>

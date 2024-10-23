@@ -31,3 +31,13 @@
   opacity: 0.7;
 }
 
+table {
+  table-layout: fixed; /* Mantiene las columnas con tamaños consistentes */
+  width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
+}
+
+td.detalle-columna {
+  max-width: 200px; /* Limita el ancho máximo de la columna de detalle */
+  word-wrap: break-word; /* Permite el ajuste del texto en la columna */
+  white-space: normal; /* Permite saltos de línea dentro de la celda */
+}

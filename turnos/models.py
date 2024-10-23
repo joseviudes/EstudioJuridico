@@ -5,11 +5,9 @@ from django.forms import ValidationError
 
 from clientes.models import Cliente
 from profesionales.models import Profesional
+from .validators import *
 
 
-# Create your models here.
-    
-    
 HORARIOS = (
         ("07:00 a 07:30", "07:00 a 07:30"),
         ("07:30 a 08:00", "07:30 a 08:00"),
@@ -21,27 +19,35 @@ HORARIOS = (
         ("10:30 a 11:00", "10:30 a 11:00"),
         ("11:00 a 11:30", "11:00 a 11:30"),
     )    
-    
-def validar_dia(value):
-    today = date.today()
-    weekday = date.fromisoformat(f'{value}').weekday()
 
-    if value < today:
-        raise ValidationError('No se puede seleccionar una fecha pasada.')
-    if (weekday == 5) or (weekday == 6):
-        raise ValidationError('Seleccione un dia habil.')    
+ESTADOS = (
+    ('Pendiente de aprobación', 'Pendiente de aprobación'),
+    ('Aprobado', 'Aprobado'),
+    ('Cancelado', 'Cancelado'),
+    ('Concluido','Concluido'),
+)  
     
 class Turno(models.Model):
     
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='turnos')
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='turnos', null=True, blank=True)
+    
+    # Información adicional para los no autenticados
+    nombre_completo = models.CharField(max_length=100, null=True, blank=True)  
+    dni = models.CharField(max_length=20, null=True, blank=True, validators=[validar_dni])
+    telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
+    
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos')
     
+    id_turno = models.AutoField(primary_key=True)
     dia = models.DateField(null=True, validators=[validar_dia])
     horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
-    motivo = models.TextField(max_length=500)  # Motivo del turno
-    id_turno = models.AutoField(primary_key=True)  # ID del turno, se genera automáticamente
+    motivo = models.TextField(max_length=500, null=True, blank=True)  
+    estado = models.CharField(max_length=25, choices=ESTADOS, default='Pendiente de aprobación')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
     
     class Meta:
+        ordering = ['-fecha_creacion']
         verbose_name = 'Turno'
         verbose_name_plural = 'Turnos'
         constraints = [
@@ -52,4 +58,7 @@ class Turno(models.Model):
         ]
 
     def __str__(self):
-        return f"Turno {self.id_turno} - {self.cliente.get_full_name()} con {self.profesional.get_full_name()} de {self.horario}"
+        if self.cliente:
+            return f"Turno {self.id_turno} - {self.cliente.get_full_name()} con {self.profesional.get_full_name()} de {self.horario}"
+        else:
+            return f"Turno {self.id_turno} - {self.nombre_completo} con {self.profesional.get_full_name()} de {self.horario}"
