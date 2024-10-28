@@ -29,19 +29,20 @@ ESTADOS = (
     
 class Turno(models.Model):
     
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='turnos', null=True, blank=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='turnos', null=True, blank=True, default='-')
+    solicitante = models.CharField(max_length=100, null=True, blank=True)
+    
+    profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos', default='-')
     
     # Información adicional para los no autenticados
-    nombre_completo = models.CharField(max_length=100, null=True, blank=True)  
-    dni = models.CharField(max_length=20, null=True, blank=True, validators=[validar_dni])
-    telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
-    
-    profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos')
+    # nombre_completo = models.CharField(max_length=100, null=True, blank=True)  
+    # dni = models.CharField(max_length=20, null=True, blank=True, validators=[validar_dni])
+    # telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
     
     id_turno = models.AutoField(primary_key=True)
     dia = models.DateField(null=True, validators=[validar_dia])
     horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
-    motivo = models.TextField(max_length=500, null=True, blank=True)  
+    motivo = models.TextField(max_length=500, null=True, blank=True, default='-')  
     estado = models.CharField(max_length=25, choices=ESTADOS, default='Pendiente de aprobación')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     
@@ -58,7 +59,4 @@ class Turno(models.Model):
         ]
 
     def __str__(self):
-        if self.cliente:
-            return f"Turno {self.id_turno} - {self.cliente.get_full_name()} con {self.profesional.get_full_name()} de {self.horario}"
-        else:
-            return f"Turno {self.id_turno} - {self.nombre_completo} con {self.profesional.get_full_name()} de {self.horario}"
+            return f"Turno {self.id_turno} - {self.cliente.full_name} con {self.profesional.full_name} de {self.horario}"

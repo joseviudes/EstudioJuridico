@@ -15,22 +15,67 @@ class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.rol == 'Admin'
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 def loginUser(request):
-    
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        # Log para verificar los valores de entrada
+        print(f"Intento de login con: username={username}, password={'*' * len(password)}")
+        
+        # Autenticación de usuario
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
+            print(f"Usuario autenticado: {user.username}")
+            
+            # Verificación para usuarios Admin
+            if user.is_superuser or (not hasattr(user, 'profesional') and not hasattr(user, 'cliente')):
+                print("Usuario es Admin o no tiene rol vinculado; omitiendo verificaciones adicionales.")
+                login(request, user)
+                messages.success(request, "Se ha iniciado sesión.")
+                return redirect("index")
+
+            # Verificación de usuarios con rol profesional
+            if hasattr(user, 'profesional'):
+                profesional = user.profesional
+                print(f"Verificando profesional asociado: {profesional}")
+                
+                if not profesional.estado:
+                    print("Profesional asociado inactivo.")
+                    messages.error(request, "Tu cuenta de profesional no está activa.")
+                    return redirect("login")
+
+            # Verificación de usuarios con rol cliente
+            elif hasattr(user, 'cliente'):
+                cliente = user.cliente
+                print(f"Verificando cliente asociado: {cliente}")
+                
+                if not cliente.estado:
+                    print("Cliente asociado inactivo.")
+                    messages.error(request, "Tu cuenta de cliente no está activa.")
+                    return redirect("login")
+
+            # Si pasa todas las verificaciones
+            print("Verificación completada, iniciando sesión.")
             login(request, user)
             messages.success(request, "Se ha iniciado sesión.")
             return redirect("index")
+
         else:
-            messages.error(request, "Hubo un error al iniciar sesión, por favor verifique los datos.")
+            # Autenticación fallida
+            print("Error de autenticación: Usuario o contraseña incorrectos.")
+            messages.error(request, "Hubo un error al iniciar sesión, por favor verifica tus datos.")
             return redirect("login")
-    
-    return render(request, 'usuarios/login.html', {})
+
+    # Si el método no es POST, renderizar el formulario de login
+    return render(request, 'usuarios/login.html')
+
+
 
 
 def logoutUser(request):
@@ -40,26 +85,49 @@ def logoutUser(request):
 
 
 class ListUsuarios(LoginRequiredMixin, AdminRequiredMixin, ListView):
+ 
     model = Usuario
     template_name = 'usuarios/usuarios.html'
-    context_object_name = 'usuarios'  # nombre del objeto en el contexto 
-    paginate_by = 10  #paginación
+    context_object_name = 'usuarios' 
+    paginate_by = 10
+ 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['clientes'] = Usuario.objects.filter(rol='Cliente').select_related('cliente')
+        context['profesionales'] = Usuario.objects.filter(rol='Abogado').select_related('profesional')  # Cambiado a 'profesional'
+        context['admins'] = Usuario.objects.filter(rol='Admin')
+        return context
     
-@login_required
-def createUsuario(request):
 
+@login_required
+def createUsuario(request, rol):
     if request.method == 'POST':
         form = UsuarioForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])  # Establecer contraseña
+            user.set_password(form.cleaned_data['password'])
+            
+            # Asignación del rol y vínculo con cliente o profesional según el rol
+            if rol == 'Cliente' and form.cleaned_data['cliente']:
+                user.rol = rol
+                user.cliente = form.cleaned_data['cliente']
+            elif rol == 'Abogado' and form.cleaned_data['profesional']:
+                user.rol = rol
+                user.profesional = form.cleaned_data['profesional']
+            elif rol == 'Admin':
+                user.rol = rol
+            
             user.save()
-            messages.success(request, f'Usuario {user.email} creado exitosamente.')
-            return redirect('usuarios')  
+            messages.success(request, f'Usuario {user.email} creado exitosamente como {rol}.')
+            return redirect('usuarios')
     else:
         form = UsuarioForm()
 
-    return render(request, 'usuarios/create-usuario.html', {'form': form})
+    return render(request, 'usuarios/create-usuario.html', {'form': form, 'tipo_usuario': rol})
+
+
+
+
 
 
 @login_required

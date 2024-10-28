@@ -134,7 +134,7 @@ def createExpediente(request):
 @login_required
 @user_passes_test(is_admin_or_abogado)
 def updateExpediente(request, numero_expediente):
-    # Obtenemos el expediente a actualizar o muestra un error 404 si no existe
+
     expediente = get_object_or_404(Expediente, numero_expediente=numero_expediente)
 
     if request.method == 'POST':
@@ -181,7 +181,7 @@ def darDeBajaExpediente(request, numero_expediente):
     else:
         messages.info(request, f"Expediente Nº{expediente.numero_expediente} ya se encuentra dado baja.")
         
-    return redirect('expedientes-inactivos')
+    return redirect('expedientes')
 
 @login_required
 @permission_required('expedientes.change_expediente', raise_exception=True)
@@ -197,7 +197,7 @@ def darDeAltaExpediente(request, numero_expediente):
     else:
         messages.info(request, f"Expediente Nº{expediente.numero_expediente} ya está activo.")
         
-    return redirect('expedientes')  
+    return redirect('expedientes-inactivos')  
     
     
 # ----------------- Movimientos -------------------
@@ -260,28 +260,29 @@ def updateMovimiento(request, id_mov):
 
     if request.method == 'POST':
         form = MovimientosForm(request.POST, request.FILES, instance=movimiento)
-        documento_formset = DocumentoFormSet(request.POST, request.FILES, instance=movimiento)
+        documento_formset = DocumentoFormSet(request.POST, request.FILES, queryset=Documentos.objects.filter(movimiento=movimiento))
 
         if form.is_valid() and documento_formset.is_valid():
             form.save()
 
-            # Guardar los documentos asociados
+            # Guardar y actualizar los documentos asociados
             for documento_form in documento_formset:
-                if documento_form.cleaned_data.get('archivo'):
+                if documento_form.cleaned_data.get('documentos'):
                     documento = documento_form.save(commit=False)
                     documento.movimiento = movimiento
                     documento.save()
 
+            # Eliminar documentos marcados para eliminación
             for documento_form in documento_formset.deleted_forms:
                 documento_form.instance.delete()
 
             messages.success(request, "Los datos del movimiento del expediente se han actualizado correctamente.")
             return redirect('movimientos', numero_expediente=expediente.numero_expediente)
         else:
-            messages.error(request, "Hubo un error al actualizar el movimiento del expediente. Por favor verifique los datos.")
+            messages.error(request, "Hubo un error al actualizar el movimiento del expediente. Por favor verifica los datos.")
     else:
         form = MovimientosForm(instance=movimiento)
-        documento_formset = DocumentoFormSet(instance=movimiento) 
+        documento_formset = DocumentoFormSet(queryset=Documentos.objects.filter(movimiento=movimiento)) 
 
     context = {
         'form': form,
@@ -291,6 +292,9 @@ def updateMovimiento(request, id_mov):
     }
     
     return render(request, 'expedientes/update-movimiento.html', context)
+
+
+
 
 
 

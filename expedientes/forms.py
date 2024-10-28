@@ -61,5 +61,4 @@ class DocumentosForm(forms.ModelForm):
             # 'documentos': forms.ClearableFileInput(attrs={'multiple': True}), 
         }
 
-# Crear un formset para manejar varios archivos
-DocumentoFormSet = modelformset_factory(Documentos, form=DocumentosForm, extra=1)
+DocumentoFormSet = modelformset_factory(Documentos, form=DocumentosForm, extra=1, can_delete=True)

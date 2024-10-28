@@ -2,7 +2,6 @@ from django.db import models
 from django.forms import ValidationError
 from PIL import Image
 
-from usuarios.models import Usuario
 
 # Create your models here.
 
@@ -39,17 +38,34 @@ def validar_dni(value):
     if not value.isdigit():
         raise ValidationError('El DNI debe contener solo números.')
 
-
 class Profesional(models.Model):
-    
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, null=True)
-    
     nombre = models.CharField(max_length=60)
     apellido = models.CharField(max_length=60)
-    dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni]) #  PK y de valor unico
-    idMatriculaProf = models.CharField('Nº de matricula del profesional',max_length=50, unique=True)
+    dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni])  # PK y de valor único
+    idMatriculaProf = models.CharField('Nº de matricula del profesional', max_length=50, unique=True)
     foto = models.ImageField('Foto', upload_to='images/', null=True, blank=True)
     
+    especialidad = models.CharField(max_length=200, choices=ESPECIALIDADES, null=True, blank=True)
+    estado = models.BooleanField(default=True)
+    fecha_ingreso = models.DateField('Fecha de ingreso')  
+    fecha_egreso = models.DateField('Fecha de egreso', null=True, blank=True)
+    motivo_egreso = models.TextField('Motivo de egreso', max_length=250, null=True, blank=True)
+    
+    # Contacto
+    domicilio = models.CharField(max_length=250, null=True, blank=True)
+    cod_postal = models.CharField('Codigo Postal', max_length=4, null=True, blank=True)
+    telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
+    email = models.EmailField(max_length=250, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Profesionales'
+
+    # Propiedad full_name que combina el nombre y el apellido
+    @property
+    def full_name(self):
+        return f"{self.nombre} {self.apellido}"
+
+    # Método save modificado para redimensionar la imagen si es necesario
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
@@ -60,24 +76,7 @@ class Profesional(models.Model):
                 output_size = (150, 150)
                 img.thumbnail(output_size)
                 img.save(self.foto.path)
-            
-    especialidad = models.CharField(max_length=200, choices=ESPECIALIDADES,null=True, blank=True)
-    estado = models.BooleanField(default=True)
-    fecha_ingreso = models.DateField('Fecha de ingreso')  
-    fecha_egreso = models.DateField('Fecha de egreso',null=True, blank=True)
-    motivo_egreso = models.TextField('Motivo de egreso', max_length=250, null=True, blank=True)
     
-    # Contacto
-    domicilio = models.CharField(max_length=250, null=True, blank=True)
-    cod_postal = models.CharField('Codigo Postal',max_length=4, null=True, blank=True)
-    telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
-    email = models.EmailField(max_length=250, null=True, blank=True)
-    
-    class Meta:  
-        verbose_name_plural = 'Profesionales'  # Nombre en plural
-    
-    def get_full_name(self):
-        return f"{self.nombre} {self.apellido}"
-
     def __str__(self):
-        return self.get_full_name()
+        return self.full_name  # Ahora usa la propiedad full_name
+

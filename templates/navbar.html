@@ -87,14 +87,14 @@
                         </li>
                         <li class="nav-item divider"></li>
                         {% endif %}
-                    {% else %}
+                    {% comment %} {% else %}
                         <!-- Opción 'Solicitar turno' para usuarios no autenticados -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'crear-turno' %}">Solicitar turno</a>
                         </li>
                         <li class="nav-item divider"></li>
-                    {% endif %}
-                    
+                    {% endif %} {% endcomment %}
+                {% endif %}
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="{% url 'logout' %}">Cerrar sesión</a>
@@ -104,7 +104,7 @@
                             <a class="nav-link text-dark" href="{% url 'login' %}">Inicio de sesión</a>
                         </li>
                     {% endif %}
-                    
+                
                 </ul>
             </div>
             

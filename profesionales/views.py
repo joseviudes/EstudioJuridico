@@ -167,9 +167,9 @@ def darDeBajaProfesional(request, dni):
     if profesional.estado:
         profesional.estado = False
         profesional.save()
-        messages.success(request, f"Profesional {profesional.get_full_name()} fué dado de baja correctamente.")
+        messages.success(request, f"Profesional {profesional.full_name} fué dado de baja correctamente.")
     else:
-        messages.info(request, f"Profesional {profesional.get_full_name()} ya se encuentra dado baja.")
+        messages.info(request, f"Profesional {profesional.full_name} ya se encuentra dado baja.")
         
     return redirect('profesionales')
 
@@ -184,8 +184,8 @@ def darDeAltaProfesional(request, dni):
     if not profesional.estado:
         profesional.estado = True
         profesional.save()
-        messages.success(request, f"Profesional {profesional.get_full_name()} fué dado de alta exitosamente.")
+        messages.success(request, f"Profesional {profesional.full_name} fué dado de alta exitosamente.")
     else:
-        messages.info(request, f"Profesional {profesional.get_full_name()} ya está activo.")
+        messages.info(request, f"Profesional {profesional.full_name} ya está activo.")
         
     return redirect('profesionales')  

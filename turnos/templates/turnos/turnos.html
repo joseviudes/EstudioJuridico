@@ -36,11 +36,12 @@
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <th>ID</th>
+                <th class="col-id_turno">ID</th>
                 {% if  user.rol == 'Admin' %}
                 <th>Fecha de creación</th>
                 {% endif %}
                 <th>Cliente</th>
+                <td>Solicitante</td>
                 <th>Profesional</th>
                 <th>Dia</th>
                 <th>Horario</th>
@@ -54,12 +55,13 @@
         <tbody>
             {% for turno in turnos %}
             <tr>
-                <td>{{turno.id_turno}}</td>
+                <td class="col-id_turno">{{turno.id_turno}}</td>
                 {% if  user.rol == 'Admin' %}
                 <td>{{turno.fecha_creacion}}</td>
                 {% endif %}
-                <td>{{turno.cliente.get_full_name}}</td>
-                <td>{{turno.profesional.get_full_name}} </td>
+                <td>{{turno.cliente.full_name}}</td>
+                <td>{{turno.solicitante}} </td>
+                <td>{{turno.profesional.full_name}} </td>
                 <td>{{turno.dia}}</td>
                 <td>{{turno.horario}}</td>
                 <td>{{turno.motivo}}</td>

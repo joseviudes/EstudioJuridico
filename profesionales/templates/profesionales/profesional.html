@@ -10,7 +10,7 @@
     <div class="card">
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="{{ profesional.foto.url}}" class="img-fluid rounded-start" alt="Foto de {{ profesional.nombre }}">
+                <img src="{% if profesional.foto %}{{ profesional.foto.url }}{% else %}/media/images/imagen_default.png{% endif %}" class="img-fluid rounded-start" alt="Foto de {{ profesional.nombre }}">
             </div>
             <div class="col-md-8">
                 <div class="card-body">

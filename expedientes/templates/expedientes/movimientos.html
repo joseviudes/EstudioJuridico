@@ -20,42 +20,43 @@
                 <th>Ubicacion</th>
                 <th>Documentos</th>
                 {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                <th>Opciones</th>
+                <th class="col-opciones-mov">Opciones</th>
                 {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for movimiento in movimientos %}
             <tr>
-                <td>{{movimiento.fecha}}</td>
-                <td>{{movimiento.sit_actual}}</td>    
-                <td>{{movimiento.tipo}}</td>
+                <td>{{ movimiento.fecha }}</td>
+                <td>{{ movimiento.sit_actual }}</td>    
+                <td>{{ movimiento.tipo }}</td>
                 <td class="detalle-columna">{{ movimiento.detalle }}</td>
-                <td>{{movimiento.ubicacion}}</td>
-                <td>
-                    {% if movimiento.documentos %}
-                        <a href="{{ movimiento.documentos.url }}">{{ movimiento.documentos.name }}</a>
+                <td>{{ movimiento.ubicacion }}</td>
+                <td class="documentos-columna">
+                    {% if movimiento.documentos.exists %}
+                        <ul>
+                            {% for documento in movimiento.documentos.all %}
+                                <li><a href="{{ documento.documentos.url }}" target="_blank">{{ documento.documentos.name }}</a></li>
+                            {% endfor %}
+                        </ul>
                     {% else %}
                         No hay documentos
                     {% endif %}
                 </td>
-
-               <td>
-                    {% comment %} <a href="{% url 'profesional' .pk %}" class="btn btn-info btn-sm">
-                        <i class="bi bi-eye"></i>
-                    </a> {% endcomment %}
+                <td class="col-opciones-mov">
                     {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                    <a href="{% url 'actualizar-movimiento' movimiento.id_mov %}" class="btn btn-warning btn-sm">
-                        <i class="bi bi-pen"></i>
-                    </a>
-                    <a href="{% url 'eliminar-movimiento' movimiento.id_mov %}" class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash-fill"></i>
-                    </a> 
+                        <a href="{% url 'actualizar-movimiento' movimiento.id_mov %}" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pen"></i>
+                        </a>
+                        <a href="{% url 'eliminar-movimiento' movimiento.id_mov %}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash-fill"></i>
+                        </a> 
                     {% endif %}
                 </td> 
             </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 </div>
 

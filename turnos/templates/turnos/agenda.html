@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<div id='calendar'></div>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: '/turnos/turnos-json/',  // URL de la vista que devuelve los turnos en formato JSON
+      eventClick: function(info) {
+        const startDate = info.event.start;
+        const endDate = info.event.end;
+
+        // Formatear la fecha y hora
+        const dateString = startDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'numeric', day: 'numeric' });
+        const startTimeString = startDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        const endTimeString = endDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+        // Mostrar alerta con información organizada incluyendo el profesional
+        alert(`${info.event.title}\nCliente: ${info.event.extendedProps.cliente}\nSolicitante: ${info.event.extendedProps.solicitante}\nMotivo: ${info.event.extendedProps.motivo} \nFecha: ${dateString}\nHora: ${startTimeString} - ${endTimeString}\nProfesional: ${info.event.extendedProps.professional}`);
+      }
+    });
+    calendar.render();
+  });
+</script>
+
+<style>
+  #calendar {
+    max-width: 900px;
+    margin: 40px auto;
+  }
+</style>
+
+{% endblock content %}

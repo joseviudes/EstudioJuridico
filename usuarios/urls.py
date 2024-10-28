@@ -7,8 +7,13 @@ urlpatterns = [
     path('logout/', logoutUser, name="logout"),
 
     path("", ListUsuarios.as_view(), name="usuarios"),
-    path('crear-usuario/', createUsuario, name="crear-usuario"),
+    
+    path('crear-usuario/administrador/', createUsuario, {'rol': 'Admin'}, name='crear_administrador'),
+    path('crear-usuario/profesional/', createUsuario, {'rol': 'Abogado'}, name='crear_profesional'),
+    path('crear-usuario/cliente/', createUsuario, {'rol': 'Cliente'}, name='crear_cliente'),
+    
     path('actualizar-usuario/<int:pk>/', updateUsuario, name="actualizar-usuario"),
+    
     path('eliminar-usuario/<int:pk>/', deleteUsuario, name="eliminar-usuario"),
 
 ]

@@ -42,31 +42,39 @@ word-wrap: break-word; /* Permite el ajuste del texto en la columna */
 white-space: normal; /* Permite saltos de línea dentro de la celda */
 }
 
-
-/* Estilo por defecto para el select */
-.estado-select {
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
+.col-rol {
+  width: 8%; 
+  white-space: nowrap; 
 }
 
-/* Colores personalizados para cada opción */
-.estado-pendiente {
-  background-color: #ffc107; /* Amarillo para Pendiente de aprobación */
-  color: black;
+.col-estado {
+  width: 15%; 
+  white-space: nowrap; 
 }
 
-.estado-aprobado {
-  background-color: #28a745; /* Verde para Aprobado */
-  color: white;
+.col-opciones {
+  width: 15%; 
+  white-space: nowrap; 
 }
 
-.estado-cancelado {
-  background-color: #dc3545; /* Rojo para Cancelado */
-  color: white;
+.col-opciones-mov {
+  width: 8%; 
+  white-space: nowrap; 
 }
 
-.estado-concluido {
-  background-color: #6c757d; /* Gris para Concluido */
-  color: white;
+/* Id del turno */
+.col-id_turno {
+  width: 4%; 
+  white-space: nowrap; 
+}
+
+.documentos-columna {
+  max-width: 150px; /* Ajusta el ancho según sea necesario */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.documentos-columna ul {
+  padding-left: 0;
+  list-style-type: none;
 }

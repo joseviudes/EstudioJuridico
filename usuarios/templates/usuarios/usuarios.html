@@ -1,43 +1,41 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
 <br>
 <h2 class="text-start"><strong>Gestión de usuarios</strong></h2>
 <br>
 
-<!-- Botón para crear un nuevo expediente, ahora en verde -->
-<a href="{% url 'crear-usuario' %}" class="btn btn-success mb-3">Crear usuario</a>
+<!-- Botones para crear nuevos usuarios -->
+<div class="botones-crear mb-3">
+    <a href="{% url 'crear_administrador' %}" class="btn btn-success">Crear Administrador</a>
+    <a href="{% url 'crear_profesional' %}" class="btn btn-success">Crear Profesional</a>
+    <a href="{% url 'crear_cliente' %}" class="btn btn-success">Crear Cliente</a>
+</div>
 <hr>
 
 <!-- Contenedor principal -->
 <div class="container">
-    <h2 class="mb-4">Lista de usuarios</h2>
 
-    <!-- Tabla de expedientes -->
+    <!-- Lista de Administradores -->
+    <h2 class="mb-4">Administradores</h2>
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
                 <th>Email</th>
-                <th>Rol</th>
-                <th>Fecha de creacion</th>
-                
-                <th>Estado</th>
-
-                <th>Opciones</th>
+                <th class="col-rol">Rol</th>
+                <th>Fecha de creación</th>
+                {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
+                <th class="col-opciones">Opciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for usuario in usuarios %}
+            {% for usuario in admins %}
             <tr>
-                <td>{{usuario.email}}</td>
-                <td>{{usuario.rol}}</td>
-                <td>{{usuario.fecha_ingreso}}</td>
-                <td>estado-poner</td>
-                <td>
-                    {% comment %} <a href="{% url 'expediente' usuario.pk %}" class="btn btn-info btn-sm">
-                        <i class="bi bi-eye"></i>
-                    </a> {% endcomment %}
+                <td>{{ usuario.email }}</td>
+                <td class="col-rol">{{ usuario.rol }}</td>
+                <td>{{ usuario.fecha_ingreso }}</td>
+                {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
+                <td class="col-opciones">
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
@@ -49,6 +47,74 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
 
+    <!-- Lista de Profesionales -->
+    <h2 class="mb-4">Profesionales</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Profesional Asociado</th>
+                <th>Email</th>
+                <th class="col-rol">Rol</th>
+                <th>Fecha de creación</th>
+                {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
+                <th class="col-opciones">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in profesionales %}
+            <tr>
+                <td>{{ usuario.profesional.full_name }}</td>
+                <td>{{ usuario.email }}</td>
+                <td class="col-rol">{{ usuario.rol }}</td>
+                <td>{{ usuario.fecha_ingreso }}</td>
+                {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
+                <td class="col-opciones">
+                    <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Lista de Clientes -->
+    <h2 class="mb-4">Clientes</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Cliente Asociado</th>
+                <th>Email</th>
+                <th class="col-rol">Rol</th>
+                <th>Fecha de creación</th>
+                {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
+                <th class="col-opciones">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in clientes %}
+            <tr>
+                <td>{{ usuario.cliente.full_name }}</td>
+                <td>{{ usuario.email }}</td>
+                <td class="col-rol">{{ usuario.rol }}</td>
+                <td>{{ usuario.fecha_ingreso }}</td>
+                {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
+                <td class="col-opciones">
+                    <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
+                    </a>
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
 {% endblock content %}

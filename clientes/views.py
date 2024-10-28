@@ -167,11 +167,11 @@ def darDeBajaCliente(request, dni):
     if cliente.estado:
         cliente.estado = False
         cliente.save()
-        messages.success(request, f"Cliente {cliente.get_full_name()} fué dado de baja correctamente.")
+        messages.success(request, f"Cliente {cliente.full_name} fué dado de baja correctamente.")
     else:
-        messages.info(request, f"Cliente {cliente.get_full_name()} ya se encuentra dado baja.")
+        messages.info(request, f"Cliente {cliente.full_name} ya se encuentra dado baja.")
         
-    return redirect('clientes-inactivos')
+    return redirect('clientes')
 
 @login_required
 @permission_required('clientes.change_cliente', raise_exception=True)
@@ -183,8 +183,8 @@ def darDeAltaCliente(request, dni):
     if not cliente.estado:
         cliente.estado = True
         cliente.save()
-        messages.success(request, f"Cliente {cliente.get_full_name()} fué dado de alta exitosamente.")
+        messages.success(request, f"Cliente {cliente.full_name} fué dado de alta exitosamente.")
     else:
-        messages.info(request, f"Cliente {cliente.get_full_name()} ya está activo.")
+        messages.info(request, f"Cliente {cliente.full_name} ya está activo.")
         
-    return redirect('clientes')  
+    return redirect('clientes-inactivos')  
