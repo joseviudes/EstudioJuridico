@@ -1,0 +1,80 @@
+.nav-item.divider {
+  border-left: 1px solid black;
+  height: 40px;
+  margin: 0 15px;
+}
+
+/* Estilo del botón de login */
+#loginButton {
+position: relative;
+overflow: hidden;
+width: 100%;
+color: white;
+background-color: #6c757d; /* Color inicial del botón */
+border-color: #6c757d;
+transition: background-color 0.5s ease;
+}
+
+/* Barra de progreso dentro del botón */
+#progressBar {
+position: absolute;
+top: 0;
+left: 0;
+height: 100%;
+width: 0;
+background-color: #28a745; /* Color verde de progreso */
+transition: width 2s ease; /* Duración del progreso */
+}
+
+#loginButton:disabled {
+cursor: not-allowed;
+opacity: 0.7;
+}
+
+table {
+table-layout: fixed; /* Mantiene las columnas con tamaños consistentes */
+width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
+}
+
+td.detalle-columna {
+max-width: 200px; /* Limita el ancho máximo de la columna de detalle */
+word-wrap: break-word; /* Permite el ajuste del texto en la columna */
+white-space: normal; /* Permite saltos de línea dentro de la celda */
+}
+
+.col-rol {
+  width: 8%; 
+  white-space: nowrap; 
+}
+
+.col-estado {
+  width: 15%; 
+  white-space: nowrap; 
+}
+
+.col-opciones {
+  width: 15%; 
+  white-space: nowrap; 
+}
+
+.col-opciones-mov {
+  width: 8%; 
+  white-space: nowrap; 
+}
+
+/* Id del turno */
+.col-id_turno {
+  width: 4%; 
+  white-space: nowrap; 
+}
+
+.documentos-columna {
+  max-width: 150px; /* Ajusta el ancho según sea necesario */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.documentos-columna ul {
+  padding-left: 0;
+  list-style-type: none;
+}
