@@ -9,6 +9,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     
+
     <a href="{% url 'crear-turno' %}" class="btn btn-success mb-3">Agendar turno</a>
 
     <!-- Formulario de búsqueda -->
@@ -47,7 +48,7 @@
                 <th>Horario</th>
                 <th>Motivo</th>
                 <th>Estado</th>
-                {% if  user.rol == 'Admin' %}
+                {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <th>Opciones</th>
                 {% endif %}
             </tr>
@@ -84,7 +85,7 @@
                 {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <td>
                     {% comment %} <a href="{% url 'turno' turno.pk %}" class="btn btn-info btn-sm">Ver</a> {% endcomment %}
-                    {% if user.rol == 'Admin' or user == turno.cliente or user == turno.profesional %}
+                    {% if user.rol == 'Admin' or user == turno.profesional %}
                     <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>

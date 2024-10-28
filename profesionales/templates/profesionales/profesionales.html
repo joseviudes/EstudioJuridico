@@ -8,7 +8,10 @@
 
 <div class="d-flex justify-content-start align-items-center mb-3">
 
+    {% if  user.rol == 'Admin' %}
     <a href="{% url 'crear-profesional' %}" class="btn btn-success me-2">Agregar profesional</a>
+    {% endif %}
+
     <a href="{% url 'profesionales-inactivos' %}" class="btn btn-danger">Profesionales inactivos</a>
 
 

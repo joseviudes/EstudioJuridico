@@ -130,21 +130,40 @@ def createUsuario(request, rol):
 
 
 
+from django.contrib.auth.hashers import make_password
+
 @login_required
 def updateUsuario(request, pk):
-    
-    user = get_object_or_404(Usuario, pk=pk) 
+    user = get_object_or_404(Usuario, pk=pk)
 
     if request.method == 'POST':
         form = UsuarioForm(request.POST, instance=user)
+        
         if form.is_valid():
+            # Verifica si la contraseña ha sido cambiada y encripta si es necesario
+            password = form.cleaned_data.get('password')
+            if password:
+                print("Actualizando contraseña...")
+                user.password = make_password(password)
+            
+            # Imprime los valores de cliente y profesional para diagnóstico
+            cliente = form.cleaned_data.get('cliente')
+            profesional = form.cleaned_data.get('profesional')
+            print(f"Vinculando Cliente: {cliente}")
+            print(f"Vinculando Profesional: {profesional}")
+
+            # Guarda el formulario
             form.save()
             messages.success(request, f'Usuario {user.email} actualizado exitosamente.')
             return redirect('usuarios')  # Cambia por la URL de éxito
+        else:
+            print("Formulario inválido:", form.errors)
+
     else:
         form = UsuarioForm(instance=user)
 
     return render(request, 'usuarios/update-usuario.html', {'form': form, 'usuario': user})
+
 
 
 
