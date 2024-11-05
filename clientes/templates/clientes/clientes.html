@@ -10,18 +10,22 @@
 
 <div class="d-flex justify-content-start align-items-center mb-3">
     
+
     {% if  user.rol == 'Admin' %}
-    <a href="{% url 'crear-cliente' %}" class="btn btn-success me-2">Agregar cliente</a>
+    <a href="{% url 'crear-cliente' %}" class="btn btn-success me-2">
+        <i class="bi bi-plus-lg"></i> Agregar cliente
+    </a>
     {% endif %}
 
-    <a href="{% url 'clientes-inactivos' %}" class="btn btn-danger">Clientes inactivos</a>
+    <a href="{% url 'clientes-inactivos' %}" class="btn btn-danger">Inactivos</a>
 
 
     <!-- Botón desplegable de filtrado -->
     <div class="dropdown ms-2">
 
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            Filtrar por
+        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
+            Filtrar
         </button>
 
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">

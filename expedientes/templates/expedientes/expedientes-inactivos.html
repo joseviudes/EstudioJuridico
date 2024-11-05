@@ -11,12 +11,15 @@
     <!-- Sección de botones alineados a la izquierda -->
     <div class="d-flex">
         
-        <a href="{% url 'expedientes' %}" class="btn btn-danger me-2">Volver</a>
+        <a href="{% url 'expedientes' %}" class="btn btn-dark me-3">
+            <i class="bi bi-box-arrow-left"></i> Volver
+        </a>
 
         <!-- Botón desplegable de filtrado -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                Filtrar por
+            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
+                Filtrar
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <li><a class="dropdown-item" href="?order=fecha_inicio_asc">Fecha de inicio (Ascendiente)</a></li>

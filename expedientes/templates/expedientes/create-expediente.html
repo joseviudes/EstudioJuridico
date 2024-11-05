@@ -9,19 +9,20 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-6">
-            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-                {% csrf_token %}
+        <div class="col-md-12">
+            <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
+                <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
+                    {% csrf_token %}
                 
-                {{ form.as_p }}
+                    {{ form.as_p }}
 
-                <div class="d-flex justify-content-start">
-                    
-                    <button type="submit" class="btn btn-success me-2">Crear</button>
-
-                    <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
-                </div>
-            </form>
+                    <!-- Botones de Acción -->
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-success me-2">Crear</button>
+                        <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </fieldset>
         </div>
     </div>
 </div>

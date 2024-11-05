@@ -1,6 +1,5 @@
 {% extends "main.html" %}
 
-
 {% block content %}
 <br>
 <h2 class="text-start"><strong>Gestión de usuarios</strong></h2>
@@ -14,18 +13,65 @@
           <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
               {% csrf_token %}
 
-              {{ form.as_p }}
+              <!-- Renderiza los campos del formulario -->
+              {{ form.username.label_tag }} {{ form.username }}
+              {{ form.email.label_tag }} {{ form.email }}
+              
+              <!-- Campo de contraseña con ícono de visibilidad -->
+              <div class="mb-3 position-relative">
+                  {{ form.password.label_tag }}
+                  <input type="password" class="form-control" name="password" id="passwordInput" placeholder="Ingrese su contraseña">
+                  <span class="position-absolute end-0 top-50 translate-middle-y pe-3" onclick="togglePasswordVisibility()" style="cursor: pointer;">
+                      <i id="toggleIcon" class="bi bi-eye"></i>
+                  </span>
+              </div>
 
+              <!-- Campo de confirmación de contraseña si existe -->
+              {% if form.confirm_password %}
+              <div class="mb-3 position-relative">
+                  {{ form.confirm_password.label_tag }}
+                  <input type="password" class="form-control" name="confirm_password" id="confirmPasswordInput" placeholder="Confirme su contraseña">
+                  <span class="position-absolute end-0 top-50 translate-middle-y pe-3" onclick="toggleConfirmPasswordVisibility()" style="cursor: pointer;">
+                      <i id="toggleConfirmIcon" class="bi bi-eye"></i>
+                  </span>
+              </div>
+              {% endif %}
 
               <div class="d-flex justify-content-start">
-                
                   <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-           
                   <a href="{% url 'usuarios' %}" class="btn btn-secondary">Cancelar</a>
               </div>
           </form>
       </div>
   </div>
 </div>
+
+<script>
+    // Función para alternar visibilidad de la contraseña principal
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('passwordInput');
+        const toggleIcon = document.getElementById('toggleIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+
+    // Función para alternar visibilidad de la confirmación de contraseña
+    function toggleConfirmPasswordVisibility() {
+        const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+        const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+        if (confirmPasswordInput.type === 'password') {
+            confirmPasswordInput.type = 'text';
+            toggleConfirmIcon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            confirmPasswordInput.type = 'password';
+            toggleConfirmIcon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+</script>
 
 {% endblock %}

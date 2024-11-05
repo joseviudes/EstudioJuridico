@@ -15,9 +15,9 @@ class ClienteForm(ModelForm):
             'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             'fecha_nacimiento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             # 'nacionalidad': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nacionalidad'}),
-            'ocupación': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ocupación'}),
-            'lugar_laboral': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Lugar laboral'}),
-            'años_aportes': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Años de aportes'}),
+            'ocupación': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ocupación laboral'}),
+            'lugar_laboral': forms.TextInput(attrs={'class': 'form-control'}),
+            'años_aportes': forms.TextInput(attrs={'class': 'form-control'}),
             
             'domicilio': forms.TextInput(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Ingrese su direccion'}),
             'cod_postal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 3400'}),

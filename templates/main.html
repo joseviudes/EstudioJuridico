@@ -32,18 +32,20 @@
     <!-- Incluye el navbar -->
     {% include 'navbar.html' %}
 
-    {% if messages %}
-    
-        {% for message in messages %}
-            <div class="alert alert-success" role="alert">
-                {{message}}
-            </div>
-        {% endfor %}
-    
-    {% endif %}
-
     <div class="container flex-grow-1">
-        <!-- Aquí se inyectará el contenido de otras vistas -->
+
+        <!-- Mensajes de alerta más elegantes -->
+        {% if messages %}
+            <div class="mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-dismissible fade show {{ message.tags }} alert-custom" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% block content %}
         {% endblock content %}
 

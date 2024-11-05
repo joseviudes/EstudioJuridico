@@ -2,14 +2,84 @@
 {% load static %}
 
 {% block content %}
-<br>
-<br>
-<h1>Estudio Juridico de la Dra Aquino</h1>
-<img src="{% static 'images/logo_abogado.png' %}" alt="imagen_juridica" />
-<br>
+<div class="container mt-5">
+    <div class="header-bg text-center">
+        <img src="{% static 'images/logo_abogado.png' %}" alt="Logo del Estudio Jurídico" class="img-fluid mb-4" style="height: 150px;">
+        
+        <h1 class="display-5 fw-bold text-primary section-title">Estudio Jurídico</h1>
+        <h2 class="text-dark">Dra. Ramona Aquino</h2>
+        <p class="lead text-muted">Defendiendo sus derechos con integridad y profesionalismo.</p>
+    </div>
+    <hr class="hr-separador">
+    
+    <!-- Sección ¿Quiénes Somos? -->
+    <div id="quienes-somos" class="about-section mt-5">
+        <h3 class="fw-semibold text-center">¿Quiénes Somos?</h3>
+        <br>
+        <p class="text-muted fs-5 text-center">En el Estudio Jurídico de la Dra. Ramona Aquino, nos dedicamos a brindar asesoramiento legal confiable y profesional. Con una trayectoria comprobada, nuestro equipo se especializa en diversas áreas del derecho, garantizando un servicio integral y personalizado a nuestros clientes.</p>
+    </div>
 
-<h3>What is Lorem Ipsum?</h3>
+    <hr class="hr-separador">
+    
+    <!-- Sección Ubicación del Estudio -->
+    <div id="ubicacion" class="mt-5">
+        <h3 class="fw-semibold text-center">Ubicación del Estudio</h3>
+        <br>
+        <p class="text-muted fs-5 text-center">Estamos en Avenida Juan Bautista Alberdi 1988, Corrientes Capital..</p>
+        <div class="map-container mt-3">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3330.545482590405!2d-58.83401262499156!3d-27.47170608276588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945c2b3333ad0fbb%3A0x5455079b42f67494!2sAv.%20Juan%20Bautista%20Alberdi%201988%2C%20Corrientes!5e0!3m2!1ses!2sar!4v1700170892519!5m2!1ses!2sar"
+                width="100%"
+                height="400"
+                style="border:0; border-radius: 8px;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
 
-<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+    <!-- Sección Contacto -->
+    <div id="contacto" class="contacto mt-5">
+        <h3 class="fw-semibold text-center">Contacto</h3>
+        <p class="text-muted text-center">¿Tenes alguna pregunta o deseas realizar una consulta? Escríbinos y te responderemos lo antes posible.</p>
+        
+        <!-- Formulario de Contacto -->
+        <form class="formulario-contacto">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="mensaje">Mensaje</label>
+                <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-enviar">Enviar</button>
+        </form>
+    </div>
 
+    <!-- JavaScript para el desplazamiento suave -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Selecciona todos los links que tienen la clase 'scroll-link'
+            document.querySelectorAll(".scroll-link").forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const targetId = this.getAttribute("href").substring(1);
+                    document.getElementById(targetId).scrollIntoView({
+                        behavior: "smooth"
+                    });
+                });
+            });
+        });
+    </script>
+
+</div>
 {% endblock content %}

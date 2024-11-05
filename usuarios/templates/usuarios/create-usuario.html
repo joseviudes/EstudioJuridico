@@ -10,7 +10,7 @@
 <h3 class="mb-4">Crear usuario con rol {{ tipo_usuario|capfirst }}</h3>
 
 <div class="container">
-  <div class="row justify-content-start"> <!-- Alinea a la izquierda -->
+  <div class="row justify-content-start">
       <div class="col-md-6">
           <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
               {% csrf_token %}
@@ -29,7 +29,15 @@
                   {{ form.password.label_tag }} 
                   {{ form.password|add_class:"form-control" }}
               </div>
-              
+
+              {% comment %} <!-- Confirmación de contraseña para el usuario logueado solo si el rol es Admin -->
+              {% if tipo_usuario == 'Admin' %}
+              <div class="mb-3">
+                  <label for="id_confirm_password">Contraseña actual (para confirmar):</label>
+                  <input type="password" name="confirm_password" id="id_confirm_password" class="form-control" required>
+              </div>
+              {% endif %} {% endcomment %}
+
               <!-- Campos para cliente y profesional, ocultos inicialmente -->
               <div id="cliente-field" class="mb-3" style="display: none;">
                   {{ form.cliente.label_tag }} 

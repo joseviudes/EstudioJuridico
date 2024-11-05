@@ -40,7 +40,7 @@ class Expediente(models.Model):
     
     
 def validar_tipo_archivo(archivos):
-    tipos_permitidos = ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt']
+    tipos_permitidos = ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt', 'pptx']
     extension = archivos.name.split('.')[-1].lower()
     if extension not in tipos_permitidos:
         raise ValidationError(f'El archivo debe ser de los siguientes tipos: {", ".join(tipos_permitidos)}')

@@ -3,6 +3,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import Turno
 
+
 class TurnoForm(ModelForm):
     class Meta:
         model = Turno
@@ -18,9 +19,12 @@ class TurnoForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-
-        user = kwargs.pop('user', None)  
+        user = kwargs.pop('user', None)  # Recibe el usuario en la inicialización del form
         super(TurnoForm, self).__init__(*args, **kwargs)
+        
+        # Ocultar el campo "profesional" si el usuario es abogado
+        if user and user.rol == 'Abogado': 
+            self.fields.pop('profesional')
         
         for field in self.fields:
             if self.fields[field].required:
@@ -33,5 +37,14 @@ class TurnoForm(ModelForm):
                     'class': 'form-control'
                 })
 
-
+    def save(self, commit=True):
+        instance = super(TurnoForm, self).save(commit=False)
+        
+        # Si el rol es "Abogado", asigna automáticamente al profesional
+        if hasattr(self, 'user') and self.user.rol == 'Abogado':
+            instance.profesional = self.user.profesional 
+        
+        if commit:
+            instance.save()
+        return instance
 

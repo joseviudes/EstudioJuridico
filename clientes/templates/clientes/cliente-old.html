@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<br>
+<h2 class="text-start"><strong>Gestión de clientes</strong></h2>
+<br>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ cliente.foto.url}}" class="img-fluid rounded-start" alt="Foto de {{ cliente.nombre }}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ cliente.nombre }} {{ cliente.apellido }}</h5>
+                    <p class="card-text"><strong>DNI:</strong> {{ cliente.dni }}</p>
+                    <p class="card-text"><strong>Fecha de nacimiento:</strong> {{ cliente.fecha_nacimiento }}</p>
+                    <p class="card-text"><strong>Nacionalidad:</strong> {{ cliente.nacionalidad }}</p>
+                    <p class="card-text"><strong>Ocupacion:</strong> {{ cliente.ocupacion }}</p>
+                    <p class="card-text"><strong>Lugar laboral:</strong> {{ cliente.lugar_laboral }}</p>
+                    <p class="card-text"><strong>Años de aportes:</strong> {{ cliente.años_aportes }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5><b>Información de contacto</b></h5>
+                    <p class="card-text"><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+                    <p class="card-text"><strong>Direccion:</strong> {{ cliente.direccion }}</p>
+                    <p class="card-text"><strong>Codigo Postal:</strong> {{ cliente.cod_postal }}</p>
+                    <p class="card-text"><strong>Email:</strong> {{ cliente.email }}</p>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

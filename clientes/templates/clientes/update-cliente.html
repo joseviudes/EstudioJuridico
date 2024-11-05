@@ -9,18 +9,79 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <!-- Renderiza el formulario de Django con clases de Bootstrap -->
-                {{ form.as_p }}
+                <!-- Contenedor para Datos Personales e Información Laboral -->
+                <div class="row">
+                    <!-- Sección de Datos Personales -->
+                    <div class="col-md-6">
+                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
+                            <legend class="w-auto px-2">Datos Personales</legend>
+                            <br>
+                            <div class="mb-3">
+                                {{ form.nombre.label_tag }} {{ form.nombre }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.apellido.label_tag }} {{ form.apellido }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.dni.label_tag }} {{ form.dni }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.fecha_ingreso.label_tag }} {{ form.fecha_ingreso }}
+                            </div>
+                            
+                        </fieldset>
+                    </div>
 
-                <!-- Contenedor de los botones -->
-                <div class="d-flex justify-content-start">
-                    <!-- Botón de Crear -->
+                    <!-- Sección de Información Laboral -->
+                    <div class="col-md-6">
+                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
+                            <legend class="w-auto px-2">Información Laboral</legend>
+                            <br>
+                            <div class="mb-3">
+                                {{ form.ocupacion.label_tag }} {{ form.ocupacion }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.lugar_laboral.label_tag }} {{ form.lugar_laboral }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.años_aportes.label_tag }} {{ form.años_aportes }}
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <!-- Sección de Contacto -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
+                            <legend class="w-auto px-2">Contacto</legend>
+                            <br>
+                            <div class="mb-3">
+                                {{ form.domicilio.label_tag }} {{ form.domicilio }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.cod_postal.label_tag }} {{ form.cod_postal }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.telefono.label_tag }} {{ form.telefono }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.email.label_tag }} {{ form.email }}
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-                    <!-- Botón de Cancelar -->
                     <a href="{% url 'clientes' %}" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>

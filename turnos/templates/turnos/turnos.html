@@ -85,7 +85,7 @@
                 {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <td>
                     {% comment %} <a href="{% url 'turno' turno.pk %}" class="btn btn-info btn-sm">Ver</a> {% endcomment %}
-                    {% if user.rol == 'Admin' or user == turno.profesional %}
+                    {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
                     <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>

@@ -1,10 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
-from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
@@ -76,13 +75,18 @@ def singleTurno(request, pk):
     context = {'turno': turno}
     return render(request, 'turnos/turno.html', context)
 
+@login_required
 def createTurno(request):
     if request.method == 'POST':
-        form = TurnoForm(request.POST, user=request.user) 
+        form = TurnoForm(request.POST, user=request.user)
         if form.is_valid():
             turno = form.save(commit=False)
+            
+            # Asignación automática del profesional si es abogado
+            if request.user.rol == 'Abogado':
+                turno.profesional = request.user.profesional
 
-            # Verificar si el turno ya está reservado
+            # Verificación de disponibilidad del turno
             turno_existente = Turno.objects.filter(
                 profesional=turno.profesional,
                 dia=turno.dia,
@@ -91,16 +95,15 @@ def createTurno(request):
             ).exists()
 
             if turno_existente:
-                messages.error(request, "El turno ya está reservado. Por favor, elegí otro horario.")
+                messages.error(request, "El turno ya está reservado. Por favor, elige otro horario.")
                 return render(request, 'turnos/create-turno.html', {'form': form})
 
-            # Si el turno está libre, se guarda con el estado 'Pendiente de aprobación'
             turno.estado = 'Pendiente de aprobación'
             turno.save()
-            return redirect('turnos')  # Si está autenticado, redirige a 'turnos'
+            return redirect('turnos')  
         
     else:
-        form = TurnoForm(user=request.user)  # Pasamos el usuario al formulario
+        form = TurnoForm(user=request.user) 
     
     context = {'form': form}
     return render(request, 'turnos/create-turno.html', context)
@@ -160,41 +163,6 @@ def deleteTurno(request, pk):
 def agendaView(request):
     return render(request, 'turnos/agenda.html')
 
-# @login_required
-# def agendaView(request):
-#     today = timezone.now().date()
-#     turnos_futuros = Turno.objects.filter(dia__gt=today).order_by('dia', 'horario')
-#     turnos_pasados = Turno.objects.filter(dia__lt=today).order_by('-dia', '-horario')
-    
-#     dia_seleccionado = request.GET.get('dia')
-#     turnos_dia = []
-    
-#     if dia_seleccionado:
-#         turnos_dia = Turno.objects.filter(dia=dia_seleccionado).order_by('horario')
-
-#     return render(request, 'turnos/agenda.html', {
-#         'turnos_futuros': turnos_futuros,
-#         'turnos_pasados': turnos_pasados,
-#         'turnos_dia': turnos_dia,
-#     })
-
-
-# def obtenerTurnos(request):
-    
-#     turnos = Turno.objects.all()
-#     eventos = []
-    
-#     for turno in turnos:
-#         eventos.append({
-#             'title': turno.cliente.nombre,
-#             'start': turno.dia.isoformat(),
-#             'end': turno.horario.isoformat(),
-#             # Puedes agregar más campos si es necesario
-#         })
-        
-#     return JsonResponse(eventos, safe=False)
-
-
 def turnos_json(request):
     turnos = Turno.objects.all()
     turnos_list = []
@@ -204,11 +172,11 @@ def turnos_json(request):
         end_time = turno.horario.split(' a ')[1]
         turnos_list.append({
             'id': turno.id_turno,
-            'title': "Turno para: ",  # Añadido título
+            'title': "Turno para: ", 
             'cliente': str(turno.cliente),
             'solicitante': str(turno.solicitante),
             'motivo': str(turno.motivo),
-            'start': f"{turno.dia}T{start_time}",  # Asegúrate de que `turno.dia` esté en el formato correcto
+            'start': f"{turno.dia}T{start_time}", 
             'end': f"{turno.dia}T{end_time}",
             'estado': turno.estado,
             'professional': str(turno.profesional),
@@ -228,8 +196,7 @@ def horariosOcupados(request):
             dia = datetime.strptime(dia, '%Y-%m-%d').date()
         except ValueError:
             return JsonResponse({'error': 'Formato de fecha incorrecto'}, status=400)
-        
-        # Filtrar los turnos para el día y profesional seleccionado
+
         turnos = Turno.objects.filter(dia=dia, profesional_dni=profesional_dni)
         horarios_ocupados = list(turnos.values_list('horario', flat=True))  
         

@@ -135,6 +135,7 @@ def updateProfesional(request, pk):
             messages.success(request, "Los datos del profesional se han actualizado correctamente.")
             return redirect('profesionales')  # Redirige a la lista de profesionales
         else:
+            print(form.errors)
             messages.error(request, "Hubo un error al actualizar el profesional. Por favor verifique los datos.")
     else:
         # Si es una solicitud GET crea un formulario con los datos actuales del profesional
@@ -188,4 +189,4 @@ def darDeAltaProfesional(request, dni):
     else:
         messages.info(request, f"Profesional {profesional.full_name} ya está activo.")
         
-    return redirect('profesionales')  
+    return redirect('profesionales-inactivos')  

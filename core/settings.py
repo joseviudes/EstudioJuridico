@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'expedientes.apps.ExpedientesConfig',
     'turnos.apps.TurnosConfig',
     'usuarios.apps.UsuariosConfig',
+    'contacto.apps.ContactoConfig',
 ]
 
 

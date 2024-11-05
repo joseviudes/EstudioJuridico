@@ -19,17 +19,26 @@ class SoloAdminYAbogadoMixin(UserPassesTestMixin):
         return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
 
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Expediente
+
 class ListExpediente(LoginRequiredMixin, ListView):
     model = Expediente
     template_name = 'expedientes/expedientes.html'
-    context_object_name = 'expedientes'  # nombre del objeto en el contexto 
-    paginate_by = 10  #paginación
-    
-    def get_queryset(self):
-        queryset = super().get_queryset().filter(estado=True) 
-        query = self.request.GET.get('q')
-        order = self.request.GET.get('order')
+    context_object_name = 'expedientes'
+    paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(estado=True)
+        
+        # Filtrar por el profesional si el usuario tiene el rol de 'Abogado'
+        if self.request.user.rol == 'Abogado':
+            queryset = queryset.filter(profesional=self.request.user.profesional)
+        
+        # Filtro de búsqueda
+        query = self.request.GET.get('q')
         if query:
             queryset = queryset.filter(
                 Q(cliente__nombre__icontains=query) |
@@ -38,8 +47,9 @@ class ListExpediente(LoginRequiredMixin, ListView):
                 Q(profesional__apellido__icontains=query) |
                 Q(numero_expediente__icontains=query)
             )
-            
-        # filtros
+        
+        # Ordenamiento
+        order = self.request.GET.get('order')
         if order == 'apellido_asc':
             queryset = queryset.order_by('cliente__apellido')
         elif order == 'apellido_desc':
@@ -55,12 +65,12 @@ class ListExpediente(LoginRequiredMixin, ListView):
 
         return queryset
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['q'] = self.request.GET.get('q', '')  
         context['order'] = self.request.GET.get('order', '')
         return context
+
 
 
 class ListExpedienteInactivo(LoginRequiredMixin, ListView):
@@ -71,9 +81,12 @@ class ListExpedienteInactivo(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset().filter(estado=False) 
+        
+        # Filtrar por el profesional si el usuario tiene el rol de 'Abogado'
+        if self.request.user.rol == 'Abogado':
+            queryset = queryset.filter(profesional=self.request.user.profesional)
+        
         query = self.request.GET.get('q')
-        order = self.request.GET.get('order')
-
         if query:
             queryset = queryset.filter(
                 Q(cliente__nombre__icontains=query) |
@@ -83,7 +96,8 @@ class ListExpedienteInactivo(LoginRequiredMixin, ListView):
                 Q(numero_expediente__icontains=query)
             )
             
-        # filtros
+            
+        order = self.request.GET.get('order')
         if order == 'apellido_asc':
             queryset = queryset.order_by('cliente__apellido')
         elif order == 'apellido_desc':
@@ -117,17 +131,24 @@ def singleExpediente(request, numero_expediente):
 @login_required
 @user_passes_test(is_admin_or_abogado)
 def createExpediente(request):
+    
     if request.method == 'POST':
-        form = ExpedienteForm(request.POST)
+        form = ExpedienteForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            expediente = form.save(commit=False)
+            
+            # Asigna automáticamente el profesional si el usuario es abogado
+            if request.user.rol == 'Abogado':
+                expediente.profesional = request.user.profesional
+            
+            expediente.save()
             messages.success(request, "Se ha creado un expediente.")
             return redirect('expedientes')
         else:
-            messages.error(request, "Hubo un error al crear el expediente. Por favor verifique los datos")
+            messages.error(request, "Hubo un error al crear el expediente. Por favor verifique los datos.")
     else:
-        form = ExpedienteForm()
-        
+        form = ExpedienteForm(user=request.user)
+    
     context = {'form': form}
     return render(request, 'expedientes/create-expediente.html', context)
 
@@ -168,23 +189,20 @@ def deleteExpediente(request, numero_expediente):
 
 
 @login_required
-@permission_required('expedientes.change_expediente', raise_exception=True)
 @user_passes_test(is_admin_or_abogado)
 def darDeBajaExpediente(request, numero_expediente):
-    
     expediente = get_object_or_404(Expediente, pk=numero_expediente)
     
     if expediente.estado:
         expediente.estado = False
         expediente.save()
-        messages.success(request, f"Expediente Nº{expediente.numero_expediente} fué dado de baja correctamente.")
+        messages.success(request, f"Expediente Nº{expediente.numero_expediente} fue dado de baja correctamente.")
     else:
-        messages.info(request, f"Expediente Nº{expediente.numero_expediente} ya se encuentra dado baja.")
+        messages.info(request, f"Expediente Nº{expediente.numero_expediente} ya se encuentra dado de baja.")
         
     return redirect('expedientes')
 
 @login_required
-@permission_required('expedientes.change_expediente', raise_exception=True)
 @user_passes_test(is_admin_or_abogado)
 def darDeAltaExpediente(request, numero_expediente):
     

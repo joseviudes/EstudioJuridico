@@ -2,24 +2,6 @@
 
 {% block content %}
 <header class="header">
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-dark bg-dark py-2">
-        <div class="container d-flex justify-content-between text-white">
-            <div>
-                <i class="fa fa-home"></i>    Av. Juan Bautista Alberdi 1988 - Corrientes Capital
-            </div>
-            <div>
-                <i class="fa fa-envelope"></i> 
-                <a href="#" class="text-white">estudiojuridicoDraAquino@hotmail.com</a>
-            </div>
-            <div>
-                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <!-- Logo -->
@@ -34,82 +16,97 @@
             
             <!-- Menú de navegación -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Grupo de navegación izquierdo, cerca del logo -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    
+                    {% if not user.is_authenticated %}
+                        <!-- Opciones visibles solo para usuarios no autenticados -->
+                        <li class="nav-item">
+                            <a class="nav-link scroll-link" href="#quienes-somos">¿Quiénes Somos?</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link scroll-link" href="#ubicacion">¿Dónde Estamos?</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link scroll-link" href="#contacto">Contacto</a>
+                        </li>
+                    {% endif %}
                     
                     {% if user.is_authenticated %}
+                        <!-- Opciones visibles solo para usuarios autenticados según su rol -->
                         {% if request.user.rol == "Admin" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profesionales' %}">Profesionales</a>
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'profesionales' %}">Profesionales</a>
+                            </li>
                         {% endif %}
                         {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
+                            </li>
                         {% endif %}
                         {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'expedientes' %}">Expedientes</a>
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'expedientes' %}">Expedientes</a>
+                            </li>
                         {% endif %}
                         {% if request.user.rol == "Cliente" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'expedientes' %}">Mis expedientes</a>
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'expedientes' %}">Mis expedientes</a>
+                            </li>
                         {% endif %}
                         
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'turnos' %}">Turnos</a>
                         </li>
-                        <li class="nav-item divider"></li>
             
                         {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'agenda' %}">Agenda</a>
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'agenda' %}">Agenda</a>
+                            </li>
                         {% endif %}
                         {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Informes</a>
-                        </li>
-            
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Informes</a>
+                            </li>
                         {% endif %}
                         {% if request.user.rol == 'Admin' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url "usuarios" %}">Usuarios</a>
-                        </li>
-                        <li class="nav-item divider"></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'usuarios' %}">Usuarios</a>
+                            </li>
                         {% endif %}
-                    {% comment %} {% else %}
-                        <!-- Opción 'Solicitar turno' para usuarios no autenticados -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'crear-turno' %}">Solicitar turno</a>
-                        </li>
-                        <li class="nav-item divider"></li>
-                    {% endif %} {% endcomment %}
-                {% endif %}
+                    {% endif %}
+                </ul>
+
+                <!-- Link de login o logout en el extremo derecho -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="{% url 'logout' %}">Cerrar sesión</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="{% url 'login' %}">Inicio de sesión</a>
+                            <a class="nav-link text-dark" href="{% url 'login' %}">Ingresar</a>
                         </li>
                     {% endif %}
-                
                 </ul>
             </div>
-            
         </div>
     </nav>
 </header>
-<hr>
+
+<script>
+    // Desplazamiento suave para los links con la clase 'scroll-link'
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".scroll-link").forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault();
+                const targetId = this.getAttribute("href").substring(1);
+                document.getElementById(targetId).scrollIntoView({
+                    behavior: "smooth"
+                });
+            });
+        });
+    });
+</script>
+
 {% endblock content %}

@@ -11,12 +11,15 @@
 
     <div class="d-flex">
         
-        <a href="{% url 'profesionales' %}" class="btn btn-danger me-2">Volver</a>
+        <a href="{% url 'profesionales' %}" class="btn btn-dark me-3">
+            <i class="bi bi-box-arrow-left"></i> Volver
+        </a>
     
         <!-- Botón desplegable de filtrado -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                Filtrar por
+            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
+                Filtrar
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de ingreso (Ascendiente)</a></li>
@@ -79,10 +82,10 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'profesional' profesional.pk %}" class="btn btn-info btn-sm" title="Ver">
+                    <a href="{% url 'profesional' profesional.pk %}"  class="btn btn-info btn-sm" title="Ver">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="{% url 'actualizar-profesional' profesional.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                    <a href="{% url 'actualizar-profesional' profesional.pk %}" title="Editar" class="btn btn-warning btn-sm" title="Editar">
                         <i class="bi bi-pen"></i>
                     </a>
                     <!-- Formulario para dar de alta -->
