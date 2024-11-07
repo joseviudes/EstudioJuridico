@@ -5,8 +5,7 @@ from .models import Usuario, Cliente, Profesional
 
 class UsuarioForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False, label="Contraseña")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, required=False, label="Confirmar Contraseña")
-    
+
     cliente = forms.ModelChoiceField(
         queryset=Cliente.objects.filter(usuario__isnull=True),
         required=False,
@@ -21,6 +20,13 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['username', 'email', 'password', 'cliente', 'profesional']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'cliente': forms.Select(attrs={'class': 'form-control'}),
+            'profesional': forms.Select(attrs={'class': 'form-control'}),
+        }
 
     def __init__(self, *args, **kwargs):
         # Extraemos el rol del usuario si está presente
@@ -29,29 +35,25 @@ class UsuarioForm(forms.ModelForm):
 
         # Configuramos los campos según el rol
         if self.rol == 'Admin':
+            # Oculta los campos de cliente y profesional si el rol es Admin
             self.fields.pop('cliente')
             self.fields.pop('profesional')
             self.fields['password'].label = "Contraseña"
             
         elif self.rol == 'Abogado':
-            self.fields.pop('cliente')  # Oculta campo cliente si el rol es Abogado
+            # Oculta el campo cliente si el rol es Abogado
+            self.fields.pop('cliente')
+            # Filtra los profesionales para mostrar solo aquellos sin usuario asignado o el actual
             self.fields['profesional'].queryset = Profesional.objects.filter(
-                models.Q(usuario__isnull=True) | models.Q(dni=self.instance.profesional.dni) if self.instance.profesional else models.Q()
+                models.Q(usuario__isnull=True) | 
+                models.Q(dni=self.instance.profesional.dni) if self.instance.profesional else models.Q()
             )
 
         elif self.rol == 'Cliente':
-            self.fields.pop('profesional')  # Oculta campo profesional si el rol es Cliente
+            # Oculta el campo profesional si el rol es Cliente
+            self.fields.pop('profesional')
+            # Filtra los clientes para mostrar solo aquellos sin usuario asignado o el actual
             self.fields['cliente'].queryset = Cliente.objects.filter(
-                models.Q(usuario__isnull=True) | models.Q(dni=self.instance.cliente.dni) if self.instance.cliente else models.Q()
+                models.Q(usuario__isnull=True) | 
+                models.Q(dni=self.instance.cliente.dni) if self.instance.cliente else models.Q()
             )
-        
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
-        
-        # Solo valida la confirmación de contraseña si el rol es Admin
-        if self.rol == 'Admin' and password != confirm_password:
-            raise forms.ValidationError("Las contraseñas no coinciden.")
-        
-        return cleaned_data

@@ -38,17 +38,17 @@
         <thead class="table-dark">
             <tr>
                 <th class="col-id_turno">ID</th>
-                {% if  user.rol == 'Admin' %}
+                {% if user.rol == 'Admin' %}
                 <th>Fecha de creación</th>
                 {% endif %}
                 <th>Cliente</th>
-                <td>Solicitante</td>
+                <th>Solicitante</th>
                 <th>Profesional</th>
                 <th>Dia</th>
                 <th>Horario</th>
                 <th>Motivo</th>
                 <th>Estado</th>
-                {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
+                {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <th>Opciones</th>
                 {% endif %}
             </tr>
@@ -56,16 +56,16 @@
         <tbody>
             {% for turno in turnos %}
             <tr>
-                <td class="col-id_turno">{{turno.id_turno}}</td>
-                {% if  user.rol == 'Admin' %}
-                <td>{{turno.fecha_creacion}}</td>
+                <td class="col-id_turno">{{ turno.id_turno }}</td>
+                {% if user.rol == 'Admin' %}
+                <td>{{ turno.fecha_creacion }}</td>
                 {% endif %}
-                <td>{{turno.cliente.full_name}}</td>
-                <td>{{turno.solicitante}} </td>
-                <td>{{turno.profesional.full_name}} </td>
-                <td>{{turno.dia}}</td>
-                <td>{{turno.horario}}</td>
-                <td>{{turno.motivo}}</td>
+                <td>{{ turno.cliente.full_name }}</td>
+                <td>{{ turno.solicitante }}</td>
+                <td>{{ turno.profesional.full_name }}</td>
+                <td>{{ turno.dia }}</td>
+                <td>{{ turno.horario }}</td>
+                <td>{{ turno.motivo }}</td>
                 {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <td>
                     <form method="POST" action="{% url 'actualizar-estado' turno.pk %}">
@@ -79,28 +79,72 @@
                     </form>
                 </td>
                 {% else %}
-                <td>{{turno.estado}}</td>
+                <td>{{ turno.estado }}</td>
                 {% endif %}
 
-                {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
+                {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
                 <td>
-                    {% comment %} <a href="{% url 'turno' turno.pk %}" class="btn btn-info btn-sm">Ver</a> {% endcomment %}
-                    {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
                     <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
                     <a href="{% url 'eliminar-turno' turno.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
                     </a>
-                    {% endif %}
                 </td>
                 {% endif %}
-
             </tr>
             {% endfor %}
-
         </tbody>
     </table>
 </div>
+
+<div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <!-- Mostrar la primera página si hay una página anterior -->
+            {% if turnos.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if q %}&q={{ q }}{% endif %}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ turnos.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Mostrar los números de página -->
+            {% for num in turnos.paginator.page_range %}
+                {% if num == turnos.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > turnos.number|add:'-3' and num < turnos.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Mostrar la siguiente página si hay una página siguiente -->
+            {% if turnos.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ turnos.next_page_number }}{% if q %}&q={{ q }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ turnos.paginator.num_pages }}{% if q %}&q={{ q }}{% endif %}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+
 
 {% endblock content %}

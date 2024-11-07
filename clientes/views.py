@@ -7,8 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .forms import ClienteForm
 from .models import Cliente
-from .filters import ClienteFilter
-
 
 
 def is_admin_or_abogado(user):
@@ -156,10 +154,8 @@ def deleteCliente(request, pk):
     context = {'cliente': cliente}
     return render(request, 'clientes/delete-cliente.html', context)
 
-
-@login_required
-@permission_required('clientes.change_cliente', raise_exception=True)
 @user_passes_test(is_admin_or_abogado)
+@login_required
 def darDeBajaCliente(request, dni):
     
     cliente = get_object_or_404(Cliente, pk=dni)
@@ -173,9 +169,8 @@ def darDeBajaCliente(request, dni):
         
     return redirect('clientes')
 
-@login_required
-@permission_required('clientes.change_cliente', raise_exception=True)
 @user_passes_test(is_admin_or_abogado)
+@login_required
 def darDeAltaCliente(request, dni):
     
     cliente = get_object_or_404(Cliente, pk=dni)

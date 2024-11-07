@@ -18,17 +18,20 @@
             <form method="POST" action="{% url 'login' %}" id="loginForm" class="p-4 shadow rounded" style="background-color: #f8f9fa;">
                 {% csrf_token %}
 
+                <!-- Usuario --> 
                 <div class="form-group mb-3">
-                    <input type="text" class="form-control" name="username" placeholder="Ingrese su usuario" required style="background-color: #f1f7ff; border-radius: 8px; border: 1px solid #ccc;">
+                    <input type="text" class="form-control" name="username" placeholder="Ingrese su email o usuario" required style="background-color: #f1f7ff; border-radius: 8px; border: 1px solid #ccc;">
                 </div>
 
+                <!-- Contraseña -->
                 <div class="form-group mb-3 position-relative">
-                    <input type="password" class="form-control" name="password" id="passwordInput" placeholder="Ingrese su contraseña" required style="background-color: #f1f7ff; border-radius: 8px; border: 1px solid #ccc;">
+                    <input type="password" class="form-control" name="password" id="passwordInput" autocomplete="new-password" placeholder="Ingrese su contraseña" required style="background-color: #f1f7ff; border-radius: 8px; border: 1px solid #ccc;">
                     <span class="position-absolute end-0 top-50 translate-middle-y pe-3" onclick="togglePasswordVisibility()" style="cursor: pointer;">
                         <i id="toggleIcon" class="bi bi-eye"></i>
                     </span>
                 </div>
 
+                <!-- Boton de login -->
                 <button type="submit" class="btn w-100" id="loginButton" style="background-color: #5bc0de; color: white; border: none; border-radius: 8px; font-weight: 600;">
                     <span id="buttonText">Login</span>
                     <div id="progressBar" style="height: 3px; background-color: #28a745; width: 0%;"></div>

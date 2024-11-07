@@ -2,8 +2,27 @@
 
 {% block content %}
 
+<br>
+<button onclick="openModal()">Nueva Tarea</button>
+
+
+<!-- Contenedor del calendario -->
 <div id='calendar'></div>
 
+<!-- Modal para el formulario de crear tarea -->
+<div id="crearTareaModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Nueva Tarea</h2>
+        <form action="{% url 'crear-tarea' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<!-- FullCalendar JavaScript -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -28,11 +47,15 @@
   });
 </script>
 
-<style>
-  #calendar {
-    max-width: 900px;
-    margin: 40px auto;
+<!-- JavaScript para controlar la apertura y cierre del modal -->
+<script>
+  function openModal() {
+    document.getElementById("crearTareaModal").style.display = "block";
   }
-</style>
+
+  function closeModal() {
+    document.getElementById("crearTareaModal").style.display = "none";
+  }
+</script>
 
 {% endblock content %}

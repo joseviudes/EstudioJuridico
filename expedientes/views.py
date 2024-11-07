@@ -18,12 +18,6 @@ class SoloAdminYAbogadoMixin(UserPassesTestMixin):
 
         return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
-from django.shortcuts import render
-from .models import Expediente
-
 class ListExpediente(LoginRequiredMixin, ListView):
     model = Expediente
     template_name = 'expedientes/expedientes.html'
@@ -36,6 +30,10 @@ class ListExpediente(LoginRequiredMixin, ListView):
         # Filtrar por el profesional si el usuario tiene el rol de 'Abogado'
         if self.request.user.rol == 'Abogado':
             queryset = queryset.filter(profesional=self.request.user.profesional)
+            
+        # Filtrar por el profesional si el usuario tiene el rol de 'Abogado'
+        if self.request.user.rol == 'Cliente':
+            queryset = queryset.filter(cliente=self.request.user.cliente)
         
         # Filtro de búsqueda
         query = self.request.GET.get('q')

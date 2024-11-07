@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ListCliente, ListClienteInactivo, singleCliente, createCliente, updateCliente, deleteCliente, darDeAltaCliente, darDeBajaCliente
+from .views import *
 
 urlpatterns = [
     path("", ListCliente.as_view(), name="clientes"),

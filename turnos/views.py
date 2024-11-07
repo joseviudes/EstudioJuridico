@@ -1,19 +1,27 @@
 from django.http import HttpResponse, JsonResponse
-from datetime import datetime
+from datetime import date, datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views.generic import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 
-from .forms import TurnoForm
-from .models import Turno
+from .forms import TurnoForm, TareaForm
+from .models import Turno, Tarea
 from clientes.models import Cliente
 from profesionales.models import Profesional
  
 
+
+def is_admin_or_abogado(user):
+    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado')
+
+class SoloAdminYAbogadoMixin(UserPassesTestMixin):
+    def test_func(self):
+        # Comprobamos si el usuario es admin o abogado
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
 
 class ListTurno(LoginRequiredMixin, ListView):
     model = Turno
@@ -64,10 +72,6 @@ class ListTurno(LoginRequiredMixin, ListView):
         context['q'] = self.request.GET.get('q', '')
         return context
 
-
-
-    
-
 @login_required  
 def singleTurno(request, pk):
     turno = get_object_or_404(Turno, pk=pk)
@@ -85,8 +89,11 @@ def createTurno(request):
             # Asignación automática del profesional si es abogado
             if request.user.rol == 'Abogado':
                 turno.profesional = request.user.profesional
+                
+            if request.user.rol == 'Cliente':
+                turno.cliente = request.user.cliente
 
-            # Verificación de disponibilidad del turno
+            # Verificar la disponibilidad del turno
             turno_existente = Turno.objects.filter(
                 profesional=turno.profesional,
                 dia=turno.dia,
@@ -100,6 +107,8 @@ def createTurno(request):
 
             turno.estado = 'Pendiente de aprobación'
             turno.save()
+            messages.success(request, "Se agendó un nuevo turno.")
+            
             return redirect('turnos')  
         
     else:
@@ -110,6 +119,7 @@ def createTurno(request):
 
 
 @login_required
+@user_passes_test(is_admin_or_abogado)
 def updateTurno(request, pk):
     
     turno = get_object_or_404(Turno, pk=pk)
@@ -130,6 +140,7 @@ def updateTurno(request, pk):
     return render(request, 'turnos/update-turno.html', context)
 
 
+
 def updateEstado(request, pk):
     
     if request.method == 'POST':
@@ -145,12 +156,14 @@ def updateEstado(request, pk):
 
 
 @login_required
+@user_passes_test(is_admin_or_abogado)
 def deleteTurno(request, pk):
     
     turno = Turno.objects.get(pk=pk)
     
     if request.method == 'POST':
         turno.delete()
+        messages.success(request, "El turno se ha eliminado correctamente.")
         return redirect('turnos')
     
     context = {'turno': turno}
@@ -160,9 +173,13 @@ def deleteTurno(request, pk):
 
 # ----------------------- agenda ------------------------
 
+@login_required
+@user_passes_test(is_admin_or_abogado)
 def agendaView(request):
     return render(request, 'turnos/agenda.html')
 
+@login_required
+@user_passes_test(is_admin_or_abogado)
 def turnos_json(request):
     turnos = Turno.objects.all()
     turnos_list = []
@@ -203,5 +220,33 @@ def horariosOcupados(request):
         return JsonResponse({'horarios_ocupados': horarios_ocupados})
     
     return JsonResponse({'error': 'Fecha o profesional no válido'}, status=400)
+
+
+# ------------------ Tareas ---------------------
+
+def createTarea(request):
+    if request.method == 'POST':
+        form = TareaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('agenda')  
+    else:
+        form = TareaForm()
+    return render(request, 'turnos/create-tarea.html', {'form': form})
+
+
+def tareas_json(request):
+    # Filtrar las tareas que están en el futuro o hoy
+    tareas = Tarea.objects.filter(fecha__gte=date.today())
+    
+    eventos = [{
+        'title': tarea.titulo,
+        'start': tarea.fecha.isoformat(),
+        'description': tarea.descripcion,
+        'completed': tarea.completado
+    } for tarea in tareas]
+    return JsonResponse(eventos, safe=False)
+
+
         
     

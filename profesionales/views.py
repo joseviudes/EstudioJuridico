@@ -144,6 +144,7 @@ def updateProfesional(request, pk):
     context = {'form': form, 'profesional': profesional}
     return render(request, 'profesionales/update-profesional.html', context)
 
+
 @login_required
 @user_passes_test(is_admin_or_abogado)
 def deleteProfesional(request, pk):

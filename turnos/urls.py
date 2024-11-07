@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListTurno, singleTurno, createTurno, updateTurno, updateEstado, deleteTurno, agendaView, horariosOcupados, turnos_json
+from .views import * 
 
 urlpatterns = [
     path("", ListTurno.as_view(), name="turnos"),
@@ -8,11 +8,12 @@ urlpatterns = [
     path("actualizar-turno/<int:pk>/", updateTurno, name="actualizar-turno"),
     path("actualizar-estado/<int:pk>/", updateEstado, name="actualizar-estado"),
     path("eliminar-turno/<int:pk>/", deleteTurno, name="eliminar-turno"),
+    path("horarios-ocupados/", horariosOcupados, name='horarios-ocupados'),
     
     path("agenda/", agendaView, name="agenda"),
-    # path("api/turno/", obtenerTurnos, name="obtener-turnos"),
-    path('turnos-json/', turnos_json, name='turnos-json'),
+    path("turnos-json/", turnos_json, name='turnos-json'),
     
-    path('horarios_ocupados/', horariosOcupados, name='horarios-ocupados'),
+    path("crear-tarea/", createTarea, name="crear-tarea"),
+    path("tareas-json/", tareas_json, name="tareas-json"),
     
 ]

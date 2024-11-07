@@ -34,11 +34,6 @@ class Turno(models.Model):
     
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos', default='-')
     
-    # Información adicional para los no autenticados
-    # nombre_completo = models.CharField(max_length=100, null=True, blank=True)  
-    # dni = models.CharField(max_length=20, null=True, blank=True, validators=[validar_dni])
-    # telefono = models.CharField(max_length=10, null=True, validators=[validar_telefono])
-    
     id_turno = models.AutoField(primary_key=True)
     dia = models.DateField(null=True, validators=[validar_dia])
     horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
@@ -60,3 +55,13 @@ class Turno(models.Model):
 
     def __str__(self):
             return f"Turno {self.id_turno} - {self.cliente.full_name} con {self.profesional.full_name} de {self.horario}"
+        
+        
+class Tarea(models.Model):
+    titulo = models.CharField(max_length=200)
+    descripcion = models.TextField(blank=True, null=True)
+    fecha = models.DateField()
+    completado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.titulo} - {self.fecha}"

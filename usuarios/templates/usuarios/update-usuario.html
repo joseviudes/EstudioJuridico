@@ -26,7 +26,7 @@
                   </span>
               </div>
 
-              <!-- Campo de confirmación de contraseña si existe -->
+              {% comment %} <!-- Campo de confirmación de contraseña si existe -->
               {% if form.confirm_password %}
               <div class="mb-3 position-relative">
                   {{ form.confirm_password.label_tag }}
@@ -35,7 +35,7 @@
                       <i id="toggleConfirmIcon" class="bi bi-eye"></i>
                   </span>
               </div>
-              {% endif %}
+              {% endif %} {% endcomment %}
 
               <div class="d-flex justify-content-start">
                   <button type="submit" class="btn btn-success me-2">Guardar cambios</button>

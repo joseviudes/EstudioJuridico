@@ -1,7 +1,9 @@
 from django.forms import ModelForm
 from django import forms
 from django.forms import ModelForm
-from .models import Turno
+
+from .models import Turno, Tarea
+from profesionales.models import Profesional
 
 
 class TurnoForm(ModelForm):
@@ -22,9 +24,17 @@ class TurnoForm(ModelForm):
         user = kwargs.pop('user', None)  # Recibe el usuario en la inicialización del form
         super(TurnoForm, self).__init__(*args, **kwargs)
         
+        
+        # Filtrar profesionales activos
+        self.fields['profesional'].queryset = Profesional.objects.filter(estado=True)
+        
         # Ocultar el campo "profesional" si el usuario es abogado
         if user and user.rol == 'Abogado': 
             self.fields.pop('profesional')
+            
+        if user and user.rol == 'Cliente': 
+            self.fields.pop('cliente'),
+            self.fields.pop('solicitante')
         
         for field in self.fields:
             if self.fields[field].required:
@@ -43,8 +53,23 @@ class TurnoForm(ModelForm):
         # Si el rol es "Abogado", asigna automáticamente al profesional
         if hasattr(self, 'user') and self.user.rol == 'Abogado':
             instance.profesional = self.user.profesional 
+            
+        # Si el rol es "Cliente", asigna automáticamente al profesional
+        if hasattr(self, 'user') and self.user.rol == 'Cliente':
+            instance.cliente = self.user.cliente 
         
         if commit:
             instance.save()
         return instance
 
+
+class TareaForm(ModelForm):
+    class Meta:
+        model = Tarea
+        fields = ['titulo', 'descripcion', 'fecha', 'completado']
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            
+        }

@@ -1,10 +1,13 @@
 {% extends "main.html" %}
 
 {% block content %}
-
+<br>
 <h2 class="text-start"><strong>Movimientos del expediente:</strong> {{expediente.numero_expediente}}</h2>
 <br>
+{% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
 <a href="{% url 'crear-movimiento' expediente.numero_expediente %}" class="btn btn-success">Añadir movimiento</a>
+{% endif %}
+
 <hr>
 
 
@@ -43,16 +46,17 @@
                         No hay documentos
                     {% endif %}
                 </td>
+                {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
                 <td class="col-opciones-mov">
-                    {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                    
                         <a href="{% url 'actualizar-movimiento' movimiento.id_mov %}" class="btn btn-warning btn-sm">
                             <i class="bi bi-pen"></i>
                         </a>
                         <a href="{% url 'eliminar-movimiento' movimiento.id_mov %}" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash-fill"></i>
                         </a> 
-                    {% endif %}
-                </td> 
+                </td>
+                {% endif %} 
             </tr>
             {% endfor %}
         </tbody>

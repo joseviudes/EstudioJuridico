@@ -19,13 +19,20 @@ def loginUser(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
+
         # Log para verificar los valores de entrada
         print(f"Intento de login con: username={username}, password={'*' * len(password)}")
-        
-        # Autenticación de usuario
-        user = authenticate(request, username=username, password=password)
 
+        # Comprobación de existencia del usuario
+        try:
+            user = Usuario.objects.get(username=username)
+        except Usuario.DoesNotExist:
+            print("Error: El usuario no existe.")
+            messages.error(request, "No existe un usuario con este email. Por favor intenta de nuevo.")
+            return redirect("login")
+
+        # Si el usuario existe, intenta autenticar con la contraseña proporcionada
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             print(f"Usuario autenticado: {user.username}")
 
@@ -65,9 +72,9 @@ def loginUser(request):
                 return redirect("expedientes")  # Redirigir a 'expedientes' para Cliente
 
         else:
-            # Autenticación fallida
-            print("Error de autenticación: Usuario o contraseña incorrectos.")
-            messages.error(request, "Hubo un error al iniciar sesión, por favor verifica tus datos.")
+            # Si el usuario existe pero la contraseña es incorrecta
+            print("Error: Contraseña incorrecta.")
+            messages.error(request, "La contraseña es incorrecta. Por favor, intenta nuevamente.")
             return redirect("login")
 
     # Si el método no es POST, renderizar el formulario de login
@@ -135,21 +142,16 @@ def updateUsuario(request, pk):
             # Verifica si la contraseña ha sido cambiada y encripta si es necesario
             password = form.cleaned_data.get('password')
             if password:
-                print("Actualizando contraseña...")
                 user.password = make_password(password)
-
-            # Guarda el formulario
             form.save()
             messages.success(request, f'Usuario {user.email} actualizado exitosamente.')
-            return redirect('usuarios')  # Cambia por la URL de éxito
+            return redirect('usuarios')
         else:
             print("Formulario inválido:", form.errors)
     else:
-        form = UsuarioForm(instance=user, rol=user.rol)  # Pasamos el rol del usuario
+        form = UsuarioForm(instance=user, rol=user.rol)
 
     return render(request, 'usuarios/update-usuario.html', {'form': form, 'usuario': user})
-
-
 
 
 @login_required

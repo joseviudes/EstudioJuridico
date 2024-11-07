@@ -368,3 +368,64 @@ table th, table td {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+
+/* Estilos básicos para el modal */
+.modal {
+  display: none; /* Oculto por defecto */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro semi-transparente */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Evitar que el texto se trunque y ajuste el tamaño de la celda automáticamente */
+table.table td {
+  white-space: normal; /* Permitir que el texto se envuelva */
+  word-wrap: break-word; /* Ajustar el contenido de texto dentro de los límites */
+  max-width: 200px; /* Limitar el ancho máximo de las celdas */
+  vertical-align: top; /* Alinear el contenido en la parte superior */
+}
+
+/* Ajustes específicos para texto largo en columnas como nombre y fecha */
+.col-id_turno {
+  width: 50px;
+  text-align: center;
+}
+
+
+/* Modal */
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+.modal {
+  z-index: 1050 !important;
+}

@@ -1,14 +1,7 @@
 from django.db import models
-from django.forms import ValidationError
 from PIL import Image
 
-
-# Create your models here.
-
-# TIPO_DE_MATRICULA = (
-#     ("DNI", "DNI"),
-#     ("CUIL", "CUIL")
-# )
+from .validators import *
 
 ESPECIALIDADES = (
      ("Derecho de familia", "Derecho de familia"),
@@ -26,17 +19,6 @@ ESTADOS = (
     ('Inactivo', 'Inactivo')
 )
 
-def validar_telefono(value):
-    if len(value) != 10:
-        raise ValidationError('El telefono debe tener 10 numeros.')
-    if not value.isdigit():
-        raise ValidationError('El telefono debe contener solo números.')
-    
-def validar_dni(value):
-    if len(value) < 7 and len(value) > 8:
-        raise ValidationError('El DNI debe tener como minimo 7 numeros y como maximo 8.')
-    if not value.isdigit():
-        raise ValidationError('El DNI debe contener solo números.')
 
 class Profesional(models.Model):
     nombre = models.CharField(max_length=60)
