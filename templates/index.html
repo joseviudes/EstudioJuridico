@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="header-bg text-center">
+    <div class="header-bg text-center section">
         <img src="{% static 'images/logo_abogado.png' %}" alt="Logo del Estudio Jurídico" class="img-fluid mb-4" style="height: 150px;">
         
         <h1 class="display-5 fw-bold text-primary section-title">Estudio Jurídico</h1>
@@ -13,7 +13,7 @@
     <hr class="hr-separador">
     
     <!-- Sección ¿Quiénes Somos? -->
-    <div id="quienes-somos" class="about-section mt-5">
+    <div id="quienes-somos" class="about-section mt-5 section">
         <h3 class="fw-semibold text-center">¿Quiénes Somos?</h3>
         <br>
         <p class="text-muted fs-5 text-center">En el Estudio Jurídico de la Dra. Ramona Aquino, nos dedicamos a brindar asesoramiento legal confiable y profesional. Con una trayectoria comprobada, nuestro equipo se especializa en diversas áreas del derecho, garantizando un servicio integral y personalizado a nuestros clientes.</p>
@@ -22,7 +22,7 @@
     <hr class="hr-separador">
     
     <!-- Sección Ubicación del Estudio -->
-    <div id="ubicacion" class="mt-5">
+    <div id="ubicacion" class="mt-5 section">
         <h3 class="fw-semibold text-center">Ubicación del Estudio</h3>
         <br>
         <p class="text-muted fs-5 text-center">Estamos en Avenida Juan Bautista Alberdi 1988, Corrientes Capital..</p>
@@ -40,7 +40,7 @@
     </div>
 
     <!-- Sección Contacto -->
-    <div id="contacto" class="contacto mt-5">
+    <div id="contacto" class="contacto mt-5 section">
         <h3 class="fw-semibold text-center">Contacto</h3>
         <p class="text-muted text-center">¿Tenes alguna pregunta o deseas realizar una consulta? Escríbinos y te responderemos lo antes posible.</p>
         
@@ -68,7 +68,6 @@
     <!-- JavaScript para el desplazamiento suave -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Selecciona todos los links que tienen la clase 'scroll-link'
             document.querySelectorAll(".scroll-link").forEach(link => {
                 link.addEventListener("click", function(event) {
                     event.preventDefault();
@@ -80,6 +79,36 @@
             });
         });
     </script>
-
 </div>
+
+<style>
+    /* Fondo degradado suave */
+    body {
+        background: linear-gradient(to bottom, #ffffff, #f0f8ff);
+    }
+
+    /* Sombra en el borde superior de cada sección */
+    .section {
+        box-shadow: 0 -2px 10px rgba(0, 123, 255, 0.1); /* Ajusta la opacidad y el color */
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+    }
+
+    /* Bordes sutiles en las cajas o contenedores */
+    .about-section, .contacto {
+        border: 1px solid rgba(0, 123, 255, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .card {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 10 10'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23cccccc' /%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 40px 40px; /* Ajusta el tamaño del patrón */
+    }
+
+
+</style>
+
 {% endblock content %}

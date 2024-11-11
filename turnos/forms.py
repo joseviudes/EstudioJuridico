@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django import forms
 from django.forms import ModelForm
 
-from .models import Turno, Tarea
+from .models import Turno
 from profesionales.models import Profesional
 
 
@@ -21,7 +21,7 @@ class TurnoForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Recibe el usuario en la inicialización del form
+        user = kwargs.pop('user', None)  # Recibe el usuario cuando se inicia el form
         super(TurnoForm, self).__init__(*args, **kwargs)
         
         
@@ -62,14 +62,3 @@ class TurnoForm(ModelForm):
             instance.save()
         return instance
 
-
-class TareaForm(ModelForm):
-    class Meta:
-        model = Tarea
-        fields = ['titulo', 'descripcion', 'fecha', 'completado']
-        widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.TextInput(attrs={'class': 'form-control'}),
-            'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
-            
-        }

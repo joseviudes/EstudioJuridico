@@ -1,0 +1,52 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-dark font-weight-bold mb-4">Informes</h1>
+
+    <!-- Fila de las cajas de informes -->
+    <div class="row mt-3">
+
+        <!-- Caja 1 -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-lg border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-success font-weight-bold">Abogado con más turnos del mes</h5>
+                    <p class="card-text text-muted mb-4">Ver el abogado que tuvo más turnos este mes.</p>
+                    <a href="{% url "informe-abogado-turnos" %}" class="btn btn-success btn-block">Ver</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Caja 2 -->
+        {% comment %} <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-lg border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-warning font-weight-bold">Informe 2</h5>
+                    <p class="card-text text-muted mb-4">Descripción del segundo informe.</p>
+                    <a href="#" class="btn btn-warning btn-block">Ver</a>
+                </div>
+            </div>
+        </div> {% endcomment %}
+
+        <!-- Caja 3 -->
+        {% comment %} <div class="col-md-4 mb-4">
+            <div class="card text-center shadow-lg border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-primary font-weight-bold">Informe 3</h5>
+                    <p class="card-text text-muted mb-4">Descripción del tercer informe.</p>
+                    <a href="#" class="btn btn-primary btn-block">Ver</a>
+                </div>
+            </div>
+        </div> {% endcomment %}
+
+    </div>
+
+    <!-- Pie de página opcional con un mensaje general -->
+    <div class="row mt-5">
+        <div class="col text-center">
+            <p class="text-muted">Seleccione el informe que desea ver para obtener detalles más completos.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

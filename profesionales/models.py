@@ -50,14 +50,6 @@ class Profesional(models.Model):
     # Método save modificado para redimensionar la imagen si es necesario
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
-        if self.foto and hasattr(self.foto, 'path'):
-            img = Image.open(self.foto.path)
-
-            if img.height > 500 or img.width > 500:
-                output_size = (250, 250)
-                img.thumbnail(output_size)
-                img.save(self.foto.path)
     
     def __str__(self):
         return self.full_name  # Ahora usa la propiedad full_name

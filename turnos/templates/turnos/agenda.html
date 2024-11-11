@@ -1,61 +1,86 @@
 {% extends "main.html" %}
 
 {% block content %}
-
 <br>
-<button onclick="openModal()">Nueva Tarea</button>
-
-
+<h3><strong>Agenda de turnos</strong></h3>
+<hr>
 <!-- Contenedor del calendario -->
 <div id='calendar'></div>
 
-<!-- Modal para el formulario de crear tarea -->
-<div id="crearTareaModal" class="modal">
+<!-- Modal para mostrar los detalles del turno -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Nueva Tarea</h2>
-        <form action="{% url 'crear-tarea' %}" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Guardar</button>
-        </form>
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="eventModalLabel">📅 Detalles del Turno</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row mb-3">
+            <div class="col-4 fw-bold">Cliente:</div>
+            <div class="col-8" id="cliente"></div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 fw-bold">Solicitante:</div>
+            <div class="col-8" id="solicitante"></div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 fw-bold">Motivo:</div>
+            <div class="col-8" id="motivo"></div>
+          </div>
+          <hr>
+          <div class="row mb-3">
+            <div class="col-4 fw-bold">Fecha:</div>
+            <div class="col-8" id="fecha"></div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 fw-bold">Hora:</div>
+            <div class="col-8" id="hora"></div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 fw-bold">Profesional:</div>
+            <div class="col-8" id="profesional"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- FullCalendar JavaScript -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+<!-- FullCalendar JavaScript y archivo de localización en español -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/locales/es.global.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
+      locale: 'es',
       initialView: 'dayGridMonth',
-      events: '/turnos/turnos-json/',  // URL de la vista que devuelve los turnos en formato JSON
+      events: '/turnos/turnos-json/',
       eventClick: function(info) {
         const startDate = info.event.start;
         const endDate = info.event.end;
 
-        // Formatear la fecha y hora
         const dateString = startDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'numeric', day: 'numeric' });
         const startTimeString = startDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-        const endTimeString = endDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        const endTimeString = endDate ? endDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
 
-        // Mostrar alerta con información organizada incluyendo el profesional
-        alert(`${info.event.title}\nCliente: ${info.event.extendedProps.cliente}\nSolicitante: ${info.event.extendedProps.solicitante}\nMotivo: ${info.event.extendedProps.motivo} \nFecha: ${dateString}\nHora: ${startTimeString} - ${endTimeString}\nProfesional: ${info.event.extendedProps.professional}`);
+        document.getElementById('cliente').textContent = info.event.extendedProps.cliente;
+        document.getElementById('solicitante').textContent = info.event.extendedProps.solicitante;
+        document.getElementById('motivo').textContent = info.event.extendedProps.motivo;
+        document.getElementById('fecha').textContent = dateString;
+        document.getElementById('hora').textContent = `${startTimeString} - ${endTimeString}`;
+        document.getElementById('profesional').textContent = info.event.extendedProps.professional;
+
+        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        eventModal.show();
       }
     });
     calendar.render();
   });
 </script>
-
-<!-- JavaScript para controlar la apertura y cierre del modal -->
-<script>
-  function openModal() {
-    document.getElementById("crearTareaModal").style.display = "block";
-  }
-
-  function closeModal() {
-    document.getElementById("crearTareaModal").style.display = "none";
-  }
-</script>
-
 {% endblock content %}

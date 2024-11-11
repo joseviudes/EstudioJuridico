@@ -1,0 +1,125 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Título principal -->
+    
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-dark font-weight-bold">Informe: Profesional con más turnos del mes</h2>
+        </div>
+    </div>
+
+    <!-- Información del profesional -->
+    <div class="row">
+        {% comment %} <div class="col-12 text-center mb-3">
+            <!-- Nombre del profesional -->
+            <h4 class="text-dark">Profesional con más turnos: <strong>{{ abogado_mas_turnos.profesional.nombre }} {{ abogado_mas_turnos.profesional.apellido }}</strong></h4>
+
+        </div> {% endcomment %}
+        
+        <!-- Información y gráfico del profesional -->
+    <div class="row">
+        <!-- Columna izquierda: Información del profesional -->
+        <div class="col-md-6 text-center mb-3">
+            <h4 class="text-dark">Profesional con más turnos: <strong>{{ abogado_mas_turnos.profesional.nombre }} {{ abogado_mas_turnos.profesional.apellido }}</strong></h4>
+            <img src="{{ abogado_mas_turnos.profesional.foto.url }}" alt="Foto de {{ abogado_mas_turnos.profesional__nombre }}" class="img-fluid img-thumbnail shadow" style="max-width: 400px;">
+            <p class="text-muted mt-2">Total de Turnos: <strong>{{ abogado_mas_turnos.total_turnos }}</strong></p>
+        </div>
+
+        <!-- Columna derecha: Gráfico del profesional -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Gráfico de Turnos del Profesional Líder</h5>
+                    <canvas id="graficoAbogadoTop" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos para cada abogado -->
+    <h3 class="text-secondary mt-5">Turnos por profesional en el mes</h3>
+    <div id="graficosPorAbogado" class="row">
+        {% for abogado in turnos_por_abogado %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ abogado.profesional__nombre }} {{ abogado.profesional__apellido }}</h5>
+                        <p class="card-text text-muted">Total de Turnos: <strong>{{ abogado.total_turnos }}</strong></p>
+                        <canvas id="graficoAbogado{{ forloop.counter }}" class="graficoSecundario" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gráfico del abogado con más turnos
+        var ctxTop = document.getElementById('graficoAbogadoTop').getContext('2d');
+        var graficoAbogadoTop = new Chart(ctxTop, {
+            type: 'bar',
+            data: {
+                labels: ['Turnos'],
+                datasets: [{
+                    label: '{{ abogado_mas_turnos.profesional__nombre }} {{ abogado_mas_turnos.profesional__apellido }}',
+                    data: [{{ abogado_mas_turnos.total_turnos }}],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true, // Asegurarse de que comience desde cero
+                        stepSize: 1, // Solo números enteros
+                        max: Math.max({{ abogado_mas_turnos.total_turnos }}, 5), // El máximo será el valor más alto entre los turnos o 5
+                        ticks: {
+                            precision: 0, // Esto evita que se muestren decimales
+                            callback: function(value) {
+                                return value; // Mostrar solo valores enteros
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráficos para cada abogado en la lista
+        {% for abogado in turnos_por_abogado %}
+            var ctxAbogado{{ forloop.counter }} = document.getElementById('graficoAbogado{{ forloop.counter }}').getContext('2d');
+            new Chart(ctxAbogado{{ forloop.counter }}, {
+                type: 'bar',
+                data: {
+                    labels: ['Turnos'],
+                    datasets: [{
+                        label: '{{ abogado.profesional__nombre }} {{ abogado.profesional__apellido }}',
+                        data: [{{ abogado.total_turnos }}],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 0.5
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stepSize: 1,
+                            max: Math.max({{ abogado.total_turnos }}, 5),
+                            ticks: {
+                                precision: 0,
+                                callback: function(value) {
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        {% endfor %}
+    });
+</script>
+{% endblock content %}

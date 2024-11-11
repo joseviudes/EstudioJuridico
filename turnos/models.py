@@ -1,7 +1,4 @@
-from datetime import date
 from django.db import models
-from django.db.models import UniqueConstraint
-from django.forms import ValidationError
 
 from clientes.models import Cliente
 from profesionales.models import Profesional
@@ -35,8 +32,8 @@ class Turno(models.Model):
     profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos', default='-')
     
     id_turno = models.AutoField(primary_key=True)
-    dia = models.DateField(null=True, validators=[validar_dia])
-    horario = models.CharField(max_length=50, choices=HORARIOS, null=True)
+    dia = models.DateField(validators=[validar_dia])
+    horario = models.CharField(max_length=50, choices=HORARIOS)
     motivo = models.TextField(max_length=500, null=True, blank=True, default='-')  
     estado = models.CharField(max_length=25, choices=ESTADOS, default='Pendiente de aprobación')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -44,8 +41,6 @@ class Turno(models.Model):
     
     class Meta:
         ordering = ['-fecha_creacion']
-        verbose_name = 'Turno'
-        verbose_name_plural = 'Turnos'
         constraints = [
             models.UniqueConstraint(
                 fields=['dia', 'horario', 'profesional'],
@@ -57,11 +52,3 @@ class Turno(models.Model):
             return f"Turno {self.id_turno} - {self.cliente.full_name} con {self.profesional.full_name} de {self.horario}"
         
         
-class Tarea(models.Model):
-    titulo = models.CharField(max_length=200)
-    descripcion = models.TextField(blank=True, null=True)
-    fecha = models.DateField()
-    completado = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.titulo} - {self.fecha}"

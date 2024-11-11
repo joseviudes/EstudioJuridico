@@ -429,3 +429,9 @@ table.table td {
 .modal {
   z-index: 1050 !important;
 }
+
+/* Graficos */
+.graficoSecundario {
+  width: 100% !important; /* Asegurarse de que el gráfico se ajuste al contenedor */
+  height: 200px !important; /* Mantener la altura que deseas */
+}

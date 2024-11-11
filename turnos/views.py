@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 
-from .forms import TurnoForm, TareaForm
-from .models import Turno, Tarea
+from .forms import TurnoForm
+from .models import Turno
 from clientes.models import Cliente
 from profesionales.models import Profesional
  
@@ -222,30 +222,7 @@ def horariosOcupados(request):
     return JsonResponse({'error': 'Fecha o profesional no válido'}, status=400)
 
 
-# ------------------ Tareas ---------------------
 
-def createTarea(request):
-    if request.method == 'POST':
-        form = TareaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('agenda')  
-    else:
-        form = TareaForm()
-    return render(request, 'turnos/create-tarea.html', {'form': form})
-
-
-def tareas_json(request):
-    # Filtrar las tareas que están en el futuro o hoy
-    tareas = Tarea.objects.filter(fecha__gte=date.today())
-    
-    eventos = [{
-        'title': tarea.titulo,
-        'start': tarea.fecha.isoformat(),
-        'description': tarea.descripcion,
-        'completed': tarea.completado
-    } for tarea in tareas]
-    return JsonResponse(eventos, safe=False)
 
 
         

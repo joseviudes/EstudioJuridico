@@ -13,7 +13,4 @@ urlpatterns = [
     path("agenda/", agendaView, name="agenda"),
     path("turnos-json/", turnos_json, name='turnos-json'),
     
-    path("crear-tarea/", createTarea, name="crear-tarea"),
-    path("tareas-json/", tareas_json, name="tareas-json"),
-    
 ]

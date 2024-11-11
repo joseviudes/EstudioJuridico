@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'turnos.apps.TurnosConfig',
     'usuarios.apps.UsuariosConfig',
     'contacto.apps.ContactoConfig',
+    'informes.apps.InformesConfig',
 ]
 
 
