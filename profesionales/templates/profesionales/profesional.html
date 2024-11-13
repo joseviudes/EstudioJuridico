@@ -21,10 +21,10 @@
             <div class="col-6 text-center me-4">
                 {% if profesional.foto %}
                 <img src="{{ profesional.foto.url }}" alt="Foto de {{ profesional.get_full_name }}"
-                     class="img-fluid rounded mb-3" style="max-width: 150px; border-radius: 15px;">
+                     class="img-fluid rounded mb-3" style="max-width: 200px; border-radius: 15px;">
                 {% else %}
                 <img src="{% static 'images/default.png' %}" alt="Foto por defecto"
-                     class="img-fluid rounded mb-3" style="max-width: 150px; border-radius: 15px;">
+                     class="img-fluid rounded mb-3" style="max-width: 200px; border-radius: 15px;">
                 {% endif %}
             </div>
 

@@ -7,6 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
+from django.db.models import QuerySet
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .forms import TurnoForm
 from .models import Turno
@@ -71,6 +73,35 @@ class ListTurno(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['q'] = self.request.GET.get('q', '')
         return context
+
+    
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+
+    # Obtenemos el queryset sin paginar
+    turnos = self.get_queryset()
+    paginator = Paginator(turnos, self.paginate_by)  # Paginamos manualmente
+
+    page = self.request.GET.get('page', 1)  # Obtenemos el número de página desde la URL
+    try:
+        # Intentamos obtener la página correspondiente
+        paginated_turnos = paginator.page(page)
+    except PageNotAnInteger:
+        # Si no es un número válido, mostramos la primera página
+        paginated_turnos = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera de rango, mostramos la última página
+        paginated_turnos = paginator.page(paginator.num_pages)
+
+    context['turnos'] = paginated_turnos  # Usamos el objeto paginado
+    context['q'] = self.request.GET.get('q', '')  # Mantenemos la búsqueda si existe
+
+    # Verificamos la paginación
+    print("Total turnos:", paginator.count)
+    print("Total páginas:", paginator.num_pages)
+    print("Página actual:", paginated_turnos.number)
+
+    return context
 
 @login_required  
 def singleTurno(request, pk):
@@ -181,7 +212,13 @@ def agendaView(request):
 @login_required
 @user_passes_test(is_admin_or_abogado)
 def turnos_json(request):
-    turnos = Turno.objects.all()
+    # Comprobar si el usuario tiene rol de "Admin"
+    if request.user.is_superuser:  # Comprobamos si el usuario es superusuario (Admin)
+        turnos = Turno.objects.all()
+    else:
+        # Si no es admin, filtrar por el profesional logueado
+        turnos = Turno.objects.filter(profesional=request.user.profesional)
+
     turnos_list = []
 
     for turno in turnos:

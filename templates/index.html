@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="header-bg text-center section">
+    <div class="header-bg text-center section" >
         <img src="{% static 'images/logo_abogado.png' %}" alt="Logo del Estudio Jurídico" class="img-fluid mb-4" style="height: 150px;">
         
         <h1 class="display-5 fw-bold text-primary section-title">Estudio Jurídico</h1>
@@ -13,16 +13,62 @@
     <hr class="hr-separador">
     
     <!-- Sección ¿Quiénes Somos? -->
-    <div id="quienes-somos" class="about-section mt-5 section">
+    <div id="quienes-somos" class="about-section mt-5 section" >
         <h3 class="fw-semibold text-center">¿Quiénes Somos?</h3>
         <br>
         <p class="text-muted fs-5 text-center">En el Estudio Jurídico de la Dra. Ramona Aquino, nos dedicamos a brindar asesoramiento legal confiable y profesional. Con una trayectoria comprobada, nuestro equipo se especializa en diversas áreas del derecho, garantizando un servicio integral y personalizado a nuestros clientes.</p>
     </div>
 
     <hr class="hr-separador">
+
+    <!-- Sección Áreas Legales -->
+    <div id="areas-legales" class="mt-5 section" >
+        <h3 class="fw-semibold text-center">Áreas Legales</h3>
+        <br>
+        <div class="row g-4">
+            <!-- Card: Derecho de la Seguridad Social -->
+            <div class="col-md-3">
+                <div class="card shadow-sm border-primary" style="background-color: #f8d7da;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark">Derecho de la Seguridad Social</h5>
+                        <p class="card-text text-muted">Asesoramiento en pensiones, jubilaciones y derechos ante el sistema de seguridad social.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card: Derecho Laboral -->
+            <div class="col-md-3">
+                <div class="card shadow-sm border-primary" style="background-color: #d1ecf1;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark">Derecho Laboral</h5>
+                        <p class="card-text text-muted">Defensa de los derechos laborales relacionados con pensiones y jubilaciones laborales.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card: Derecho de Familia -->
+            <div class="col-md-3">
+                <div class="card shadow-sm border-primary" style="background-color: #fff3cd;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark">Derecho de Familia</h5>
+                        <p class="card-text text-muted">Asesoría en pensiones alimentarias, divorcios y conflictos familiares relacionados con la manutención.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card: Derecho Sucesorio -->
+            <div class="col-md-3">
+                <div class="card shadow-sm border-primary" style="background-color: #d4edda;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark">Derecho Sucesorio</h5>
+                        <p class="card-text text-muted">Asistencia en juicios sucesorios y distribución de bienes tras el fallecimiento de un familiar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="hr-separador">
     
     <!-- Sección Ubicación del Estudio -->
-    <div id="ubicacion" class="mt-5 section">
+    <div id="ubicacion" class="mt-5 section" >
         <h3 class="fw-semibold text-center">Ubicación del Estudio</h3>
         <br>
         <p class="text-muted fs-5 text-center">Estamos en Avenida Juan Bautista Alberdi 1988, Corrientes Capital..</p>
@@ -81,18 +127,21 @@
     </script>
 </div>
 
-<style>
+{% comment %} <style>
     /* Fondo degradado suave */
     body {
-        background: linear-gradient(to bottom, #ffffff, #f0f8ff);
+        background: url("{% static 'images/fondo_cielo.png' %}") no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #333;
     }
-
+    
     /* Sombra en el borde superior de cada sección */
     .section {
-        box-shadow: 0 -2px 10px rgba(0, 123, 255, 0.1); /* Ajusta la opacidad y el color */
-        padding: 20px;
-        background-color: white;
-        border-radius: 8px;
+        box-shadow: 0 -2px 10px rgba(0, 123, 255, 0.1);
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco translúcido */
+            border-radius: 8px;
     }
 
     /* Bordes sutiles en las cajas o contenedores */
@@ -102,13 +151,23 @@
         border-radius: 8px;
     }
 
+    /* Estilo de las cards */
     .card {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 10 10'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23cccccc' /%3E%3C/svg%3E");
         background-repeat: repeat;
         background-size: 40px 40px; /* Ajusta el tamaño del patrón */
     }
 
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #007bff;
+    }
 
-</style>
+    .card-text {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+</style> {% endcomment %}
 
 {% endblock content %}

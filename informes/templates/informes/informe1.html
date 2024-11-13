@@ -3,42 +3,84 @@
 {% block content %}
 <div class="container mt-4">
     <!-- Título principal -->
-    
     <div class="row mb-4">
         <div class="col">
-            <h2 class="text-dark font-weight-bold">Informe: Profesional con más turnos del mes</h2>
+            <h2 class="text-dark font-weight-bold">Informe: Distribución de turnos por profesional en el mes</h2>
         </div>
     </div>
 
-    <!-- Información del profesional -->
-    <div class="row">
-        {% comment %} <div class="col-12 text-center mb-3">
-            <!-- Nombre del profesional -->
-            <h4 class="text-dark">Profesional con más turnos: <strong>{{ abogado_mas_turnos.profesional.nombre }} {{ abogado_mas_turnos.profesional.apellido }}</strong></h4>
+    <div class="container mt-4">
+        <!-- Selector de mes y año, con límite de ancho -->
+        <div class="row justify-content-left">
+            <div class="col-md-6">
+                <form method="GET" action="{% url 'informe-abogado-turnos' %}" class="form-inline mb-4">
+                    <label for="mes" class="mr-2">Mes:</label>
+                    <select name="mes" id="mes" class="form-control mr-3">
+                        {% for numero_mes, nombre_mes in meses %}
+                            <option value="{{ numero_mes }}" {% if numero_mes == mes_actual %}selected{% endif %}>
+                                {% if nombre_mes == "January" %}Enero{% elif nombre_mes == "February" %}Febrero{% elif nombre_mes == "March" %}Marzo{% elif nombre_mes == "April" %}Abril{% elif nombre_mes == "May" %}Mayo{% elif nombre_mes == "June" %}Junio{% elif nombre_mes == "July" %}Julio{% elif nombre_mes == "August" %}Agosto{% elif nombre_mes == "September" %}Septiembre{% elif nombre_mes == "October" %}Octubre{% elif nombre_mes == "November" %}Noviembre{% elif nombre_mes == "December" %}Diciembre{% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label for="anio" class="mr-2">Año:</label>
+                    <select name="anio" id="anio" class="form-control mr-3">
+                        {% for anio in anios %}
+                            <option value="{{ anio }}" {% if anio == anio_actual %}selected{% endif %}>
+                                {{ anio }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        </div> {% endcomment %}
-        
-        <!-- Información y gráfico del profesional -->
+    <form method="POST" action="{% url 'descargar_informe_pdf' %}">
+        {% csrf_token %}
+        <input type="hidden" name="grafico_base64" id="graficoBase64Input">
+        <input type="hidden" name="mes" value="{{ mes_actual }}">
+        <input type="hidden" name="anio" value="{{ anio_actual }}">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-file-earmark-arrow-down"></i> Descargar PDF
+        </button>
+    </form>
+
+    <br>
+
+    <!-- Información del profesional con más turnos -->
     <div class="row">
-        <!-- Columna izquierda: Información del profesional -->
         <div class="col-md-6 text-center mb-3">
-            <h4 class="text-dark">Profesional con más turnos: <strong>{{ abogado_mas_turnos.profesional.nombre }} {{ abogado_mas_turnos.profesional.apellido }}</strong></h4>
-            <img src="{{ abogado_mas_turnos.profesional.foto.url }}" alt="Foto de {{ abogado_mas_turnos.profesional__nombre }}" class="img-fluid img-thumbnail shadow" style="max-width: 400px;">
-            <p class="text-muted mt-2">Total de Turnos: <strong>{{ abogado_mas_turnos.total_turnos }}</strong></p>
+            <h4 class="text-dark">
+                Profesional con más turnos:
+                {% if abogados_con_mas_turnos %}
+                    {% for abogado in abogados_con_mas_turnos %}
+                        <strong>{{ abogado.profesional__nombre }} {{ abogado.profesional__apellido }}</strong>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No hay un profesional destacado este mes.
+                {% endif %}
+            </h4>
+            {% if abogados_con_mas_turnos %}
+                <img src="{{ abogados_con_mas_turnos.profesional__foto.url }}" alt="Foto del abogado principal" class="img-fluid img-thumbnail shadow" style="max-width: 400px;">
+                <p class="text-muted mt-2">Total de Turnos: <strong>{{ abogados_con_mas_turnos.0.total_turnos }}</strong></p>
+            {% endif %}
         </div>
 
-        <!-- Columna derecha: Gráfico del profesional -->
+        <!-- Columna derecha: Gráfico de torta para distribución de turnos entre todos los abogados -->
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title text-success">Gráfico de Turnos del Profesional Líder</h5>
-                    <canvas id="graficoAbogadoTop" width="400" height="300"></canvas>
+                    <h5 class="card-title text-success">Distribución de turnos entre todos los profesionales</h5>
+                    <canvas id="graficoTortaAbogados" width="200" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Gráficos para cada abogado -->
+    <!-- Gráficos para cada abogado individual -->
     <h3 class="text-secondary mt-5">Turnos por profesional en el mes</h3>
     <div id="graficosPorAbogado" class="row">
         {% for abogado in turnos_por_abogado %}
@@ -57,30 +99,58 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Gráfico del abogado con más turnos
-        var ctxTop = document.getElementById('graficoAbogadoTop').getContext('2d');
-        var graficoAbogadoTop = new Chart(ctxTop, {
-            type: 'bar',
+        // Gráfico de torta para la distribución de turnos entre todos los abogados
+        var ctxTorta = document.getElementById('graficoTortaAbogados').getContext('2d');
+        var nombresAbogados = [
+            {% for abogado in turnos_por_abogado %}
+                '{{ abogado.profesional__nombre }} {{ abogado.profesional__apellido }}',
+            {% endfor %}
+        ];
+        var turnosAbogados = [
+            {% for abogado in turnos_por_abogado %}
+                {{ abogado.total_turnos }},
+            {% endfor %}
+        ];
+
+        var graficoTortaAbogados = new Chart(ctxTorta, {
+            type: 'pie',
             data: {
-                labels: ['Turnos'],
+                labels: nombresAbogados,
                 datasets: [{
-                    label: '{{ abogado_mas_turnos.profesional__nombre }} {{ abogado_mas_turnos.profesional__apellido }}',
-                    data: [{{ abogado_mas_turnos.total_turnos }}],
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    data: turnosAbogados,
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
                     borderWidth: 1
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true, // Asegurarse de que comience desde cero
-                        stepSize: 1, // Solo números enteros
-                        max: Math.max({{ abogado_mas_turnos.total_turnos }}, 5), // El máximo será el valor más alto entre los turnos o 5
-                        ticks: {
-                            precision: 0, // Esto evita que se muestren decimales
-                            callback: function(value) {
-                                return value; // Mostrar solo valores enteros
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                var value = context.raw;
+                                var total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                                var percentage = ((value / total) * 100).toFixed(2);
+                                return label + ': ' + value + ' turnos (' + percentage + '%)';
                             }
                         }
                     }
@@ -88,7 +158,7 @@
             }
         });
 
-        // Gráficos para cada abogado en la lista
+        // Gráficos individuales para cada abogado en la lista
         {% for abogado in turnos_por_abogado %}
             var ctxAbogado{{ forloop.counter }} = document.getElementById('graficoAbogado{{ forloop.counter }}').getContext('2d');
             new Chart(ctxAbogado{{ forloop.counter }}, {
@@ -122,4 +192,8 @@
         {% endfor %}
     });
 </script>
+
+
 {% endblock content %}
+
+

@@ -9,6 +9,8 @@ class ExpedienteForm(ModelForm):
         exclude = ('tipo_expediente', 'estado')
         widgets = {
             'cliente': forms.Select(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
+            'jurisdiccion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Justicia Federal de Corrientes'}),
+            'dependencia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Juzgado Federal de Corrientes 2'}),
             'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             'fecha_finalizacion': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             'caratula': forms.TextInput(attrs={'class': 'form-control'})
@@ -47,6 +49,7 @@ class MovimientosForm(ModelForm):
         exclude = ['expediente']
         widgets = {
             'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            'tipo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tipo de movimiento'}),
         }
 
 
