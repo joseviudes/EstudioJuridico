@@ -3,21 +3,26 @@
 {% block content %}
 
 <br>
-<h2 class="text-start"><strong>Gestión de profesionales </strong></h2>
-<br>
+<div class="my-4">
+    <h2>
+        <i class="bi bi-person-workspace"></i> Gestión de Profesional
+    </h2>
+</div>
+<hr>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
 
 
     <div class="d-flex">
-        
+
         <a href="{% url 'profesionales' %}" class="btn btn-dark me-3">
             <i class="bi bi-box-arrow-left"></i> Volver
         </a>
-    
+
         <!-- Botón desplegable de filtrado -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
+                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
                 Filtrar
             </button>
@@ -26,7 +31,7 @@
                 <li><a class="dropdown-item" href="?order=fecha_ingreso">Fecha de ingreso (Descendiente)</a></li>
                 <li><a class="dropdown-item" href="?order=apellido_asc">Apellido (A-Z)</a></li>
                 <li><a class="dropdown-item" href="?order=apellido_desc">Apellido (Z-A)</a></li>
-    
+
             </ul>
         </div>
 
@@ -35,7 +40,8 @@
     <!-- Formulario de búsqueda -->
     <form method="GET" action="{% url 'profesionales-inactivos' %}" class="d-flex">
         <div class="input-group">
-            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por DNI, apellido, nombre..." value="{{ q }}">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por DNI, apellido, nombre..."
+                value="{{ q }}">
             <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
                 <i class="bi bi-search"></i>
             </button>
@@ -76,29 +82,28 @@
                 <td>{{profesional.fecha_ingreso}}</td>
                 <td>
                     {% if profesional.estado %}
-                        <span class="text-success">Activo</span>
+                    <span class="text-success">Activo</span>
                     {% else %}
-                        <span class="text-danger">Inactivo</span>
+                    <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'profesional' profesional.pk %}"  class="btn btn-info btn-sm" title="Ver">
+                    <a href="{% url 'profesional' profesional.pk %}" class="btn btn-info btn-sm" title="Ver">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="{% url 'actualizar-profesional' profesional.pk %}" title="Editar" class="btn btn-warning btn-sm" title="Editar">
+                    <a href="{% url 'actualizar-profesional' profesional.pk %}" title="Editar"
+                        class="btn btn-warning btn-sm" title="Editar">
                         <i class="bi bi-pen"></i>
                     </a>
                     <!-- Formulario para dar de alta -->
-                    <form action="{% url 'dar-de-alta-profesional' profesional.pk %}" method="post" style="display:inline;">
+                    <form id="darDeAltaForm" action="{% url 'dar-de-alta-profesional' profesional.pk %}" method="post"
+                        style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-sm" title="Dar de alta" onclick="return confirm('¿Estás seguro de dar de alta a este profesional?');">
+                        <button type="button" class="btn btn-success btn-sm" title="Dar de alta"
+                            onclick="confirmarAlta();">
                             <i class="bi bi-arrow-up-circle"></i>
                         </button>
                     </form>
-                    
-                    <a href="{% url 'eliminar-profesional' profesional.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
-                        <i class="bi bi-trash-fill"></i>
-                    </a>
                 </td>
             </tr>
             {% empty %}
@@ -114,56 +119,78 @@
     <nav aria-label="Paginación">
         <ul class="pagination justify-content-center">
             {% if profesionales.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.previous_page_number }}" aria-label="Anterior">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page={{ profesionales.previous_page_number }}"
+                    aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
             {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
-                </li>
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;</span>
-                </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
             {% endif %}
 
             <!-- Número de páginas -->
             {% for num in profesionales.paginator.page_range %}
-                {% if profesionales.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% elif num > profesionales.number|add:'-3' and num < profesionales.number|add:'3' %}
-                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+            {% if profesionales.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > profesionales.number|add:'-3' and num < profesionales.number|add:'3' %} <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-            {% if profesionales.has_next %}
+                {% if profesionales.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.next_page_number }}" aria-label="Siguiente">
+                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.next_page_number }}"
+                        aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.paginator.num_pages }}" aria-label="Última">
+                    <a class="page-link" href="?q={{ q }}&page={{ profesionales.paginator.num_pages }}"
+                        aria-label="Última">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>
                 </li>
-            {% else %}
+                {% else %}
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;</span>
                 </li>
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
                 </li>
-            {% endif %}
+                {% endif %}
         </ul>
     </nav>
     {% endif %}
 </div>
+<script>
+    function confirmarAlta() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción dará de alta al profesional.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745', // color verde
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, dar de alta',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('darDeAltaForm').submit();
+            }
+        });
+    }
+</script>
+
 
 {% endblock content %}

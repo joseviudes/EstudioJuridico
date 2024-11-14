@@ -7,17 +7,18 @@
 <br>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    
+
     <!-- Sección de botones alineados a la izquierda -->
     <div class="d-flex">
-        
+
         <a href="{% url 'expedientes' %}" class="btn btn-dark me-3">
             <i class="bi bi-box-arrow-left"></i> Volver
         </a>
 
         <!-- Botón desplegable de filtrado -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
+                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
                 Filtrar
             </button>
@@ -37,7 +38,8 @@
     <!-- Formulario de búsqueda alineado a la derecha -->
     <form method="GET" action="{% url 'expedientes' %}" class="d-flex ml-auto">
         <div class="input-group">
-            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por Nº Exp, cliente, profesional..." value="{{ q }}">
+            <input type="text" name="q" class="form-control me-2"
+                placeholder="Buscar por Nº Exp, cliente, profesional..." value="{{ q }}">
             <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
                 <i class="bi bi-search"></i>
             </button>
@@ -77,38 +79,39 @@
                 <td>{{ expediente.numero_expediente }}</td>
                 <td>{{ expediente.cliente }}</td>
                 <td>{{ expediente.profesional }}</td>
-                <td>{{ expediente.apoderado }}</td>            
+                <td>{{ expediente.apoderado }}</td>
                 <td>{{ expediente.fecha_inicio }}</td>
                 <td>
                     {% if expediente.estado %}
-                        <span class="text-success">Activo</span>
+                    <span class="text-success">Activo</span>
                     {% else %}
-                        <span class="text-danger">Inactivo</span>
+                    <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url "movimientos" expediente.numero_expediente %}"><i class="bi bi-box-arrow-up-right"></i></i></a>
+                    <a href="{% url 'movimientos' expediente.numero_expediente %}"><i
+                            class="bi bi-box-arrow-up-right"></i></i></a>
                 </td>
                 <td>
-                    
+
                     <a href="{% url 'expediente' expediente.numero_expediente %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a>
                     {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                    <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}" class="btn btn-warning btn-sm">
+                    <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}"
+                        class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
                     <!-- Formulario para dar de alta -->
-                    <form action="{% url 'dar-de-alta-expediente' expediente.numero_expediente %}" method="post" style="display:inline;">
+                    <form id="darDeAltaForm" action="{% url 'dar-de-alta-expediente' expediente.numero_expediente %}"
+                        method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-sm" title="Dar de alta" onclick="return confirm('¿Estás seguro de dar de alta a este expediente?');">
+                        <button type="button" class="btn btn-success btn-sm" title="Dar de alta"
+                            onclick="confirmarAlta();">
                             <i class="bi bi-arrow-up-circle"></i>
                         </button>
                     </form>
-                    <!-- Formulario para eliminar -->
-                    <a href="{% url 'eliminar-expediente' expediente.numero_expediente %}" class="btn btn-danger btn-sm" title="Eliminar">
-                        <i class="bi bi-trash-fill"></i>
-                    </a>
+                    </form>
 
                     {% endif %}
                 </td>
@@ -128,57 +131,78 @@
     <nav aria-label="Paginación">
         <ul class="pagination justify-content-center">
             {% if expedientes.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.previous_page_number }}" aria-label="Anterior">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page={{ expedientes.previous_page_number }}"
+                    aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
             {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
-                </li>
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;</span>
-                </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
             {% endif %}
 
             <!-- Número de páginas -->
             {% for num in expedientes.paginator.page_range %}
-                {% if expedientes.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% elif num > expedientes.number|add:'-3' and num < expedientes.number|add:'3' %}
-                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+            {% if expedientes.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > expedientes.number|add:'-3' and num < expedientes.number|add:'3' %} <li class="page-item"><a
+                    class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-            {% if expedientes.has_next %}
+                {% if expedientes.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.next_page_number }}" aria-label="Siguiente">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.next_page_number }}"
+                        aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.paginator.num_pages }}" aria-label="Última">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.paginator.num_pages }}"
+                        aria-label="Última">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>
                 </li>
-            {% else %}
+                {% else %}
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;</span>
                 </li>
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
                 </li>
-            {% endif %}
+                {% endif %}
         </ul>
     </nav>
     {% endif %}
 
 </div>
 
+<script>
+    function confirmarAlta() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción dará de alta este expediente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745', // color verde
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, dar de alta',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('darDeAltaForm').submit();
+            }
+        });
+    }
+</script>
 {% endblock content %}

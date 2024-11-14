@@ -1,101 +1,177 @@
 {% extends "main.html" %}
-
-
 {% block content %}
 <br>
-<h2 class="text-start"><strong>Gestión de profesionales</strong></h2>
 <br>
+<h2 class="mb-4">
+    <a href="{% url 'profesionales' %}" style="text-decoration: none; color: inherit;">
+        <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
+    </a>
+    Actualizar Profesional <b>{{ profesional.apellido }}, {{ profesional.nombre }}</b>
+</h2>
 
-<h3 class="mb-4">Editar profesional</h3>
+<form id="registrationForm" method="post" enctype="multipart/form-data">
+    <!-- Asegúrate de incluir enctype para archivos -->
+    {% csrf_token %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <!-- Contenedor para Datos Personales e Información Laboral -->
-                <div class="row">
-                    <!-- Sección de Datos Personales -->
-                    <div class="col-md-6">
-                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                            <legend class="w-auto px-2">Datos Personales</legend>
-                            <br>
-                            <div class="mb-3">
-                                {{ form.nombre.label_tag }} {{ form.nombre }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.apellido.label_tag }} {{ form.apellido }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.dni.label_tag }} {{ form.dni }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.foto.label_tag }} {{ form.foto }}
-                            </div>
-                            
-                        </fieldset>
-                    </div>
-
-                    <!-- Sección de Información Laboral -->
-                    <div class="col-md-6">
-                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                            <legend class="w-auto px-2">Información Laboral</legend>
-                            <br>
-                            <div class="mb-3">
-                                {{ form.idMatriculaProf.label_tag }} {{ form.idMatriculaProf }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.especialidad.label_tag }} {{ form.especialidad }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.fecha_ingreso.label_tag }} {{ form.fecha_ingreso }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.fecha_egreso.label_tag }} {{ form.fecha_egreso }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.motivo_egreso.label_tag }} {{ form.motivo_egreso }}
-                            </div>
-                        </fieldset>
-                    </div>
+    <!-- Datos Personales -->
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Datos Personales</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="apellido" class="form-label">Apellido:</label>
+                    {{ form.apellido }}
                 </div>
-
-                <!-- Sección de Contacto -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                            <legend class="w-auto px-2">Contacto</legend>
-                            <br>
-                            <div class="mb-3">
-                                {{ form.domicilio.label_tag }} {{ form.domicilio }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.cod_postal.label_tag }} {{ form.cod_postal }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.telefono.label_tag }} {{ form.telefono }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.email.label_tag }} {{ form.email }}
-                            </div>
-                        </fieldset>
-                    </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    {{ form.nombre }}
                 </div>
-
-
-                <!-- Botones de Acción -->
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-                    <a href="{% url 'profesionales' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="dni" class="form-label">DNI:</label>
+                    {{ form.dni }}
                 </div>
-
-            </form>
+                <div class="col-12 col-md-6">
+                    <label for="foto" class="form-label">Foto:</label>
+                    {{ form.foto }}
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-{% endblock content %}
+    <!-- Datos Profesionales -->
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Datos Profesionales</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="idMatriculaProf" class="form-label">Nº de matrícula del profesional:</label>
+                    {{ form.idMatriculaProf }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="especialidad" class="form-label">Especialidad:</label>
+                    {{ form.especialidad }}
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Movimientos -->
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Movimientos</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="fecha_ingreso" class="form-label">Fecha de ingreso:</label>
+                    {{ form.fecha_ingreso }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="fecha_egreso" class="form-label">Fecha de egreso:</label>
+                    {{ form.fecha_egreso }}
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="motivo_egreso" class="form-label">Motivo de egreso:</label>
+                {{ form.motivo_egreso }}
+            </div>
+        </div>
+    </div>
 
+    <!-- Datos de Contacto -->
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Datos de Contacto</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="domicilio" class="form-label">Domicilio:</label>
+                    {{ form.domicilio }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="cod_postal" class="form-label">Código Postal:</label>
+                    {{ form.cod_postal }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="telefono" class="form-label">Teléfono:</label>
+                    {{ form.telefono }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="email" class="form-label">Email:</label>
+                    {{ form.email }}
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Botones -->
+    <div class="d-flex flex-wrap justify-content-between">
+        <a href="{% url 'profesionales' %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
+            <i class="bi bi-box-arrow-left"></i> Volver
+        </a>
+        <div class="d-flex flex-wrap gap-2">
+            <!-- Botón Registrar Profesional -->
+            <button type="submit" class="btn btn-outline-primary btn-lg mb-2 mb-md-0" id="btnRegistrar">
+                <i class="bi bi-cloud-arrow-up"></i> Actualizar Profesional
+            </button>
+        </div>
+    </div>
+
+</form>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const fechaEgresoInput = document.getElementById("id_fecha_egreso"); // ID del campo de fecha de egreso
+        const motivoEgresoInput = document.getElementById("id_motivo_egreso"); // ID del campo de motivo de egreso
+
+        function toggleMotivoEgreso() {
+            if (fechaEgresoInput.value) {
+                motivoEgresoInput.disabled = false; // Habilitar el campo de motivo de egreso
+            } else {
+                motivoEgresoInput.disabled = true; // Deshabilitar el campo de motivo de egreso
+                motivoEgresoInput.value = ""; // Limpiar el campo si se desactiva
+            }
+        }
+
+        toggleMotivoEgreso();
+        // Escuchar cambios en el campo de fecha de egreso
+        fechaEgresoInput.addEventListener("input", toggleMotivoEgreso);
+    });
+
+    // Boton Enviar
+    document.getElementById('btnRegistrar').addEventListener('click', function (event) {
+        event.preventDefault();  // Evita el envío del formulario antes de la confirmación
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas actualizar el profesional?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, actualizar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, envía el formulario
+                document.getElementById('registrationForm').submit();  // Envía el formulario
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}

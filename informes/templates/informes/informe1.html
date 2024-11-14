@@ -1,5 +1,7 @@
 {% extends "main.html" %}
 
+{% load static %}
+
 {% block content %}
 <div class="container mt-4">
     <!-- Título principal -->
@@ -64,7 +66,7 @@
                 {% endif %}
             </h4>
             {% if abogados_con_mas_turnos %}
-                <img src="{{ abogados_con_mas_turnos.profesional__foto.url }}" alt="Foto del abogado principal" class="img-fluid img-thumbnail shadow" style="max-width: 400px;">
+                <img src="{% static 'images/scaloni.png' %}" alt="Foto del abogado principal" class="img-fluid img-thumbnail shadow" style="max-width: 400px;">
                 <p class="text-muted mt-2">Total de Turnos: <strong>{{ abogados_con_mas_turnos.0.total_turnos }}</strong></p>
             {% endif %}
         </div>

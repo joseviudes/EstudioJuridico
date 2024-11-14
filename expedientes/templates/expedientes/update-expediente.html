@@ -1,29 +1,114 @@
 {% extends "main.html" %}
-
 {% block content %}
+
 <br>
-<h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
-<br>
+<h2 class="mb-4">
+    <a href="{% url 'expedientes' %}" style="text-decoration: none; color: inherit;">
+        <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
+    </a>
+    Editar Expediente <b>N° {{ expediente.numero_expediente }}</b>
+</h2>
 
-<h3 class="mb-4">Editar expedientes</h3>
+<form id="registrationForm" method="post" enctype="multipart/form-data">
+    <!-- Asegúrate de incluir enctype para archivos -->
+    {% csrf_token %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                {{ form.as_p }}
-
-                <div class="d-flex justify-content-start">
-                    <!-- Botón de Crear -->
-                    <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-                    
-                    <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
+    <!-- Datos Personales -->
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Generar Expediente</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="numero_expediente" class="form-label">N° Expediente:</label>
+                    {{ form.numero_expediente }}
                 </div>
-            </form>
+                <div class="col-12 col-md-6">
+                    <label for="caratula" class="form-label">Caratula:</label>
+                    {{ form.caratula }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="cliente" class="form-label">Cliente:</label>
+                    {{ form.cliente }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="apoderado" class="form-label">Apoderado:</label>
+                    {{ form.apoderado }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="profesional" class="form-label">Profesional:</label>
+                    {{ form.profesional }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="jurisdiccion" class="form-label">Jurisdiccion:</label>
+                    {{ form.jurisdiccion }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="dependencia" class="form-label">Dependencia:</label>
+                    {{ form.dependencia }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                    {{ form.fecha_inicio }} <!-- Verifica que este ID sea correcto -->
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="fecha_finalizacion" class="form-label">Fecha de Finalizacion:</label>
+                    {{ form.fecha_finalizacion }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-12"> <!-- Ajustar para ser responsivo -->
+                    <label for="asunto" class="form-label">Asunto:</label>
+                    {{ form.asunto }}
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-between">
+        <a href="{% url 'expedientes' %}" class="btn btn-outline-dark btn-lg">
+            <i class="bi bi-box-arrow-left"></i> Volver
+        </a>
+        <div>
+            <!-- Botón Registrar Profesional -->
+            <button type="submit" class="btn btn-outline-primary btn-lg" id="btnRegistrar">
+                <i class="bi bi-cloud-arrow-up"></i> Actualizar Expediente
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    // Boton Enviar
+    document.getElementById('btnRegistrar').addEventListener('click', function (event) {
+        event.preventDefault();  // Evita el envío del formulario antes de la confirmación
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas actualizar el expediente?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, Actualizar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, envía el formulario
+                document.getElementById('registrationForm').submit();  // Envía el formulario
+            }
+        });
+    });
+</script>
 
 {% endblock content %}

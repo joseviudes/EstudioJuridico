@@ -1,93 +1,166 @@
 {% extends "main.html" %}
-
 {% block content %}
 <br>
-<h2 class="text-start"><strong>Gestión de clientes</strong></h2>
-<br>
+<h2 class="mb-4">
+    <a href="{% url 'clientes' %}" style="text-decoration: none; color: inherit;">
+        <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
+    </a>
+    Registrar Cliente
+</h2>
 
-<h3 class="mb-4">Agregar cliente</h3>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <!-- Contenedor para Datos Personales e Información Laboral -->
-                <div class="row">
-                    <!-- Sección de Datos Personales -->
-                    <div class="col-md-6">
-                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                            <legend class="w-auto px-2">Datos Personales</legend>
-                            <br>
-                            <div class="mb-3">
-                                {{ form.nombre.label_tag }} {{ form.nombre }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.apellido.label_tag }} {{ form.apellido }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.dni.label_tag }} {{ form.dni }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.fecha_ingreso.label_tag }} {{ form.fecha_ingreso }}
-                            </div>
-                            
-                        </fieldset>
-                    </div>
-
-                    <!-- Sección de Información Laboral -->
-                    <div class="col-md-6">
-                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                            <legend class="w-auto px-2">Información Laboral</legend>
-                            <br>
-                            <div class="mb-3">
-                                {{ form.ocupacion.label_tag }} {{ form.ocupacion }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.lugar_laboral.label_tag }} {{ form.lugar_laboral }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.años_aportes.label_tag }} {{ form.años_aportes }}
-                            </div>
-                        </fieldset>
-                    </div>
+<form id="formRegistrarCliente" method="post" enctype="multipart/form-data">
+    <!-- Asegúrate de incluir enctype para archivos -->
+    {% csrf_token %}
+    <!-- Contenedor para Datos Personales e Información Laboral -->
+    <!-- Datos Personales -->
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Datos Personales</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="apellido" class="form-label">Apellido:</label>
+                    {{ form.apellido }}
                 </div>
-
-                <!-- Sección de Contacto -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                            <legend class="w-auto px-2">Contacto</legend>
-                            <br>
-                            <div class="mb-3">
-                                {{ form.domicilio.label_tag }} {{ form.domicilio }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.cod_postal.label_tag }} {{ form.cod_postal }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.telefono.label_tag }} {{ form.telefono }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form.email.label_tag }} {{ form.email }}
-                            </div>
-                        </fieldset>
-                    </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    {{ form.nombre }}
                 </div>
-
-                <!-- Botones de Acción -->
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success me-2">Crear</button>
-                    <a href="{% url 'clientes' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="dni" class="form-label">DNI:</label>
+                    {{ form.dni }}
                 </div>
-                
-            </form>
+                <div class="col-12 col-md-6">
+                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                    {{ form.fecha_nacimiento }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6">
+                    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+                    {{ form.fecha_ingreso }}
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Datos Laborales</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="ocupacion" class="form-label">Ocupacion:</label>
+                    {{ form.ocupacion }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="lugar_laboral" class="form-label">Lugar Laboral:</label>
+                    {{ form.lugar_laboral }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="años_aportes" class="form-label">Años De Aportes:</label>
+                    {{ form.años_aportes }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Contacto</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="domicilio" class="form-label">Domicilio:</label>
+                    {{ form.domicilio }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="cod_postal" class="form-label">Cod Postal:</label>
+                    {{ form.cod_postal }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="telefono" class="form-label">Telefono:</label>
+                    {{ form.telefono }}
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex flex-wrap justify-content-between">
+        <a href="{% url 'clientes' %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
+            <i class="bi bi-box-arrow-left"></i> Volver
+        </a>
+        <div class="d-flex flex-wrap gap-2">
+            <!-- Botón Registrar Cliente -->
+            <button type="button" class="btn btn-outline-primary btn-lg mb-2 mb-md-0" id="btnRegistrar"
+                onclick="confirmarRegistrar();">
+                <i class="bi bi-person-plus"></i> Registrar Cliente
+            </button>
+
+            <button type="button" class="btn btn-outline-danger btn-lg mb-2 mb-md-0" id="btnBorrar">
+                <i class="bi bi-eraser"></i> Borrar
+            </button>
+        </div>
+    </div>
+
+
+</form>
+<script>
+    // Función para confirmar el registro de cliente
+    function confirmarRegistrar() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres registrar a este cliente?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745', // verde para confirmar
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Envía el formulario después de la confirmación
+                document.getElementById('formRegistrarCliente').submit();
+            }
+        });
+    }
+
+    // boton borrar
+    document.getElementById('btnBorrar').addEventListener('click', function () {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción borrará todos los campos del formulario.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, borrar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Resetea el formulario
+                const form = document.querySelector('#formRegistrarCliente');
+                form.reset(); // Resetea los campos del formulario
+            }
+        });
+    });
+</script>
 
 {% endblock content %}

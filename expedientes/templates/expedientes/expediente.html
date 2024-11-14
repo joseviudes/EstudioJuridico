@@ -1,10 +1,68 @@
-{% extends "main.html" %}
+{% extends 'main.html' %}
 
+{% load static %}
 {% block content %}
 <br>
-<h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
-<br>
+<div class="mb-4">
+    <h2>
+        <a href="{% url 'expedientes' %}" style="text-decoration: none; color: inherit;">
+            <i class="bi bi-box-arrow-left" style="font-size: 2rem; color: #6c757d; margin-right: 8px;"></i>
+        </a>
+        <span style="color: black;">Expediente <b>N° {{ expediente.numero_expediente }}</b></span>
+    </h2>
+</div>
 
-<p>Single expediente</p>
+<div class="container mt-3 fs-5">
+    <!-- Sección de Datos Laborales y de Contacto -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <p></p>
+                    <h4 class="mb-0">Detalles del Expediente</h4>
+                </div>
+                <br>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-md-6"><strong>N° Expediente:</strong> {{ expediente.numero_expediente }}</div>
+                        <div class="col-md-6"><strong>Carátula:</strong> {{ expediente.caratula }}</div>
+                    </div>
+                    <br>
+                    <div class="row mb-2">
+                        <div class="col-md-6"><strong>Cliente:</strong> {{ expediente.cliente }}</div>
+                        <div class="col-md-6"><strong>Apoderado:</strong> {{ expediente.apoderado }}</div>
+                    </div>
+                    <br>
+                    <div class="row mb-2">
+                        <div class="col-md-6"><strong>Profesional:</strong> {{ expediente.profesional }}</div>
+                        <div class="col-md-6"><strong>Asunto:</strong> {{ expediente.asunto }}</div>
+                        
+                    </div>
+                    <br>
+                    <div class="row mb-2">
+                        <div class="col-md-6"><strong>Dependencia:</strong> {{ expediente.dependencia }}</div>
+                        <div class="col-md-6"><strong>Jurisdicción:</strong> {{ expediente.jurisdiccion }}</div>
+                    </div>
+                    <br>
+                    <div class="row mb-2">
+                        <div class="col-md-6"><strong>Fecha de Inicio:</strong> {{ expediente.fecha_inicio }}</div>
+                        <div class="col-md-6"><strong>Fecha de Finalización:</strong> {{ expediente.fecha_finalizacion }}</div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
 
-{% endblock content %}
+    <!-- Botones inferiores -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="d-flex">
+            <a href="{% url 'expedientes' %}" class="btn btn-outline-dark btn-lg">
+                <i class="bi bi-box-arrow-left"></i> Volver
+            </a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

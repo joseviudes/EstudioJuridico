@@ -1,25 +1,29 @@
 {% extends "main.html" %}
-
 {% block content %}
 
 <br>
-<h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
-<br>
+<div class="my-4">
+    <h2>
+        <i class="bi bi-archive"></i> Gestión de Expedientes
+    </h2>
+</div>
+<hr>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    
+
     <!-- Sección de botones alineados a la izquierda -->
     <div class="d-flex">
-        {% if  user.rol == 'Admin' or user.rol == 'Abogado' %}
-            <a href="{% url 'crear-expediente' %}" class="btn btn-success me-2">
-             <i class="bi bi-plus-lg"></i> Crear expediente
-            </a>
+        {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
+        <a href="{% url 'crear-expediente' %}" class="btn btn-success me-2">
+            <i class="bi bi-plus-lg"></i> Crear expediente
+        </a>
         {% endif %}
         <a href="{% url 'expedientes-inactivos' %}" class="btn btn-danger me-2">Inactivos</a>
 
         <!-- Botón desplegable de filtrado -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
+                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
                 Filtrar
             </button>
@@ -37,7 +41,8 @@
     <!-- Formulario de búsqueda alineado a la derecha -->
     <form method="GET" action="{% url 'expedientes' %}" class="d-flex ml-auto">
         <div class="input-group">
-            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por Nº Exp, cliente, profesional..." value="{{ q }}">
+            <input type="text" name="q" class="form-control me-2"
+                placeholder="Buscar por Nº Exp, cliente, profesional..." value="{{ q }}">
             <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
                 <i class="bi bi-search"></i>
             </button>
@@ -77,35 +82,40 @@
                 <td>{{ expediente.numero_expediente }}</td>
                 <td>{{ expediente.cliente }}</td>
                 <td>{{ expediente.profesional }}</td>
-                <td>{{ expediente.apoderado }}</td>            
+                <td>{{ expediente.apoderado }}</td>
                 <td>{{ expediente.fecha_inicio }}</td>
                 <td>
                     {% if expediente.estado %}
-                        <span class="text-success">Activo</span>
+                    <span class="text-success">Activo</span>
                     {% else %}
-                        <span class="text-danger">Inactivo</span>
+                    <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url "movimientos" expediente.numero_expediente %}"><i class="bi bi-box-arrow-up-right"></i></i></a>
+                    <a href="{% url 'movimientos' expediente.numero_expediente %}"><i
+                            class="bi bi-box-arrow-up-right"></i></i></a>
                 </td>
                 <td>
-                    
+
                     <a href="{% url 'expediente' expediente.numero_expediente %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a>
                     {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
-                    <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}" class="btn btn-warning btn-sm">
+                    <a href="{% url 'actualizar-expediente' expediente.numero_expediente %}"
+                        class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
                     <!-- Formulario para dar de baja -->
-                    <form action="{% url 'dar-de-baja-expediente' expediente.pk %}" method="post" style="display:inline;">
+                    <form id="darDeBajaForm" action="{% url 'dar-de-baja-expediente' expediente.pk %}" method="post"
+                        style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-secondary btn-sm" title="Dar de baja" onclick="return confirm('¿Estás seguro de dar de baja a este expediente?');">
+                        <button type="button" class="btn btn-danger btn-sm" title="Dar de baja"
+                            onclick="confirmarBaja();">
                             <i class="bi bi-arrow-down-circle"></i>
                         </button>
                     </form>
-                    {% comment %} <a href="{% url 'eliminar-expediente' expediente.numero_expediente %}" class="btn btn-danger btn-sm">
+                    {% comment %} <a href="{% url 'eliminar-expediente' expediente.numero_expediente %}"
+                        class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
                     </a> {% endcomment %}
                     {% endif %}
@@ -120,57 +130,78 @@
     <nav aria-label="Paginación">
         <ul class="pagination justify-content-center">
             {% if expedientes.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.previous_page_number }}" aria-label="Anterior">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page={{ expedientes.previous_page_number }}"
+                    aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
             {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
-                </li>
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;</span>
-                </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
             {% endif %}
 
             <!-- Número de páginas -->
             {% for num in expedientes.paginator.page_range %}
-                {% if expedientes.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% elif num > expedientes.number|add:'-3' and num < expedientes.number|add:'3' %}
-                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+            {% if expedientes.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > expedientes.number|add:'-3' and num < expedientes.number|add:'3' %} <li class="page-item"><a
+                    class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-            {% if expedientes.has_next %}
+                {% if expedientes.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.next_page_number }}" aria-label="Siguiente">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.next_page_number }}"
+                        aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.paginator.num_pages }}" aria-label="Última">
+                    <a class="page-link" href="?q={{ q }}&page={{ expedientes.paginator.num_pages }}"
+                        aria-label="Última">
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>
                 </li>
-            {% else %}
+                {% else %}
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;</span>
                 </li>
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
                 </li>
-            {% endif %}
+                {% endif %}
         </ul>
     </nav>
     {% endif %}
 
 </div>
+<script>
+    function confirmarBaja() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción dará de baja el expediente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, dar de baja',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('darDeBajaForm').submit();
+            }
+        });
+    }
+</script>
 
 {% endblock content %}

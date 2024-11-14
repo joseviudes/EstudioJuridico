@@ -1,37 +1,36 @@
 {% extends "main.html" %}
-
 {% block content %}
-
-<h4>Crear movimiento para el expediente: {{expediente.numero_expediente}} </h4>
+<br>
+<h2 class="mb-4">
+    <a href="{% url 'expedientes' %}" style="text-decoration: none; color: inherit;">
+        <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
+    </a>
+    Movimiento expediente <b>N° {{ expediente.numero_expediente }}</b>
+</h2>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-                {% csrf_token %}
+    <form method="POST" class="mb-5" enctype="multipart/form-data">
+        {% csrf_token %}
 
+        {{ form.as_p }}
+
+        <!-- Renderiza el formset de documentos -->
+        <h5>Documentos</h5>
+        {{ documento_formset.management_form }}
+        {% for form in documento_formset %}
+            <div class="mb-3">
                 {{ form.as_p }}
+            </div>
+        {% endfor %}
 
-                <!-- Renderiza el formset de documentos -->
-                {{ documento_formset.management_form }}
-                <h5>Documentos</h5>
-                {% for form in documento_formset %}
-                    <div class="mb-3">
-                        {{ form.as_p }}
-                    </div>
-                {% endfor %}
 
-                <div class="d-flex justify-content-start">
-                    <button type="submit" class="btn btn-success me-2">Añadir</button>
-
-                    <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-secondary">Cancelar</a>
-                </div>
-            </form>
+        <div class="d-flex justify-content-start mt-4">
+       
+            <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
+            
+            <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-secondary">Cancelar</a>
         </div>
-    </div>
+    </form>
 </div>
 
 {% endblock content %}
-
-
-

@@ -13,7 +13,8 @@ class ExpedienteForm(ModelForm):
             'dependencia': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Juzgado Federal de Corrientes 2'}),
             'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             'fecha_finalizacion': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
-            'caratula': forms.TextInput(attrs={'class': 'form-control'})
+            'caratula': forms.TextInput(attrs={'class': 'form-control'}),
+            'asunto': forms.Textarea(attrs={'cols': 40, 'rows': 2}),
         }
         
     def __init__(self, *args, **kwargs):
@@ -50,6 +51,7 @@ class MovimientosForm(ModelForm):
         widgets = {
             'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             'tipo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tipo de movimiento'}),
+            'detalle': forms.Textarea(attrs={'cols': 50, 'rows': 4}),
         }
 
 

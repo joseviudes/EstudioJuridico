@@ -5,22 +5,26 @@
 {% block content %}
 
 <br>
-<h2 class="text-start"><strong>Gestión de clientes</strong></h2>
-<br>
-
+<div class="my-4">
+    <h2>
+        <i class="bi bi-person-workspace"></i> Gestión de Clientes
+    </h2>
+</div>
+<hr>
 <div class="d-flex justify-content-between align-items-center mb-3">
 
 
     <!-- Sección de botones alineados a la izquierda -->
     <div class="d-flex">
-        
+
         <a href="{% url 'clientes' %}" class="btn btn-dark me-3">
             <i class="bi bi-box-arrow-left"></i> Volver
         </a>
 
         <!-- Botón desplegable de filtrado -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button"
+                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-funnel me-2"></i> <!-- Icono antes del texto -->
                 Filtrar
             </button>
@@ -43,7 +47,8 @@
     <!-- Formulario de búsqueda -->
     <form method="GET" action="{% url 'clientes-inactivos' %}" class="d-flex">
         <div class="input-group">
-            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por DNI, apellido, nombre..." value="{{ q }}">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por DNI, apellido, nombre..."
+                value="{{ q }}">
             <button type="submit" class="btn btn-primary rounded" aria-label="Buscar">
                 <i class="bi bi-search"></i>
             </button>
@@ -83,9 +88,9 @@
                 <td>{{ cliente.telefono }}</td>
                 <td>
                     {% if cliente.estado %}
-                        <span class="text-success">Activo</span>
+                    <span class="text-success">Activo</span>
                     {% else %}
-                        <span class="text-danger">Inactivo</span>
+                    <span class="text-danger">Inactivo</span>
                     {% endif %}
                 </td>
                 <td>
@@ -96,16 +101,14 @@
                         <i class="bi bi-pen"></i>
                     </a>
                     <!-- Formulario para dar de alta -->
-                    <form action="{% url 'dar-de-alta-cliente' cliente.pk %}" method="post" style="display:inline;">
+                    <form id="darDeAltaForm" action="{% url 'dar-de-alta-cliente' cliente.pk %}" method="post"
+                        style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-sm" title="Dar de alta" onclick="return confirm('¿Estás seguro de dar de alta a este cliente?');">
+                        <button type="button" class="btn btn-success btn-sm" title="Dar de alta"
+                            onclick="confirmarAlta();">
                             <i class="bi bi-arrow-up-circle"></i>
                         </button>
                     </form>
-                    <!-- Formulario para eliminar -->
-                    <a href="{% url 'eliminar-cliente' cliente.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
-                        <i class="bi bi-trash-fill"></i>
-                    </a>
                 </td>
             </tr>
 
@@ -113,7 +116,7 @@
             <tr>
                 <td colspan="6" class="text-center">No se encontraron clientes inactivos.</td>
             </tr>
-            
+
             {% endfor %}
         </tbody>
     </table>
@@ -123,35 +126,35 @@
     <nav aria-label="Paginación">
         <ul class="pagination justify-content-center">
             {% if clientes.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ q }}&page={{ clientes.previous_page_number }}" aria-label="Anterior">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page=1" aria-label="Primera">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&page={{ clientes.previous_page_number }}" aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
             {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
-                </li>
-                <li class="page-item disabled">
-                    <span class="page-link" aria-hidden="true">&laquo;</span>
-                </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
             {% endif %}
 
             <!-- Número de páginas -->
             {% for num in clientes.paginator.page_range %}
-                {% if clientes.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% elif num > clientes.number|add:'-3' and num < clientes.number|add:'3' %}
-                    <li class="page-item"><a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
+            {% if clientes.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > clientes.number|add:'-3' and num < clientes.number|add:'3' %} <li class="page-item"><a
+                    class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a></li>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-            {% if clientes.has_next %}
+                {% if clientes.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?q={{ q }}&page={{ clientes.next_page_number }}" aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
@@ -162,17 +165,35 @@
                         <span aria-hidden="true">&raquo;&raquo;</span>
                     </a>
                 </li>
-            {% else %}
+                {% else %}
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;</span>
                 </li>
                 <li class="page-item disabled">
                     <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
                 </li>
-            {% endif %}
+                {% endif %}
         </ul>
     </nav>
     {% endif %}
 </div>
 
+<script>
+    function confirmarAlta() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción dará de alta al cliente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745', // color verde
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, dar de alta',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('darDeAltaForm').submit();
+            }
+        });
+    }
+</script>
 {% endblock content %}

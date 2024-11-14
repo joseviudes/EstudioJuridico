@@ -2,7 +2,7 @@
 
 {% block content %}
 <br>
-<h2 class="text-start"><strong>Movimientos del expediente:</strong> {{expediente.numero_expediente}}</h2>
+<h2 class="text-start"><strong>Movimientos del expediente N°</strong> {{expediente.numero_expediente}}</h2>
 <br>
 {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
 <a href="{% url 'crear-movimiento' expediente.numero_expediente %}" class="btn btn-success">Añadir movimiento</a>

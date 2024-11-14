@@ -2,29 +2,134 @@
 
 {% block content %}
 <br>
-<h2 class="text-start"><strong>Gestión de expedientes</strong></h2>
-<br>
+<h2 class="mb-4">
+    <a href="{% url 'expedientes' %}" style="text-decoration: none; color: inherit;">
+        <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
+    </a>
+    Gestion de Expediente
+</h2>
 
-<h3 class="mb-4">Crear expediente</h3>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <fieldset class="border p-3 mb-4 shadow-sm rounded section-box">
-                <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-                    {% csrf_token %}
-                
-                    {{ form.as_p }}
+<form id="formRegistrarExpediente" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
+        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+            <p></p>
+            <h4>Generar Expediente</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="cliente" class="form-label">Cliente:</label>
+                    {{ form.cliente }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="apoderado" class="form-label">Apoderado:</label>
+                    {{ form.apoderado }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="profesional" class="form-label">Profesional:</label>
+                    {{ form.profesional }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="numero_expediente" class="form-label">Numero Expediente:</label>
+                    {{ form.numero_expediente }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="caratula" class="form-label">Caratula:</label>
+                    {{ form.caratula }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="jurisdiccion" class="form-label">Jurisdiccion:</label>
+                    {{ form.jurisdiccion }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="dependencia" class="form-label">Dependencia:</label>
+                    {{ form.dependencia }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="fecha_inicio" class="form-label">Fecha de inicio:</label>
+                    {{ form.fecha_inicio }}
+                </div>
+                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                    <label for="fecha_finalizacion" class="form-label">Fecha de Finalizacion:</label>
+                    {{ form.fecha_finalizacion }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12"> <!-- Ajustar para ser responsivo -->
+                    <label for="asunto" class="form-label">Asunto:</label>
+                    {{ form.asunto }}
+                </div>
+            </div>
+            <!-- Botones -->
+            <div class="d-flex flex-wrap justify-content-between">
+                <a href="{% url 'expedientes' %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
+                    <i class="bi bi-box-arrow-left"></i> Volver
+                </a>
+                <div class="d-flex flex-wrap gap-2">
 
-                    <!-- Botones de Acción -->
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-success me-2">Crear</button>
-                        <a href="{% url 'expedientes' %}" class="btn btn-secondary">Cancelar</a>
-                    </div>
-                </form>
-            </fieldset>
+                    <button type="button" class="btn btn-outline-primary btn-lg mb-2 mb-md-0" id="btnRegistrar"
+                        onclick="confirmarRegistrar();">
+                        <i class="bi bi-person-plus"></i> Registrar Expediente
+                    </button>
+
+                    <button type="button" class="btn btn-outline-danger btn-lg mb-2 mb-md-0" id="btnBorrar">
+                        <i class="bi bi-eraser"></i> Borrar
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+</form>
+
+<script>
+    // Función para confirmar el registro de cliente
+    function confirmarRegistrar() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres generar este expediente?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745', // verde para confirmar
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Envía el formulario después de la confirmación
+                document.getElementById('formRegistrarExpediente').submit();
+            }
+        });
+    }
+
+    // boton borrar
+    document.getElementById('btnBorrar').addEventListener('click', function () {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción borrará todos los campos del formulario.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, borrar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Resetea el formulario
+                const form = document.querySelector('#formRegistrarExpediente');
+                form.reset(); // Resetea los campos del formulario
+            }
+        });
+    });
+</script>
 
 {% endblock content %}
