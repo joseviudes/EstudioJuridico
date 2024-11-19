@@ -14,6 +14,7 @@
     <a href="{% url 'crear_administrador' %}" class="btn btn-success">Crear Administrador</a>
     <a href="{% url 'crear_profesional' %}" class="btn btn-success">Crear Profesional</a>
     <a href="{% url 'crear_cliente' %}" class="btn btn-success">Crear Cliente</a>
+    <a href="{% url 'crear_secretaria' %}" class="btn btn-success">Crear Secretaria</a>
 </div>
 <hr>
 
@@ -29,7 +30,7 @@
                 <th class="col-rol">Rol</th>
                 <th>Fecha de creación</th>
                 {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
-                <th class="col-opciones">Opciones</th>
+                <th class="col-opciones-usuarios">Opciones</th>
             </tr>
         </thead>
         <tbody>
@@ -39,13 +40,13 @@
                 <td class="col-rol">{{ usuario.rol }}</td>
                 <td>{{ usuario.fecha_ingreso }}</td>
                 {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
-                <td class="col-opciones">
+                <td class="col-opciones-usuarios">
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a>
+                    </a> {% endcomment %}
                 </td>
             </tr>
             {% endfor %}
@@ -62,7 +63,7 @@
                 <th class="col-rol">Rol</th>
                 <th>Fecha de creación</th>
                 {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
-                <th class="col-opciones">Opciones</th>
+                <th class="col-opciones-usuarios">Opciones</th>
             </tr>
         </thead>
         <tbody>
@@ -73,13 +74,47 @@
                 <td class="col-rol">{{ usuario.rol }}</td>
                 <td>{{ usuario.fecha_ingreso }}</td>
                 {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
-                <td class="col-opciones">
+                <td class="col-opciones-usuarios">
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
+                    </a> {% endcomment %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Lista de Secretarias -->
+    <h2 class="mb-4">Secretari@s</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Secretari@ Asociad@</th>
+                <th>Email</th>
+                <th class="col-rol">Rol</th>
+                <th>Fecha de creación</th>
+                {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
+                <th class="col-opciones-usuarios">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in secretarias %}
+            <tr>
+                <td>{{ usuario.secretaria.full_name }}</td>
+                <td>{{ usuario.email }}</td>
+                <td class="col-rol">{{ usuario.rol }}</td>
+                <td>{{ usuario.fecha_ingreso }}</td>
+                {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
+                <td class="col-opciones-usuarios">
+                    <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pen"></i>
                     </a>
+                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash-fill"></i>
+                    </a> {% endcomment %}
                 </td>
             </tr>
             {% endfor %}
@@ -96,7 +131,7 @@
                 <th class="col-rol">Rol</th>
                 <th>Fecha de creación</th>
                 {% comment %} <th class="col-estado">Estado</th> {% endcomment %}
-                <th class="col-opciones">Opciones</th>
+                <th class="col-opciones-usuarios">Opciones</th>
             </tr>
         </thead>
         <tbody>
@@ -107,13 +142,13 @@
                 <td class="col-rol">{{ usuario.rol }}</td>
                 <td>{{ usuario.fecha_ingreso }}</td>
                 {% comment %} <td class="col-estado">estado-poner</td> {% endcomment %}
-                <td class="col-opciones">
+                <td class="col-opciones-usuarios">
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a>
+                    </a> {% endcomment %}
                 </td>
             </tr>
             {% endfor %}

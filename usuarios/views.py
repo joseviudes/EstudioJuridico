@@ -28,7 +28,7 @@ def loginUser(request):
             user = Usuario.objects.get(username=username)
         except Usuario.DoesNotExist:
             print("Error: El usuario no existe.")
-            messages.error(request, "No existe un usuario con este email. Por favor intenta de nuevo.")
+            messages.error(request, "No existe un usuario con este nombre de usuario. Por favor intenta de nuevo.")
             return redirect("login")
 
         # Si el usuario existe, intenta autenticar con la contraseña proporcionada
@@ -37,7 +37,7 @@ def loginUser(request):
             print(f"Usuario autenticado: {user.username}")
 
             # Verificación para usuarios Admin
-            if user.is_superuser or (not hasattr(user, 'profesional') and not hasattr(user, 'cliente')):
+            if user.is_superuser or (not hasattr(user, 'profesional') and not hasattr(user, 'cliente') and not hasattr(user, 'secretaria')):
                 print("Usuario es Admin o no tiene rol vinculado; omitiendo verificaciones adicionales.")
                 login(request, user)
                 messages.success(request, "Se ha iniciado sesión.")
@@ -71,6 +71,20 @@ def loginUser(request):
                 messages.success(request, "Se ha iniciado sesión.")
                 return redirect("expedientes")  # Redirigir a 'expedientes' para Cliente
 
+            # Verificación de usuarios con rol secretaria
+            elif hasattr(user, 'secretaria') and user.secretaria is not None:
+                secretaria = user.secretaria
+                print(f"Verificando secretaria asociada: {secretaria}")
+
+                if not secretaria.estado:
+                    print("Secretaria asociada inactiva.")
+                    messages.error(request, "Tu cuenta de secretaria no está activa.")
+                    return redirect("login")
+
+                login(request, user)
+                messages.success(request, "Se ha iniciado sesión.")
+                return redirect("clientes")  # Redirigir a 'secretarias' para Secretaria
+
         else:
             # Si el usuario existe pero la contraseña es incorrecta
             print("Error: Contraseña incorrecta.")
@@ -98,6 +112,7 @@ class ListUsuarios(LoginRequiredMixin, AdminRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['clientes'] = Usuario.objects.filter(rol='Cliente').select_related('cliente')
         context['profesionales'] = Usuario.objects.filter(rol='Abogado').select_related('profesional')  # Cambiado a 'profesional'
+        context['secretarias'] = Usuario.objects.filter(rol='Secretaria').select_related('secretaria')
         context['admins'] = Usuario.objects.filter(rol='Admin')
         return context
     
@@ -107,7 +122,6 @@ def createUsuario(request, rol):
     if request.method == 'POST':
         
         form = UsuarioForm(request.POST)
-        confirm_password = request.POST.get("confirm_password") 
         
         if form.is_valid():
             user = form.save(commit=False)
@@ -120,6 +134,9 @@ def createUsuario(request, rol):
             elif rol == 'Abogado' and form.cleaned_data['profesional']:
                 user.rol = rol
                 user.profesional = form.cleaned_data['profesional']
+            elif rol == 'Secretaria' and form.cleaned_data['secretaria']:
+                user.rol = rol
+                user.secretaria = form.cleaned_data['secretaria']
             elif rol == 'Admin':
                 user.rol = rol
             

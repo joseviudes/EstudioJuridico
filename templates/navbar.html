@@ -34,12 +34,12 @@
                     
                     {% if user.is_authenticated %}
                         <!-- Opciones visibles solo para usuarios autenticados según su rol -->
-                        {% if request.user.rol == "Admin" %}
+                        {% if request.user.rol == "Admin"%}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'profesionales' %}">Profesionales</a>
                             </li>
                         {% endif %}
-                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" or request.user.rol == "Secretaria" %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
                             </li>
@@ -55,7 +55,7 @@
                             </li>
                         {% endif %}
                         
-                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Secretaria" %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'turnos' %}">Turnos</a>
                         </li>
@@ -67,12 +67,12 @@
                             </li>
                         {% endif %}
             
-                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" or request.user.rol == "Secretaria" %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'agenda' %}">Agenda</a>
                             </li>
                         {% endif %}
-                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" or request.user.rol == "Secretaria"%}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'informes' %}">Informes</a>
                             </li>
@@ -88,8 +88,11 @@
                 <!-- Link de login o logout en el extremo derecho -->
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
+                        {% comment %} <li class="nav-item">
+                            <span class="navbar-text text-muted">Logeado como: <strong>{{ user.username }}</strong></span>
+                        </li> {% endcomment %}
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="{% url 'logout' %}">Cerrar sesión</a>
+                            <a class="nav-link text-dark" title="Cerrar sesión" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i></a>
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -97,6 +100,7 @@
                         </li>
                     {% endif %}
                 </ul>
+
             </div>
         </div>
     </nav>

@@ -35,9 +35,10 @@ ESTADOS = (
 class Turno(models.Model):
     
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='turnos', null=True, blank=True, default='-')
-    solicitante = models.CharField(max_length=100, null=True, blank=True)
+    solicitante = models.CharField(max_length=100, null=True, blank=True, default="-")
+    contacto_solicitante = models.CharField('Contacto del solicitante', max_length=150, null=True, blank=True, default="-")
     
-    profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos', default='-')
+    profesional = models.ForeignKey(Profesional, on_delete=models.CASCADE, related_name='turnos')
     
     id_turno = models.AutoField(primary_key=True)
     dia = models.DateField(validators=[validar_dia])

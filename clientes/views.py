@@ -10,12 +10,12 @@ from .models import Cliente
 
 
 def is_admin_or_abogado(user):
-    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado')
+    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado' or user.rol == 'Secretaria')
 
 class SoloAdminYAbogadoMixin(UserPassesTestMixin):
     def test_func(self):
         # Comprobamos si el usuario es admin o abogado
-        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado' or self.request.user.rol == 'Secretaria')
 
 
 class ListCliente(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):

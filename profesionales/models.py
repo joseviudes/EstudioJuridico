@@ -47,10 +47,34 @@ class Profesional(models.Model):
     def full_name(self):
         return f"{self.nombre} {self.apellido}"
 
-    # Método save modificado para redimensionar la imagen si es necesario
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-    
     def __str__(self):
-        return self.full_name  # Ahora usa la propiedad full_name
+        return self.full_name  
 
+
+class Secretaria(models.Model):
+    
+    profesional = models.ForeignKey(Profesional, related_name='secretarias', on_delete=models.CASCADE)
+    
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni])
+    foto = models.ImageField('Foto', upload_to='images/', null=True, blank=True)
+    
+    estado = models.BooleanField(default=True)
+    fecha_ingreso = models.DateField('Fecha de ingreso')  
+    fecha_egreso = models.DateField('Fecha de egreso', null=True, blank=True)
+    motivo_egreso = models.TextField('Motivo de egreso', max_length=250, null=True, blank=True)
+    
+    # Contacto
+    domicilio = models.CharField(max_length=250, null=True, blank=True)
+    cod_postal = models.CharField('Codigo Postal', max_length=4, null=True, blank=True)
+    telefono = models.CharField(max_length=10, validators=[validar_telefono])
+    email = models.EmailField(max_length=250, null=True, blank=True)
+
+
+    @property
+    def full_name(self):
+        return f"{self.nombre} {self.apellido}"
+
+    def __str__(self):
+        return self.full_name 

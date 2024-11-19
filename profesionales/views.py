@@ -5,19 +5,19 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 
-from .forms import ProfesionalForm
-from .models import Profesional
-from .filters import ProfesionalFilter
+from .forms import ProfesionalForm, SecretariaForm
+from .models import Profesional, Secretaria
+from .filters import ProfesionalFilter, SecretariaFilter
 
 
 
 def is_admin_or_abogado(user):
-    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado')
+    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado' or user.rol == 'Secretaria')
 
 class SoloAdminYAbogadoMixin(UserPassesTestMixin):
     def test_func(self):
-
-        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
+        # Comprobamos si el usuario es admin o abogado
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado' or self.request.user.rol == 'Secretaria')
 
 
 class ListProfesional(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
@@ -191,3 +191,163 @@ def darDeAltaProfesional(request, dni):
         messages.info(request, f"Profesional {profesional.full_name} ya está activo.")
         
     return redirect('profesionales-inactivos')  
+
+
+# ---------------------- Secretaria ---------------------
+
+class ListSecretaria(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
+    
+    model = Secretaria
+    template_name = 'profesionales/secretarias.html'
+    context_object_name = 'secretarias'
+    filterset_class = ProfesionalFilter
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(estado=True)
+        query = self.request.GET.get('q')
+        order = self.request.GET.get('order')
+
+        if query:
+            queryset = queryset.filter(
+                Q(nombre__icontains=query) |
+                Q(apellido__icontains=query) |
+                Q(dni__icontains=query)
+            )
+
+        # filtros
+        if order == 'apellido_asc':
+            queryset = queryset.order_by('apellido')
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-apellido')
+        elif order == 'fecha_ingreso_asc':
+            queryset = queryset.order_by('fecha_ingreso')
+        elif order == 'fecha_ingreso_desc':
+            queryset = queryset.order_by('-fecha_ingreso')
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')
+        context['order'] = self.request.GET.get('order', '')
+        return context
+    
+class ListSecretariaInactivo(LoginRequiredMixin, SoloAdminYAbogadoMixin, ListView):
+    
+    model = Secretaria
+    template_name = 'profesionales/secretarias-inactivos.html'
+    context_object_name = 'secretarias'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(estado=False) 
+        query = self.request.GET.get('q')
+        order = self.request.GET.get('order')
+
+        if query:
+            queryset = queryset.filter(
+                Q(nombre__icontains=query) |
+                Q(apellido__icontains=query) |
+                Q(dni__icontains=query)
+            )
+            
+        # filtros
+        if order == 'apellido_asc':
+            queryset = queryset.order_by('apellido')
+        elif order == 'apellido_desc':
+            queryset = queryset.order_by('-apellido')
+        elif order == 'fecha_ingreso_asc':
+            queryset = queryset.order_by('fecha_ingreso')
+        elif order == 'fecha_ingreso_desc':
+            queryset = queryset.order_by('-fecha_ingreso')
+            
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')  
+        return context 
+
+@login_required
+@user_passes_test(is_admin_or_abogado)
+def detailSecretaria(request, pk):
+    secretaria = get_object_or_404(Secretaria, pk=pk)
+    
+    context = {'secretaria': secretaria,}
+    return render(request, 'profesionales/secretaria.html', context)
+
+@login_required
+@user_passes_test(is_admin_or_abogado)
+def createSecretaria(request):
+    if request.method == 'POST':
+        form = SecretariaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Se ha agregado una secretaria.")
+            return redirect('profesionales')
+        else:
+            messages.error(request, "Hubo un error al crear una nueva secretaria. Por favor verifique los datos")
+    else:
+        form = SecretariaForm()
+        
+    context = {'form': form}
+    return render(request, 'profesionales/create-secretaria.html', context)
+
+
+@login_required
+@user_passes_test(is_admin_or_abogado)
+def updateSecretaria(request, pk):
+    secretaria = get_object_or_404(Secretaria, pk=pk)
+
+    if request.method == 'POST':
+        form = SecretariaForm(request.POST, instance=secretaria)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Los datos de la secretaria se han actualizado correctamente.")
+            return redirect('secretarias') 
+        else:
+            # Mostrar errores específicos del formulario
+            messages.error(request, "Hubo un error al actualizar los datos de la secretaria. Por favor verifique los datos.")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error en el campo {field}: {error}")
+
+    else:
+        form = SecretariaForm(instance=secretaria)  # Corrigiendo aquí para que coincida con el formulario
+
+    context = {'form': form, 'secretaria': secretaria}
+    return render(request, 'profesionales/update-secretaria.html', context)
+
+@login_required
+@permission_required('profesionales.change_secretaria', raise_exception=True)
+@user_passes_test(is_admin_or_abogado)
+def darDeBajaSecretaria(request, dni):
+    
+    secretaria = get_object_or_404(Secretaria, pk=dni)
+    
+    if secretaria.estado:
+        secretaria.estado = False
+        secretaria.save()
+        messages.success(request, f"Secretari@ {secretaria.full_name} fué dad@ de baja correctamente.")
+    else:
+        messages.info(request, f"Secretari@ {secretaria.full_name} ya se encuentra dad@ baja.")
+        
+    return redirect('secretarias')
+
+
+@login_required
+@permission_required('profesionales.change_secretaria', raise_exception=True)
+@user_passes_test(is_admin_or_abogado)
+def darDeAltaSecretaria(request, dni):
+    
+    secretaria = get_object_or_404(Secretaria, pk=dni)
+    
+    if not secretaria.estado:
+        secretaria.estado = True
+        secretaria.save()
+        messages.success(request, f"Secretari@ {secretaria.full_name} fué dad@ de alta exitosamente.")
+    else:
+        messages.info(request, f"Secretari@ {secretaria.full_name} ya está activ@.")
+        
+    return redirect('secretarias-inactivos')  

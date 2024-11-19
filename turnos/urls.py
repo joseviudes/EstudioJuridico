@@ -10,7 +10,7 @@ urlpatterns = [
     path("eliminar-turno/<int:pk>/", deleteTurno, name="eliminar-turno"),
     path("horarios-ocupados/", horariosOcupados, name='horarios-ocupados'),
     
-    path("agenda/", agendaView, name="agenda"),
+    path('agenda/', agendaView, name='agenda'),
     path("turnos-json/", turnos_json, name='turnos-json'),
     
 ]

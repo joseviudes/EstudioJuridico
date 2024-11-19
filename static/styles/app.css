@@ -55,6 +55,11 @@
   border-bottom: 2px solid #2980b9;
 }
 
+/* Asegurar que el logout y el texto estén alineados */
+.navbar-nav .nav-item span {
+  padding-top: 8px;
+}
+
 /* Alertas */
 .alert {
   font-size: 0.9rem;
@@ -164,8 +169,19 @@ white-space: normal; /* Permite saltos de línea dentro de la celda */
   white-space: nowrap; 
 }
 
+.col-horario {
+  width: 10%; 
+  white-space: nowrap; 
+}
+
+
 .col-opciones {
   width: 15%; 
+  white-space: nowrap; 
+}
+
+.col-opciones-usuarios {
+  width: 8%; 
   white-space: nowrap; 
 }
 
@@ -587,4 +603,39 @@ body {
   .card-title {
       font-size: 1.15rem;
   }
+}
+
+
+
+.agenda-section {
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.agenda-section h3 {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.turnos-dia {
+    background-color: #d4edda; /* Verde claro */
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f2f2f2; /* Color suave */
+}
+
+.table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.table-secondary {
+    background-color: #e9ecef;
 }

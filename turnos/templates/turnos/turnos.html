@@ -40,13 +40,17 @@
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <th class="col-id_turno">ID</th>
                 {% if user.rol == 'Admin' %}
+                <th class="col-id_turno">ID</th>
                 <th>Fecha de creación</th>
                 {% endif %}
                 <th>Cliente</th>
+                <th>Telefono</th>
                 <th>Solicitante</th>
+                <Th>Contacto solicitante</Th>
+                {% if user.rol == 'Admin' %}
                 <th>Profesional</th>
+                {% endif %}
                 <th>Dia</th>
                 <th>Horario</th>
                 <th>Motivo</th>
@@ -59,13 +63,17 @@
         <tbody>
             {% for turno in turnos %}
             <tr>
-                <td class="col-id_turno">{{ turno.id_turno }}</td>
                 {% if user.rol == 'Admin' %}
+                <td class="col-id_turno">{{ turno.id_turno }}</td>
                 <td>{{ turno.fecha_creacion }}</td>
                 {% endif %}
                 <td>{{ turno.cliente.full_name }}</td>
+                <td>{{ turno.cliente.telefono }}</td>
                 <td>{{ turno.solicitante }}</td>
+                <td>{{ turno.contacto_solicitante }}</td>
+                {% if user.rol == 'Admin' %}
                 <td>{{ turno.profesional.full_name }}</td>
+                {% endif %}
                 <td>{{ turno.dia }}</td>
                 <td>{{ turno.horario }}</td>
                 <td>{{ turno.motivo }}</td>
@@ -90,9 +98,9 @@
                     <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    <a href="{% url 'eliminar-turno' turno.pk %}" class="btn btn-danger btn-sm">
+                    {% comment %} <a href="{% url 'eliminar-turno' turno.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a>
+                    </a> {% endcomment %}
                 </td>
                 {% endif %}
             </tr>
@@ -147,6 +155,24 @@
         </ul>
     </nav>
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.querySelector('input[type="date"]');
+        const today = new Date().toISOString().split('T')[0];  // obtiene la fecha actual en formato YYYY-MM-DD
+        input.setAttribute('min', today);  // deshabilita fechas pasadas
+
+        input.addEventListener('input', function (e) {
+            const selectedDate = new Date(e.target.value);
+            if (selectedDate < new Date()) {
+                e.target.style.color = 'gray';  // Cambia el color si la fecha es pasada
+            } else {
+                e.target.style.color = 'black';
+            }
+        });
+    });
+</script>
 
 
 

@@ -1,90 +1,380 @@
 {% extends "main.html" %}
 
+{% block title %}
+    Agenda
+{% endblock %}
+
 {% block content %}
-<br>
-<div class="my-4">
-    <h2>
-      <i class="bi bi-calendar2-week"></i> Agenda de Turnos
-    </h2>
-</div>
-<hr>
-<!-- Contenedor del calendario -->
-<div id='calendar'></div>
+<div class="container mt-5">
+    <h3 class="text-left"><i class="bi bi-calendar-week"></i><strong> Agenda</strong> {% if user.rol == 'Abogado' %}- <strong>{{ profesional.nombre }} {{ profesional.apellido }}</strong> {% endif%} - {{ dia|date:"j \\d\\e F \\d\\e Y" }}</h3>
+    <br>
+    <hr>
 
-<!-- Modal para mostrar los detalles del turno -->
-<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="eventModalLabel">📅 Detalles del Turno</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-          <div class="row mb-3">
-            <div class="col-4 fw-bold">Cliente:</div>
-            <div class="col-8" id="cliente"></div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4 fw-bold">Solicitante:</div>
-            <div class="col-8" id="solicitante"></div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4 fw-bold">Motivo:</div>
-            <div class="col-8" id="motivo"></div>
-          </div>
-          <hr>
-          <div class="row mb-3">
-            <div class="col-4 fw-bold">Fecha:</div>
-            <div class="col-8" id="fecha"></div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4 fw-bold">Hora:</div>
-            <div class="col-8" id="hora"></div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-4 fw-bold">Profesional:</div>
-            <div class="col-8" id="profesional"></div>
-          </div>
+    {% if admin_view %}
+
+        <h3 class="text-success"><i class="fas fa-calendar-day"></i> Turnos del día de todos los profesionales</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Profesional</th>
+                    <th>Fecha</th>
+                    <th>Horario</th>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Solicitante</th>
+                    <th>Tel. Solicitante</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profesional in profesionales %}
+                    {% for turno in profesional.turnos.all %}
+                        {% if turno.dia == dia %}
+                            <tr>
+                                <td>{{ profesional.nombre }} {{ profesional.apellido }}</td>
+                                <td>{{ turno.dia|date:"d/m/Y" }}</td>
+                                <td>{{ turno.horario }}</td>
+                                <td>{{ turno.cliente }}</td>
+                                <td>{{ turno.cliente.telefono }}</td>
+                                <td>{{ turno.solicitante }}</td>
+                                <td>{{ turno.contacto_solicitante }}</td>
+                                <td>{{ turno.motivo }}</td>
+                                <td>
+                                    {% if turno.estado == "Pendiente de aprobación" %}
+                                        <span class="badge bg-warning">{{ turno.estado }}</span>
+                                    {% endif %}
+                                    {% if turno.estado == "Aprobado" %}
+                                        <span class="badge bg-success">{{ turno.estado }}</span>
+                                    {% endif %}
+                                    {% if turno.estado == "Cancelado" %}
+                                        <span class="badge bg-danger">{{ turno.estado }}</span>
+                                    {% endif %}
+                                    {% if turno.estado == "Concluido" %}
+                                        <span class="badge bg-muted">{{ turno.estado }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="9">No hay turnos para este profesional hoy.</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        <!-- Próximos turnos -->
+        <section class="agenda-section mb-4">
+            <h3 class="text-warning"><i class="fas fa-calendar-alt"></i> Próximos turnos</h3>
+            {% if turnos_proximos %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-rol">Fecha</th>
+                            <th class="col-horario">Horario</th>
+                            <th>Profesional</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Solicitante</th>
+                            <th class="col-horario">Tel. Solicitante</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turno in turnos_proximos %}
+                            <tr>
+                                <td class="col-rol">{{ turno.dia|date:"d/m/Y" }}</td>
+                                <td class="col-horario">{{ turno.horario }}</td>
+                                <td>{{ turno.profesional }}</td>
+                                <td>{{ turno.cliente }}</td>
+                                <td>{{ turno.cliente.telefono }}</td>
+                                <td>{{ turno.solicitante }}</td>
+                                <td class="col-horario">{{ turno.contacto_solicitante }}</td>
+                                <td>{{ turno.motivo }}</td>
+                                <td>
+                                    {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">No tienes próximos turnos.</p>
+            {% endif %}
+        </section>
+        <hr>
+
+        <h3>Filtros para turnos pasados</h3>
+
+        <div class="row justify-content-left">
+            <div class="col-md-6">
+                <form method="get" class="mb-3">
+                    <label for="mes">Mes:</label>
+                    <select name="mes" id="mes" class="form-select">
+                        <option value="">Todos</option>
+                        {% for mes_num, mes_nombre in meses %}
+                            <option value="{{ mes_num }}" {% if mes_seleccionado|default:"" == mes_num|stringformat:"d" %}selected{% endif %}>
+                                {% if mes_nombre == "January" %}Enero
+                                {% elif mes_nombre == "February" %}Febrero
+                                {% elif mes_nombre == "March" %}Marzo
+                                {% elif mes_nombre == "April" %}Abril
+                                {% elif mes_nombre == "May" %}Mayo
+                                {% elif mes_nombre == "June" %}Junio
+                                {% elif mes_nombre == "July" %}Julio
+                                {% elif mes_nombre == "August" %}Agosto
+                                {% elif mes_nombre == "September" %}Septiembre
+                                {% elif mes_nombre == "October" %}Octubre
+                                {% elif mes_nombre == "November" %}Noviembre
+                                {% elif mes_nombre == "December" %}Diciembre
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                
+                    <label for="anio">Año:</label>
+                    <select name="anio" id="anio" class="form-select">
+                        <option value="">Todos</option>
+                        {% for anio in anios %}
+                            <option value="{{ anio }}" {% if anio_seleccionado == anio|stringformat:"d" %}selected{% endif %}>
+                                {{ anio }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
+
+        <!-- Turnos pasados -->
+        <section class="agenda-section turnos-dia mb-4">
+            <h3 class="text-muted"><i class="bi bi-calendar-check"></i> Turnos pasados</h3>
+            {% if turnos_pasados %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="col-rol">Fecha</th>
+                            <th class="col-horario">Horario</th>
+                            <th>Profesional</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Solicitante</th>
+                            <th>Tel. Solicitante</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turno in turnos_pasados %}
+                            <tr>
+                                <td class="col-rol">{{ turno.dia|date:"d/m/Y" }}</td>
+                                <td class="col-horario">{{ turno.horario }}</td>
+                                <td>{{ turno.profesional }}</td>
+                                <td>{{ turno.cliente }}</td>
+                                <td>{{ turno.cliente.telefono }}</td>
+                                <td>{{ turno.solicitante }}</td>
+                                <td>{{ turno.contacto_solicitante }}</td>
+                                <td>{{ turno.motivo }}</td>
+                                <td>
+                                    {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">No hay turnos pasados registrados.</p>
+            {% endif %}
+        </section>
+        
+    {% endif %}
+
+    {% if user.rol == 'Abogado' or user.rol == 'Secretaria' %}
+
+        <!-- Turnos del día -->
+        <section class="agenda-section turnos-dia mb-4">
+            <h3 class="text-success"><i class="fas fa-calendar-day"></i> Turnos del día</h3>
+            {% if turnos_hoy %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="col-rol">Fecha</th>
+                        <th class="col-horario">Horario</th>
+                        <th>Cliente</th>
+                        <th>Telefono</th>
+                        <th>Solicitante</th>
+                        <th>Tel. Solicitante</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for turno in turnos_hoy %}
+                        <tr>
+                            <td class="col-rol">{{ turno.dia|date:"d/m/Y" }}</td>
+                            <td class="col-horario">{{ turno.horario }}</td>
+                            <td>{{ turno.cliente }}</td>
+                            <td>{{ turno.cliente.telefono }}</td>
+                            <td>{{ turno.solicitante }}</td>
+                            <td>{{ turno.contacto_solicitante }}</td>
+                            <td>{{ turno.motivo }}</td>
+                            <td>
+                                {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
+                                {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
+                                {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
+                                {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p class="text-muted">No tienes turnos para hoy.</p>
+            {% endif %}
+        </section>
+
+        <!-- Próximos turnos -->
+        <section class="agenda-section mb-4">
+            <h3 class="text-warning"><i class="fas fa-calendar-alt"></i> Próximos turnos</h3>
+            {% if turnos_proximos %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-rol">Fecha</th>
+                            <th class="col-horario">Horario</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Solicitante</th>
+                            <th>Tel. Solicitante</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turno in turnos_proximos %}
+                            <tr>
+                                <td class="col-rol">{{ turno.dia|date:"d/m/Y" }}</td>
+                                <td class="col-horario">{{ turno.horario }}</td>
+                                <td>{{ turno.cliente }}</td>
+                                <td>{{ turno.cliente.telefono }}</td>
+                                <td>{{ turno.solicitante }}</td>
+                                <td>{{ turno.contacto_solicitante }}</td>
+                                <td>{{ turno.motivo }}</td>
+                                <td>
+                                    {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">No tienes próximos turnos.</p>
+            {% endif %}
+        </section>
+        <hr>
+
+        <h3>Filtros para turnos pasados</h3>
+
+        <div class="row justify-content-left">
+            <div class="col-md-6">
+                <form method="get" class="mb-3">
+                    <label for="mes">Mes:</label>
+                    <select name="mes" id="mes" class="form-select">
+                        <option value="">Todos</option>
+                        {% for mes_num, mes_nombre in meses %}
+                            <option value="{{ mes_num }}" {% if mes_seleccionado|default:"" == mes_num|stringformat:"d" %}selected{% endif %}>
+                                {% if mes_nombre == "January" %}Enero
+                                {% elif mes_nombre == "February" %}Febrero
+                                {% elif mes_nombre == "March" %}Marzo
+                                {% elif mes_nombre == "April" %}Abril
+                                {% elif mes_nombre == "May" %}Mayo
+                                {% elif mes_nombre == "June" %}Junio
+                                {% elif mes_nombre == "July" %}Julio
+                                {% elif mes_nombre == "August" %}Agosto
+                                {% elif mes_nombre == "September" %}Septiembre
+                                {% elif mes_nombre == "October" %}Octubre
+                                {% elif mes_nombre == "November" %}Noviembre
+                                {% elif mes_nombre == "December" %}Diciembre
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                
+                    <label for="anio">Año:</label>
+                    <select name="anio" id="anio" class="form-select">
+                        <option value="">Todos</option>
+                        {% for anio in anios %}
+                            <option value="{{ anio }}" {% if anio_seleccionado == anio|stringformat:"d" %}selected{% endif %}>
+                                {{ anio }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Turnos pasados -->
+        <section class="agenda-section turnos-dia mb-4">
+            <h3 class="text-muted"><i class="bi bi-calendar-check"></i> Turnos pasados</h3>
+            {% if turnos_pasados %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="col-rol">Fecha</th>
+                            <th class="col-horario">Horario</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Solicitante</th>
+                            <th>Tel. Solicitante</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turno in turnos_pasados %}
+                            <tr>
+                                <td class="col-rol">{{ turno.dia|date:"d/m/Y" }}</td>
+                                <td class="col-horario">{{ turno.horario }}</td>
+                                <td>{{ turno.cliente }}</td>
+                                <td>{{ turno.cliente.telefono }}</td>
+                                <td>{{ turno.solicitante }}</td>
+                                <td>{{ turno.contacto_solicitante }}</td>
+                                <td>{{ turno.motivo }}</td>
+                                <td>
+                                    {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">No hay turnos pasados registrados.</p>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    {% if error %}
+        <div class="alert alert-danger mt-4">{{ error }}</div>
+    {% endif %}
+
 </div>
 
-<!-- FullCalendar JavaScript y archivo de localización en español -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/locales/es.global.min.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      locale: 'es',
-      initialView: 'dayGridMonth',
-      events: '/turnos/turnos-json/',
-      eventClick: function(info) {
-        const startDate = info.event.start;
-        const endDate = info.event.end;
-
-        const dateString = startDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'numeric', day: 'numeric' });
-        const startTimeString = startDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-        const endTimeString = endDate ? endDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
-
-        document.getElementById('cliente').textContent = info.event.extendedProps.cliente;
-        document.getElementById('solicitante').textContent = info.event.extendedProps.solicitante;
-        document.getElementById('motivo').textContent = info.event.extendedProps.motivo;
-        document.getElementById('fecha').textContent = dateString;
-        document.getElementById('hora').textContent = `${startTimeString} - ${endTimeString}`;
-        document.getElementById('profesional').textContent = info.event.extendedProps.professional;
-
-        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
-        eventModal.show();
-      }
-    });
-    calendar.render();
-  });
-</script>
-{% endblock content %}
+{% endblock %}

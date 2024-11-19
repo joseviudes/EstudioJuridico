@@ -9,6 +9,7 @@
     </h2>
 </div>
 <hr>
+
 <div class="d-flex justify-content-start align-items-center mb-3">
 
     {% if user.rol == 'Admin' %}
@@ -17,7 +18,9 @@
     </a>
     {% endif %}
 
-    <a href="{% url 'profesionales-inactivos' %}" class="btn btn-danger">Inactivos</a>
+    <a href="{% url 'profesionales-inactivos' %}" class="btn btn-danger me-2">Inactivos</a>
+
+    <a href="{% url 'secretarias' %}" class="btn btn-primary">Secretarias</a>
 
 
     <!-- Botón desplegable de filtrado -->

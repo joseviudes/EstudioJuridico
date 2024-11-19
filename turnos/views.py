@@ -7,30 +7,31 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
-from django.db.models import QuerySet
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models.functions import ExtractYear
+import calendar
 
 from .forms import TurnoForm
 from .models import Turno
 from clientes.models import Cliente
-from profesionales.models import Profesional
+from profesionales.models import Profesional, Secretaria
  
 
 
 def is_admin_or_abogado(user):
-    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado')
+    return user.is_authenticated and (user.is_superuser or user.rol == 'Abogado' or user.rol == 'Secretaria')
 
 class SoloAdminYAbogadoMixin(UserPassesTestMixin):
     def test_func(self):
         # Comprobamos si el usuario es admin o abogado
-        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado')
+        return self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.rol == 'Abogado' or self.request.user.rol == 'Secretaria')
 
 class ListTurno(LoginRequiredMixin, ListView):
     model = Turno
     template_name = 'turnos/turnos.html'
     context_object_name = 'turnos'  
     paginate_by = 10  
-    
+
     def get_queryset(self):
         user = self.request.user
 
@@ -51,10 +52,21 @@ class ListTurno(LoginRequiredMixin, ListView):
                 queryset = Turno.objects.filter(profesional=profesional)
             except Profesional.DoesNotExist:
                 return Turno.objects.none()
+        elif user.rol == 'Secretaria':
+            # Si es Secretaria, mostramos solo los turnos del profesional al que está vinculada
+            try:
+                secretaria = Secretaria.objects.get(usuario=user)
+                profesional = secretaria.profesional  # Asumimos que existe un campo 'profesional' en Secretaria
+                queryset = Turno.objects.filter(profesional=profesional)
+            except Secretaria.DoesNotExist:
+                return Turno.objects.none()
+            except Profesional.DoesNotExist:
+                return Turno.objects.none()
         else:
             # Si no tiene un rol válido, devolvemos un queryset vacío
             return Turno.objects.none()
 
+        # Filtrado adicional por búsqueda
         query = self.request.GET.get('q', '')
         if query:
             queryset = queryset.annotate(
@@ -67,41 +79,33 @@ class ListTurno(LoginRequiredMixin, ListView):
                 Q(motivo__icontains=query)
             )
 
+        # Ordenar los turnos por el día, de más cercano a más lejano
+        queryset = queryset.order_by('-dia')
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['q'] = self.request.GET.get('q', '')
+
+        # Obtenemos el queryset sin paginar
+        turnos = self.get_queryset()
+        paginator = Paginator(turnos, self.paginate_by)  # Paginamos manualmente
+
+        page = self.request.GET.get('page', 1)  # Obtenemos el número de página desde la URL
+        try:
+            # Intentamos obtener la página correspondiente
+            paginated_turnos = paginator.page(page)
+        except PageNotAnInteger:
+            # Si no es un número válido, mostramos la primera página
+            paginated_turnos = paginator.page(1)
+        except EmptyPage:
+            # Si la página está fuera de rango, mostramos la última página
+            paginated_turnos = paginator.page(paginator.num_pages)
+
+        context['turnos'] = paginated_turnos  # Usamos el objeto paginado
+        context['q'] = self.request.GET.get('q', '')  # Mantenemos la búsqueda si existe
+
         return context
-
-    
-def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-
-    # Obtenemos el queryset sin paginar
-    turnos = self.get_queryset()
-    paginator = Paginator(turnos, self.paginate_by)  # Paginamos manualmente
-
-    page = self.request.GET.get('page', 1)  # Obtenemos el número de página desde la URL
-    try:
-        # Intentamos obtener la página correspondiente
-        paginated_turnos = paginator.page(page)
-    except PageNotAnInteger:
-        # Si no es un número válido, mostramos la primera página
-        paginated_turnos = paginator.page(1)
-    except EmptyPage:
-        # Si la página está fuera de rango, mostramos la última página
-        paginated_turnos = paginator.page(paginator.num_pages)
-
-    context['turnos'] = paginated_turnos  # Usamos el objeto paginado
-    context['q'] = self.request.GET.get('q', '')  # Mantenemos la búsqueda si existe
-
-    # Verificamos la paginación
-    print("Total turnos:", paginator.count)
-    print("Total páginas:", paginator.num_pages)
-    print("Página actual:", paginated_turnos.number)
-
-    return context
 
 @login_required  
 def singleTurno(request, pk):
@@ -120,6 +124,14 @@ def createTurno(request):
             # Asignación automática del profesional si es abogado
             if request.user.rol == 'Abogado':
                 turno.profesional = request.user.profesional
+                
+            if request.user.rol == 'Secretaria':
+                try:
+                    secretaria = Secretaria.objects.get(usuario=request.user)
+                    turno.profesional = secretaria.profesional
+                except Secretaria.DoesNotExist:
+                    # Manejo de error si no se encuentra la secretaria asociada
+                    pass
                 
             if request.user.rol == 'Cliente':
                 turno.cliente = request.user.cliente
@@ -204,10 +216,155 @@ def deleteTurno(request, pk):
 
 # ----------------------- agenda ------------------------
 
-@login_required
-@user_passes_test(is_admin_or_abogado)
-def agendaView(request):
-    return render(request, 'turnos/agenda.html')
+def agendaView(request): 
+    hoy = date.today()
+    user_rol = request.user.rol
+
+    # Lista de meses con sus nombres
+    meses = [(i, calendar.month_name[i]) for i in range(1, 13)]
+
+    # Obtener parámetros del filtro
+    mes = request.GET.get('mes')
+    anio = request.GET.get('anio')
+
+    # Vista para Admin
+    if user_rol == "Admin":
+        # Obtener todos los profesionales activos y sus turnos
+        profesionales = Profesional.objects.filter(estado=True).prefetch_related('turnos')
+
+        # Filtrar turnos de todos los profesionales para el día de hoy
+        turnos_hoy = Turno.objects.filter(dia=hoy).order_by('dia', 'horario')
+
+        # Filtrar turnos próximos (turnos en el futuro)
+        turnos_proximos = Turno.objects.filter(dia__gt=hoy).order_by('dia', 'horario')
+
+        # Filtrar turnos pasados (turnos previos)
+        turnos_pasados = Turno.objects.filter(dia__lt=hoy).order_by('dia', 'horario')
+
+        # Obtener los años distintos de los turnos pasados
+        anios = (
+            turnos_pasados
+            .annotate(anio=ExtractYear('dia'))  # Extraer el año del campo 'dia'
+            .values_list('anio', flat=True)    # Obtener una lista de años
+            .distinct()                        # Evitar duplicados
+        )
+
+        # Filtrar turnos pasados por mes y año
+        if mes and anio:
+            turnos_pasados = turnos_pasados.filter(dia__month=mes, dia__year=anio)
+        elif mes:
+            turnos_pasados = turnos_pasados.filter(dia__month=mes)
+        elif anio:
+            turnos_pasados = turnos_pasados.filter(dia__year=anio)
+
+        context = {
+            'profesionales': profesionales,
+            'dia': hoy,
+            'turnos_hoy': turnos_hoy,
+            'turnos_proximos': turnos_proximos,
+            'turnos_pasados': turnos_pasados,
+            'meses': meses,  # Agregar meses al contexto
+            'anios': sorted(anios, reverse=True),
+            'admin_view': True,
+            'mes_seleccionado': mes,
+            'anio_seleccionado': anio,
+        }
+
+    # Vista para Abogado
+    elif user_rol == "Abogado":
+        # Obtener el profesional correspondiente al usuario actual
+        profesional = Profesional.objects.get(usuario=request.user)
+
+        # Filtrar turnos del día para este profesional
+        turnos_hoy = Turno.objects.filter(profesional=profesional, dia=hoy).order_by('dia', 'horario')
+
+        # Filtrar turnos próximos para este profesional
+        turnos_proximos = Turno.objects.filter(profesional=profesional, dia__gt=hoy).order_by('dia', 'horario')
+
+        # Filtrar turnos pasados para este profesional
+        turnos_pasados = Turno.objects.filter(profesional=profesional, dia__lt=hoy).order_by('dia', 'horario')
+
+        # Obtener los años distintos de los turnos pasados
+        anios = (
+            turnos_pasados
+            .annotate(anio=ExtractYear('dia'))  # Extraer el año del campo 'dia'
+            .values_list('anio', flat=True)    # Obtener una lista de años
+            .distinct()                        # Evitar duplicados
+        )
+
+        # Filtrar turnos pasados por mes y año
+        if mes and anio:
+            turnos_pasados = turnos_pasados.filter(dia__month=mes, dia__year=anio)
+        elif mes:
+            turnos_pasados = turnos_pasados.filter(dia__month=mes)
+        elif anio:
+            turnos_pasados = turnos_pasados.filter(dia__year=anio)
+
+        context = {
+            'profesional': profesional,
+            'dia': hoy,
+            'turnos_hoy': turnos_hoy,
+            'turnos_proximos': turnos_proximos,
+            'turnos_pasados': turnos_pasados,
+            'meses': meses,  # Agregar meses al contexto
+            'anios': sorted(anios, reverse=True),
+            'admin_view': False,
+            'mes_seleccionado': mes,
+            'anio_seleccionado': anio,
+        }
+
+    # Vista para Secretaria
+    elif user_rol == "Secretaria":
+        # Obtener el profesional vinculado a la secretaria
+        secretaria = Secretaria.objects.get(usuario=request.user)
+        profesional = secretaria.profesional
+
+        # Filtrar turnos del día para este profesional
+        turnos_hoy = Turno.objects.filter(profesional=profesional, dia=hoy).order_by('dia', 'horario')
+
+        # Filtrar turnos próximos para este profesional
+        turnos_proximos = Turno.objects.filter(profesional=profesional, dia__gt=hoy).order_by('dia', 'horario')
+
+        # Filtrar turnos pasados para este profesional
+        turnos_pasados = Turno.objects.filter(profesional=profesional, dia__lt=hoy).order_by('dia', 'horario')
+
+        # Obtener los años distintos de los turnos pasados
+        anios = (
+            turnos_pasados
+            .annotate(anio=ExtractYear('dia'))  # Extraer el año del campo 'dia'
+            .values_list('anio', flat=True)    # Obtener una lista de años
+            .distinct()                        # Evitar duplicados
+        )
+
+        # Filtrar turnos pasados por mes y año
+        if mes and anio:
+            turnos_pasados = turnos_pasados.filter(dia__month=mes, dia__year=anio)
+        elif mes:
+            turnos_pasados = turnos_pasados.filter(dia__month=mes)
+        elif anio:
+            turnos_pasados = turnos_pasados.filter(dia__year=anio)
+
+        context = {
+            'profesional': profesional,
+            'dia': hoy,
+            'turnos_hoy': turnos_hoy,
+            'turnos_proximos': turnos_proximos,
+            'turnos_pasados': turnos_pasados,
+            'meses': meses,  # Agregar meses al contexto
+            'anios': sorted(anios, reverse=True),
+            'admin_view': False,
+            'mes_seleccionado': mes,
+            'anio_seleccionado': anio,
+        }
+
+    else:
+        context = {
+            'error': "No tienes permisos para acceder a esta sección."
+        }
+
+    return render(request, 'turnos/agenda.html', context)
+
+
 
 @login_required
 @user_passes_test(is_admin_or_abogado)
