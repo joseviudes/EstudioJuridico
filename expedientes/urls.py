@@ -1,5 +1,5 @@
 from django.urls import path
-
+from . import views
 from .views import ListExpediente, ListExpedienteInactivo, singleExpediente, createExpediente, updateExpediente, deleteExpediente, darDeAltaExpediente, darDeBajaExpediente,  ListMovimientos, createMovimiento, updateMovimiento, deleteMovimiento
 
 urlpatterns = [
@@ -17,6 +17,8 @@ urlpatterns = [
     path('<str:numero_expediente>/movimientos/crear-movimiento', createMovimiento, name='crear-movimiento'),
     path('<int:id_mov>/movimientos/actualizar-movimiento/', updateMovimiento, name='actualizar-movimiento'),
     path('<int:id_mov>/movimientos/eliminar-movimiento/', deleteMovimiento, name='eliminar-movimiento'),
+
+     path('generar-numero-expediente/<str:tipo_expediente>/', views.generar_numero_expediente, name='generar_numero_expediente'),
 
 ]
 

@@ -15,7 +15,7 @@
 <div class="d-flex justify-content-start align-items-center mb-3">
 
 
-    {% if user.rol == 'Admin' %}
+    {% if user.rol == 'Admin' or user.rol == "Secretaria" %}
     <a href="{% url 'crear-cliente' %}" class="btn btn-success me-2">
         <i class="bi bi-plus-lg"></i> Agregar cliente
     </a>
@@ -100,7 +100,7 @@
                     <a href="{% url 'cliente' cliente.pk %}" class="btn btn-info btn-sm" title="Ver">
                         <i class="bi bi-eye"></i>
                     </a>
-                    {% if user.rol == 'Admin' %}
+                    {% if user.rol == 'Admin' or user.rol == "Secretaria" %}
                     <a href="{% url 'actualizar-cliente' cliente.pk %}" class="btn btn-warning btn-sm" title="Editar">
                         <i class="bi bi-pen"></i>
                     </a>

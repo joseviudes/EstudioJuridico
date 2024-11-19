@@ -1,13 +1,6 @@
 from django.db import models
 from django.forms import ValidationError
-
-
-# Create your models here.
-
-# TIPO_DE_MATRICULA = (
-#     ("DNI", "DNI"),
-#     ("CUIL", "CUIL")
-# )
+from django.utils import timezone
 
 def validar_telefono(value):
     if len(value) != 10:
@@ -16,10 +9,11 @@ def validar_telefono(value):
         raise ValidationError('El telefono debe contener solo números.')
     
 def validar_dni(value):
-    if len(value) < 7 and len(value) > 8:
-        raise ValidationError('El DNI debe tener como minimo 7 digitos y como maximo 8.')
+    if len(value) != 8:
+        raise ValidationError('El DNI debe tener exactamente 8 dígitos.')
     if not value.isdigit():
         raise ValidationError('El DNI debe contener solo números.')
+
     
 def validar_codPostal(value):
     if len(value) != 4:
@@ -27,16 +21,20 @@ def validar_codPostal(value):
     if not value.isdigit():
         raise ValidationError('El código postal debe contener solo digitos.')
 
+def validar_fecha_nacimiento(value):
+    today = timezone.now().date()
+    if value > today:
+        raise ValidationError('La fecha de nacimiento no puede ser posterior a la fecha actual.')
 
 class Cliente(models.Model):
 
-    nombre = models.CharField(max_length=60)
-    apellido = models.CharField(max_length=60)
-    dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni])  # PK y de valor único
+    nombre = models.CharField(max_length=60, blank=False)
+    apellido = models.CharField(max_length=60, blank=False)
+    dni = models.CharField('DNI', max_length=8, primary_key=True, unique=True, validators=[validar_dni], blank=False)
     estado = models.BooleanField(default=True)
     
     fecha_ingreso = models.DateField('Fecha de ingreso')
-    fecha_nacimiento = models.DateField('Fecha de nacimiento', blank=True, null=True)
+    fecha_nacimiento = models.DateField('Fecha de nacimiento', blank=True, null=True, validators=[validar_fecha_nacimiento])
     nacionalidad = models.CharField('Nacionalidad', max_length=50)
     ocupacion = models.CharField('Ocupación', max_length=50, blank=True, null=True)
     lugar_laboral = models.CharField('Lugar laboral', max_length=100, blank=True, null=True)

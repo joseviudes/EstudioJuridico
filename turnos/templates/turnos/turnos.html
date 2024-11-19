@@ -55,8 +55,8 @@
                 <th>Horario</th>
                 <th>Motivo</th>
                 <th>Estado</th>
-                {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
-                <th>Opciones</th>
+                {% if user.rol == 'Admin' or user.rol == 'Secretaria' %}
+                <th class="col-opciones-usuarios">Opciones</th>
                 {% endif %}
             </tr>
         </thead>
@@ -77,7 +77,7 @@
                 <td>{{ turno.dia }}</td>
                 <td>{{ turno.horario }}</td>
                 <td>{{ turno.motivo }}</td>
-                {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
+                {% if user.rol == 'Admin' or user.rol == 'Secretaria' %}
                 <td>
                     <form method="POST" action="{% url 'actualizar-estado' turno.pk %}">
                         {% csrf_token %}
@@ -93,8 +93,8 @@
                 <td>{{ turno.estado }}</td>
                 {% endif %}
 
-                {% if user.rol == 'Admin' or user.rol == 'Abogado' %}
-                <td>
+                {% if user.rol == 'Admin' or user.rol == 'Secretaria' %}
+                <td class="col-opciones-usuarios">
                     <a href="{% url 'actualizar-turno' turno.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>

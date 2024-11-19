@@ -21,17 +21,17 @@
         <div class="card-body">
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="apellido" class="form-label">Apellido:</label>
+                    <label for="apellido" class="form-label">Apellido: <span class="text-primary">*</label>
                     {{ form.apellido }}
                 </div>
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="nombre" class="form-label">Nombre:</label>
+                    <label for="nombre" class="form-label">Nombre: <span class="text-primary">*</label>
                     {{ form.nombre }}
                 </div>
             </div>
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="dni" class="form-label">DNI:</label>
+                    <label for="dni" class="form-label">DNI: <span class="text-primary">*</label>
                     {{ form.dni }}
                 </div>
                 <div class="col-12 col-md-6">
@@ -51,11 +51,12 @@
         <div class="card-body">
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="idMatriculaProf" class="form-label">Nº de matrícula del profesional:</label>
+                    <label for="idMatriculaProf" class="form-label">Nº de matrícula del profesional: <span
+                            class="text-primary">*</label>
                     {{ form.idMatriculaProf }}
                 </div>
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="especialidad" class="form-label">Especialidad:</label>
+                    <label for="especialidad" class="form-label">Especialidad: <span class="text-primary">*</label>
                     {{ form.especialidad }}
                 </div>
             </div>
@@ -71,7 +72,7 @@
         <div class="card-body">
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="fecha_ingreso" class="form-label">Fecha de ingreso:</label>
+                    <label for="fecha_ingreso" class="form-label">Fecha de ingreso: <span class="text-primary">*</label>
                     {{ form.fecha_ingreso }}
                 </div>
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
@@ -109,7 +110,7 @@
                     {{ form.telefono }}
                 </div>
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="email" class="form-label">Email:</label>
+                    <label for="email" class="form-label">Email: <span class="text-primary">*</label>
                     {{ form.email }}
                 </div>
             </div>
@@ -134,52 +135,100 @@
     </div>
 
 </form>
-
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fechaIngreso = document.getElementById('id_fecha_ingreso');
+        const fechaEgreso = document.getElementById('id_fecha_egreso');
+        const motivoEgreso = document.getElementById('id_motivo_egreso');
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const fechaEgresoInput = document.getElementById("id_fecha_egreso"); // ID del campo de fecha de egreso
-        const motivoEgresoInput = document.getElementById("id_motivo_egreso"); // ID del campo de motivo de egreso
+        // Deshabilitar los campos inicialmente
+        fechaEgreso.disabled = true;
+        motivoEgreso.disabled = true;
 
-        function toggleMotivoEgreso() {
-            if (fechaEgresoInput.value) {
-                motivoEgresoInput.disabled = false; // Habilitar el campo de motivo de egreso
+        // Habilitar fecha_egreso cuando se seleccione una fecha en fecha_ingreso
+        fechaIngreso.addEventListener('change', function () {
+            if (fechaIngreso.value) {
+                fechaEgreso.disabled = false;  // Habilitar fecha_egreso
+                const fechaSeleccionada = fechaIngreso.value;  // Obtenemos la fecha seleccionada
+                fechaEgreso.setAttribute('min', fechaSeleccionada);  // Establecemos la fecha mínima de egreso
             } else {
-                motivoEgresoInput.disabled = true; // Deshabilitar el campo de motivo de egreso
-                motivoEgresoInput.value = ""; // Limpiar el campo si se desactiva
-            }
-        }
-
-        toggleMotivoEgreso();
-        // Escuchar cambios en el campo de fecha de egreso
-        fechaEgresoInput.addEventListener("input", toggleMotivoEgreso);
-    });
-
-    // Boton Enviar
-    document.getElementById('btnRegistrar').addEventListener('click', function (event) {
-        event.preventDefault();  // Evita el envío del formulario antes de la confirmación
-
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¿Deseas registrar un nuevo profesional?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, registrar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Si el usuario confirma, envía el formulario
-                document.getElementById('registrationForm').submit();  // Envía el formulario
+                fechaEgreso.disabled = true;  // Deshabilitar fecha_egreso si no hay fecha_ingreso
+                fechaEgreso.value = '';  // Limpiar el valor de fecha_egreso
+                motivoEgreso.disabled = true;  // Deshabilitar motivo_egreso si no hay fecha_egreso
+                motivoEgreso.value = '';  // Limpiar el valor de motivo_egreso
             }
         });
-    });
 
-    // boton borrar
+        // Habilitar motivo_egreso cuando se seleccione una fecha en fecha_egreso
+        fechaEgreso.addEventListener('change', function () {
+            if (fechaEgreso.value) {
+                motivoEgreso.disabled = false;  // Habilitar motivo_egreso
+            } else {
+                motivoEgreso.disabled = true;  // Deshabilitar motivo_egreso si no hay fecha_egreso
+                motivoEgreso.value = '';  // Limpiar el valor de motivo_egreso
+            }
+        });
+
+        // Establecer el mínimo inicial de fecha_egreso basado en la fecha de ingreso al cargar la página
+        if (fechaIngreso.value) {
+            fechaEgreso.setAttribute('min', fechaIngreso.value);
+            fechaEgreso.disabled = false;  // Habilitar el campo de fecha_egreso si ya hay fecha_ingreso
+        }
+    });
+    // Validar campos obligatorios
+    function validarFormulario() {
+        let camposObligatorios = ['id_nombre', 'id_apellido', 'id_dni', 'id_fecha_ingreso', 'id_email', 'id_especialidad', 'id_idMatriculaProf']; // Ajusta los campos según los id correctos
+        let camposFaltantes = [];
+
+        camposObligatorios.forEach(function (campo) {
+            let input = document.getElementById(campo);
+            if (!input.value.trim()) {
+                camposFaltantes.push(campo);
+                input.classList.add('border', 'border-danger'); // Resalta los campos faltantes con borde rojo
+            } else {
+                input.classList.remove('border', 'border-danger'); // Elimina el borde rojo si ya está completo
+            }
+        });
+
+        // Mostrar los campos faltantes si existen
+        if (camposFaltantes.length > 0) {
+            Swal.fire({
+                title: 'Campos obligatorios faltantes',
+                text: 'Por favor complete los campos obligatorios.',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return false; // No enviamos el formulario
+        }
+
+        return true; // Si todos los campos obligatorios están completos, enviamos el formulario
+    }
+
+    // Función para confirmar el registro de cliente
+    function confirmarRegistrar() {
+        if (validarFormulario()) {
+            Swal.fire({
+                title: 'Confirmar registro',
+                text: "¿Desea generar el profesional con los datos proporcionados?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, generar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('registrationForm').submit();
+                }
+            });
+        }
+    }
+
+    // Botón borrar
     document.getElementById('btnBorrar').addEventListener('click', function () {
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción borrará todos los campos del formulario.",
+            title: 'Confirmar eliminación',
+            text: "¿Está seguro de borrar los datos del formulario?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, borrar',
@@ -187,12 +236,28 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Resetea el formulario
                 const form = document.querySelector('#registrationForm');
-                form.reset(); // Resetea los campos del formulario
+                form.reset(); // Limpiar los datos del formulario
+
+                // Mostrar mensaje de éxito sin tiempo
+                Swal.fire({
+                    title: 'Formulario borrado',
+                    text: 'Todos los campos han sido limpiados.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#28a745',
+                    timer: 3000, // Duración de la alerta
+                    showConfirmButton: true // Mostrar siempre el botón "OK"
+                });
             }
         });
     });
-</script>
 
+
+    // Botón de registro (para confirmar el envío)
+    document.getElementById('btnRegistrar').addEventListener('click', function (event) {
+        event.preventDefault(); // Evita el envío inmediato del formulario
+        confirmarRegistrar(); // Llama a la función para confirmar el registro
+    });
+</script>
 {% endblock %}

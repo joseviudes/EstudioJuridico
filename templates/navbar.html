@@ -44,7 +44,7 @@
                                 <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
                             </li>
                         {% endif %}
-                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" %}
+                        {% if request.user.rol == "Admin" or request.user.rol == "Abogado" or request.user.rol == "Secretaria" %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'expedientes' %}">Expedientes</a>
                             </li>
@@ -88,13 +88,25 @@
                 <!-- Link de login o logout en el extremo derecho -->
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
-                        {% comment %} <li class="nav-item">
-                            <span class="navbar-text text-muted">Logeado como: <strong>{{ user.username }}</strong></span>
-                        </li> {% endcomment %}
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" title="Cerrar sesión" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i></a>
+                        <!-- Menú desplegable de usuario -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li>
+                                    <span class="dropdown-item-text">
+                                        Logeado como: <strong>{{ user.username }}</strong>
+                                    </span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="text-right dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Salir</a>
+                                </li>
+                            </ul>
                         </li>
                     {% else %}
+                        <!-- Mostrar opción de login si no está autenticado -->
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="{% url 'login' %}">Ingresar</a>
                         </li>

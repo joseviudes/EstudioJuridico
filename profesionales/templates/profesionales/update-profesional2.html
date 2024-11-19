@@ -22,17 +22,17 @@
         <div class="card-body">
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="apellido" class="form-label">Apellido: <span class="text-primary">*</label>
+                    <label for="apellido" class="form-label">Apellido:</label>
                     {{ form.apellido }}
                 </div>
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="nombre" class="form-label">Nombre: <span class="text-primary">*</label>
+                    <label for="nombre" class="form-label">Nombre:</label>
                     {{ form.nombre }}
                 </div>
             </div>
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="dni" class="form-label">DNI: <span class="text-primary">*</label>
+                    <label for="dni" class="form-label">DNI:</label>
                     {{ form.dni }}
                 </div>
                 <div class="col-12 col-md-6">
@@ -52,11 +52,11 @@
         <div class="card-body">
             <div class="mb-3 row">
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="idMatriculaProf" class="form-label">Nº de matrícula del profesional: <span class="text-primary">*</label>
+                    <label for="idMatriculaProf" class="form-label">Nº de matrícula del profesional:</label>
                     {{ form.idMatriculaProf }}
                 </div>
                 <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="especialidad" class="form-label">Especialidad: <span class="text-primary">*</label>
+                    <label for="especialidad" class="form-label">Especialidad:</label>
                     {{ form.especialidad }}
                 </div>
             </div>
@@ -133,109 +133,45 @@
 </form>
 
 <script>
+
     document.addEventListener("DOMContentLoaded", function () {
-        const fechaIngresoInput = document.getElementById("id_fecha_ingreso"); // ID del campo de fecha de ingreso
         const fechaEgresoInput = document.getElementById("id_fecha_egreso"); // ID del campo de fecha de egreso
         const motivoEgresoInput = document.getElementById("id_motivo_egreso"); // ID del campo de motivo de egreso
 
-        // Función para habilitar/deshabilitar el campo de 'fecha_egreso'
-        function toggleFechaEgreso() {
-            if (fechaIngresoInput.value) {
-                fechaEgresoInput.disabled = false; // Habilitar el campo de 'fecha_egreso' si hay fecha de ingreso
-            } else {
-                fechaEgresoInput.disabled = true; // Deshabilitar el campo de 'fecha_egreso' si no hay fecha de ingreso
-                fechaEgresoInput.value = ""; // Limpiar el campo si se desactiva
-            }
-        }
-
-        // Llamar a la función para verificar si 'fecha_ingreso' tiene valor al cargar la página
-        toggleFechaEgreso();
-
-        // Escuchar cambios en el campo de fecha de ingreso para activar/desactivar 'fecha_egreso'
-        fechaIngresoInput.addEventListener("input", toggleFechaEgreso);
-
-        // Función para habilitar/deshabilitar el campo de 'motivo_egreso'
         function toggleMotivoEgreso() {
             if (fechaEgresoInput.value) {
-                motivoEgresoInput.disabled = false; // Habilitar el campo de 'motivo_egreso' si hay fecha de egreso
+                motivoEgresoInput.disabled = false; // Habilitar el campo de motivo de egreso
             } else {
-                motivoEgresoInput.disabled = true; // Deshabilitar el campo de 'motivo_egreso' si no hay fecha de egreso
+                motivoEgresoInput.disabled = true; // Deshabilitar el campo de motivo de egreso
                 motivoEgresoInput.value = ""; // Limpiar el campo si se desactiva
             }
         }
 
-        // Llamar a la función para verificar si 'fecha_egreso' tiene valor al cargar la página
         toggleMotivoEgreso();
-
-        // Escuchar cambios en el campo de fecha de egreso para activar/desactivar 'motivo_egreso'
+        // Escuchar cambios en el campo de fecha de egreso
         fechaEgresoInput.addEventListener("input", toggleMotivoEgreso);
-
-        // Función para actualizar el valor mínimo de fecha_egreso
-        function actualizarFechaEgresoMinima() {
-            const fechaIngresoValue = fechaIngresoInput.value;
-            if (fechaIngresoValue) {
-                fechaEgresoInput.setAttribute("min", fechaIngresoValue);  // Establece el valor mínimo de fecha_egreso
-            }
-        }
-
-        // Escuchar cambios en el campo de fecha de ingreso
-        fechaIngresoInput.addEventListener("change", actualizarFechaEgresoMinima);
-
-        // Llamamos a la función para actualizar el valor mínimo de fecha_egreso al cargar la página
-        actualizarFechaEgresoMinima();
     });
-
-    // Validar campos obligatorios
-    function validarFormulario() {
-        let camposObligatorios = ['id_nombre', 'id_apellido', 'id_dni', 'id_fecha_ingreso', 'id_email', 'id_especialidad', 'id_idMatriculaProf']; // Ajusta los campos según los id correctos
-        let camposFaltantes = [];
-
-        // Recorremos los campos obligatorios para verificar si están vacíos
-        camposObligatorios.forEach(function (campo) {
-            let input = document.getElementById(campo);
-            if (!input.value.trim()) {
-                camposFaltantes.push(campo);
-                input.classList.add('border', 'border-danger'); // Resalta los campos faltantes con borde rojo
-            } else {
-                input.classList.remove('border', 'border-danger'); // Elimina el borde rojo si ya está completo
-            }
-        });
-
-        // Mostrar los campos faltantes si existen
-        if (camposFaltantes.length > 0) {
-            Swal.fire({
-                title: 'Campos obligatorios faltantes',
-                text: 'Por favor complete los campos obligatorios.',
-                icon: 'warning',
-                confirmButtonText: 'Aceptar'
-            });
-            return false; // No enviamos el formulario
-        }
-
-        return true; // Si todos los campos obligatorios están completos, enviamos el formulario
-    }
 
     // Boton Enviar
     document.getElementById('btnRegistrar').addEventListener('click', function (event) {
         event.preventDefault();  // Evita el envío del formulario antes de la confirmación
 
-        if (validarFormulario()) {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Deseas actualizar el profesional?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, actualizar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Si el usuario confirma, envía el formulario
-                    document.getElementById('registrationForm').submit();  // Envía el formulario
-                }
-            });
-        }
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas actualizar el profesional?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, actualizar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, envía el formulario
+                document.getElementById('registrationForm').submit();  // Envía el formulario
+            }
+        });
     });
+
 </script>
 
 {% endblock %}

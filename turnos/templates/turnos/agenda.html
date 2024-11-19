@@ -51,7 +51,7 @@
                                         <span class="badge bg-danger">{{ turno.estado }}</span>
                                     {% endif %}
                                     {% if turno.estado == "Concluido" %}
-                                        <span class="badge bg-muted">{{ turno.estado }}</span>
+                                        <span class="badge bg-secondary">{{ turno.estado }}</span>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -99,7 +99,7 @@
                                     {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
-                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-secondary">{{ turno.estado }}</span>{% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -186,7 +186,7 @@
                                     {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
-                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-secondary">{{ turno.estado }}</span>{% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -232,7 +232,7 @@
                                 {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
                                 {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
                                 {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
-                                {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                {% if turno.estado == "Concluido" %}<span class="badge bg-secondary">{{ turno.estado }}</span>{% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -274,7 +274,7 @@
                                     {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
-                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-secondary">{{ turno.estado }}</span>{% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -332,7 +332,7 @@
         <section class="agenda-section turnos-dia mb-4">
             <h3 class="text-muted"><i class="bi bi-calendar-check"></i> Turnos pasados</h3>
             {% if turnos_pasados %}
-                <table class="table table-hover">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th class="col-rol">Fecha</th>
@@ -359,7 +359,7 @@
                                     {% if turno.estado == "Pendiente de aprobación" %}<span class="badge bg-warning">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Aprobado" %}<span class="badge bg-success">{{ turno.estado }}</span>{% endif %}
                                     {% if turno.estado == "Cancelado" %}<span class="badge bg-danger">{{ turno.estado }}</span>{% endif %}
-                                    {% if turno.estado == "Concluido" %}<span class="badge bg-muted">{{ turno.estado }}</span>{% endif %}
+                                    {% if turno.estado == "Concluido" %}<span class="badge bg-secondary">{{ turno.estado }}</span>{% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

@@ -1,36 +1,145 @@
 {% extends "main.html" %}
 {% block content %}
-<br>
-<h2 class="mb-4">
-    <a href="{% url 'expedientes' %}" style="text-decoration: none; color: inherit;">
-        <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
-    </a>
-    Movimiento expediente <b>N° {{ expediente.numero_expediente }}</b>
-</h2>
-
-<div class="container">
-    <form method="POST" class="mb-5" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <!-- Renderiza el formset de documentos -->
-        <h5>Documentos</h5>
-        {{ documento_formset.management_form }}
-        {% for form in documento_formset %}
-            <div class="mb-3">
-                {{ form.as_p }}
+<div class="container py-4">
+    <!-- Cabecera de sección -->
+    <div class="card shadow p-3 bg-primary text-white rounded-3 mb-2">
+        <h4 class="m-0">Generar Movimiento Expediente</h4>
+    </div>
+    <!-- Tarjeta del formulario -->
+    <div class="card shadow p-4">
+        <form id="movimientosForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Campos del formulario -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.fecha.label_tag }}
+                    {{ form.fecha }}
+                    {% if form.fecha.errors %}
+                    <div class="text-danger small">{{ form.fecha.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.sit_actual.label_tag }}
+                    {{ form.sit_actual }}
+                    {% if form.sit_actual.errors %}
+                    <div class="text-danger small">{{ form.sit_actual.errors }}</div>
+                    {% endif %}
+                </div>
             </div>
-        {% endfor %}
 
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.tipo.label_tag }}
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}
+                    <div class="text-danger small">{{ form.tipo.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.ubicacion.label_tag }}
+                    {{ form.ubicacion }}
+                    {% if form.ubicacion.errors %}
+                    <div class="text-danger small">{{ form.ubicacion.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
 
-        <div class="d-flex justify-content-start mt-4">
-       
-            <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-            
-            <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+            <div class="mb-3">
+                {{ form.detalle.label_tag }}
+                {{ form.detalle }}
+                {% if form.detalle.errors %}
+                <div class="text-danger small">{{ form.detalle.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Sección de documentos -->
+            <div class="mt-4">
+                <h5 class="mb-3">Documentos</h5>
+                {{ documento_formset.management_form }}
+                {% for form in documento_formset %}
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-10">
+                        {{ form.documentos.label_tag }}
+                        {{ form.documentos }}
+                        {% if form.documentos.errors %}
+                        <div class="text-danger small">{{ form.documentos.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between mt-4">
+                <!-- Botón Volver alineado a la izquierda -->
+                <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
+                    <i class="bi bi-box-arrow-left"></i> Volver
+                </a>
+
+                <!-- Botones Registrar y Borrar alineados a la derecha -->
+                <div>
+                    <button type="button" id="saveBtn" class="btn btn-success me-2">Registrar</button>
+                    <button type="button" id="resetBtn" class="btn btn-danger">Borrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
+<script>
+    // Registro con SweetAlert
+    // Registro con SweetAlert
+    document.getElementById('saveBtn').addEventListener('click', function () {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Se registrará este movimiento de expediente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el registro es exitoso, se envía el formulario
+                document.getElementById('movimientosForm').submit();
+
+                // Mostrar mensaje de éxito con un temporizador antes de redirigir
+                Swal.fire(
+                    'Registro exitoso',
+                    'El movimiento de expediente ha sido registrado correctamente.',
+                    'success'
+                ).then(() => {
+                    // Esperar 5 segundos (5000 milisegundos) antes de redirigir
+                    setTimeout(function () {
+                        // Redirigir a la nueva página o sección
+                        window.location.href = '{% url "movimientos" expediente.numero_expediente %}'; // Modifica la URL si es necesario
+                    }, 9000);
+                });
+            }
+        });
+    });
+
+    // Borrar formulario con SweetAlert
+    document.getElementById('resetBtn').addEventListener('click', function () {
+        Swal.fire({
+            title: '¿Deseas borrar todo el contenido?',
+            text: "Esta acción no puede deshacerse.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, borrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('movimientosForm').reset();
+                Swal.fire('Formulario borrado', 'Todos los campos han sido limpiados.', 'success');
+            }
+        });
+    });
+</script>
 {% endblock content %}

@@ -92,11 +92,11 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'movimientos' expediente.numero_expediente %}"><i
-                            class="bi bi-box-arrow-up-right"></i></i></a>
+                    <a href="{% url 'movimientos' expediente.numero_expediente %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-box-arrow-up-right"></i> movimiento
+                    </a>
                 </td>
                 <td>
-
                     <a href="{% url 'expediente' expediente.numero_expediente %}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                     </a>

@@ -621,14 +621,14 @@ body {
 }
 
 .turnos-dia {
-    background-color: #d4edda; /* Verde claro */
+    background-color: #ffffff; /* Verde claro */
     border: 1px solid #c3e6cb;
     border-radius: 8px;
     padding: 10px;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #f2f2f2; /* Color suave */
+    background-color: #ffffff; /* Color suave */
 }
 
 .table th {
@@ -637,5 +637,5 @@ body {
 }
 
 .table-secondary {
-    background-color: #e9ecef;
+    background-color: #ffffff;
 }

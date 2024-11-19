@@ -11,52 +11,63 @@
 </div>
 <hr>
 
-<h3 class="mb-4">Crear usuario con rol {{ tipo_usuario|capfirst }}</h3>
+<div class="container py-3">
+    <!-- Cabecera de sección -->
+    <div class="card shadow p-3 bg-primary text-white rounded-3 mb-2">
+        <h4 class="m-0">Crear usuario con rol {{ tipo_usuario|capfirst }}</h4>
+    </div>
 
-<div class="container">
-  <div class="row justify-content-start">
-      <div class="col-md-6">
-          <form method="POST" class="mb-5 p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
-              {% csrf_token %}
-              
-              <div class="mb-3">
-                {{ form.username.label_tag }} 
+    <!-- Formulario en un contenedor con menos ancho -->
+    <div class="card shadow p-4">
+        <form method="POST" class="mb-0" enctype="multipart/form-data" id="registrationForm">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                {{ form.username.label_tag }}
                 {{ form.username|add_class:"form-control" }}
-              </div>
+            </div>
 
-              <div class="mb-3">
-                  {{ form.email.label_tag }} 
-                  {{ form.email|add_class:"form-control" }}
-              </div>
-              
-              <div class="mb-3">
-                  {{ form.password.label_tag }} 
-                  {{ form.password|add_class:"form-control" }}
-              </div>
+            <div class="mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email|add_class:"form-control" }}
+            </div>
 
-              <!-- Campos para cliente y profesional, ocultos inicialmente -->
-              <div id="cliente-field" class="mb-3" style="display: none;">
-                  {{ form.cliente.label_tag }} 
-                  {{ form.cliente|add_class:"form-select" }}
-              </div>
-              
-              <div id="profesional-field" class="mb-3" style="display: none;">
-                  {{ form.profesional.label_tag }} 
-                  {{ form.profesional|add_class:"form-select" }}
-              </div>
+            <div class="mb-3">
+                {{ form.password.label_tag }}
+                {{ form.password|add_class:"form-control" }}
+            </div>
 
-              <div id="secretaria-field" class="mb-3" style="display: none;">
+            <!-- Campos para cliente y profesional, ocultos inicialmente -->
+            <div id="cliente-field" class="mb-3" style="display: none;">
+                {{ form.cliente.label_tag }}
+                {{ form.cliente|add_class:"form-select" }}
+            </div>
+
+            <div id="profesional-field" class="mb-3" style="display: none;">
+                {{ form.profesional.label_tag }}
+                {{ form.profesional|add_class:"form-select" }}
+            </div>
+
+            <div id="secretaria-field" class="mb-3" style="display: none;">
                 {{ form.secretaria.label_tag }} 
                 {{ form.secretaria|add_class:"form-select" }}
-              </div>
+            </div>
 
-              <div class="d-flex justify-content-start">
-                  <button type="submit" class="btn btn-success me-2">Crear</button>
-                  <a href="{% url 'usuarios' %}" class="btn btn-secondary">Cancelar</a>
-              </div>
-          </form>
-      </div>
-  </div>
+            <!-- Botones alineados -->
+            <div class="d-flex justify-content-between mt-3">
+                <!-- Botón Volver alineado a la izquierda -->
+                <a href="{% url 'usuarios' %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
+                    <i class="bi bi-box-arrow-left"></i> Volver
+                </a>
+
+                <!-- Botones Registrar y Borrar alineados a la derecha -->
+                <div>
+                    <button type="submit" class="btn btn-success me-2" id="btnRegistrar">Registrar</button>
+                    <button type="button" class="btn btn-danger" id="btnBorrar">Borrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -69,7 +80,51 @@
         } else if (rol === "Secretaria") {
             document.getElementById("secretaria-field").style.display = "block";
         }
+    
+
+        // Botón registrar con SweetAlert
+        document.getElementById('btnRegistrar').addEventListener('click', function (e) {
+            e.preventDefault(); // Evitar el envío del formulario inmediatamente
+            Swal.fire({
+                title: '¿Está seguro de registrar este usuario?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, registrar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.querySelector('form').submit(); // Enviar formulario si el usuario confirma
+                }
+            });
+        });
+
+        // Botón borrar con SweetAlert
+        document.getElementById('btnBorrar').addEventListener('click', function () {
+            Swal.fire({
+                title: 'Confirmar eliminación',
+                text: "¿Está seguro de borrar los datos del formulario?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, borrar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.querySelector('#registrationForm');
+                    form.reset(); // Limpiar los datos del formulario
+
+                    Swal.fire({
+                        title: 'Formulario borrado',
+                        text: 'Todos los campos han sido limpiados.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#28a745'
+                    });
+                }
+            });
+        });
     });
-  </script>
+</script>
 
 {% endblock %}

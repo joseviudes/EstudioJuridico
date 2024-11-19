@@ -6,130 +6,230 @@
     <a href="{% url 'expedientes' %}" style="text-decoration: none; color: inherit;">
         <i class="bi bi-box-arrow-left" style="font-size: 2rem; margin-right: 8px;"></i>
     </a>
-    Gestion de Expediente
+    Gestión de Expediente
 </h2>
 
 
 <form id="formRegistrarExpediente" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="card mb-4"> <!-- Agregar mb-4 para margen inferior -->
-        <div class="card-header bg-primary text-white"> <!-- Clase para fondo gris -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
             <p></p>
             <h4>Generar Expediente</h4>
         </div>
         <div class="card-body">
             <div class="mb-3 row">
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="cliente" class="form-label">Cliente:</label>
+                <div class="col-12 col-md-6">
+                    <label for="numero_expediente_preview">Número de Expediente (previsualización):</label>
+                    {{ form.numero_expediente_preview }}
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="tipo_expediente" class="form-label">Tipo de Expediente: <span
+                            class="text-primary">*</span></label>
+                    {{ form.tipo_expediente }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                {% if user.rol == 'Admin'%}
+                <div class="col-12 col-md-6">
+                    <label for="profesional" class="form-label">Profesional: <span class="text-primary">*</span></label>
+                    {{ form.profesional }}
+                </div>
+                {% endif %}
+                <div class="col-12 col-md-6">
+                    <label for="caratula" class="form-label">Caratula: <span class="text-primary">*</span></label>
+                    {{ form.caratula }}
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-12 col-md-6">
+                    <label for="cliente" class="form-label">Cliente: <span class="text-primary">*</span></label>
                     {{ form.cliente }}
                 </div>
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                <div class="col-12 col-md-6">
                     <label for="apoderado" class="form-label">Apoderado:</label>
                     {{ form.apoderado }}
                 </div>
             </div>
             <div class="mb-3 row">
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="profesional" class="form-label">Profesional:</label>
-                    {{ form.profesional }}
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="numero_expediente" class="form-label">Numero Expediente:</label>
-                    {{ form.numero_expediente }}
-                </div>
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="caratula" class="form-label">Caratula:</label>
-                    {{ form.caratula }}
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="jurisdiccion" class="form-label">Jurisdiccion:</label>
+                <div class="col-12 col-md-6">
+                    <label for="jurisdiccion" class="form-label">Jurisdicción:</label>
                     {{ form.jurisdiccion }}
                 </div>
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
+                <div class="col-12 col-md-6">
                     <label for="dependencia" class="form-label">Dependencia:</label>
                     {{ form.dependencia }}
                 </div>
             </div>
             <div class="mb-3 row">
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="fecha_inicio" class="form-label">Fecha de inicio:</label>
+                <div class="col-12 col-md-6">
+                    <label for="fecha_inicio" class="form-label">Fecha de inicio: <span
+                            class="text-primary">*</span></label>
                     {{ form.fecha_inicio }}
                 </div>
-                <div class="col-12 col-md-6"> <!-- Ajustar para ser responsivo -->
-                    <label for="fecha_finalizacion" class="form-label">Fecha de Finalizacion:</label>
+                <div class="col-12 col-md-6">
+                    <label for="fecha_finalizacion" class="form-label">Fecha de Finalización:</label>
                     {{ form.fecha_finalizacion }}
                 </div>
             </div>
             <div class="mb-3 row">
-                <div class="col-12"> <!-- Ajustar para ser responsivo -->
+                <div class="col-12">
                     <label for="asunto" class="form-label">Asunto:</label>
                     {{ form.asunto }}
                 </div>
             </div>
+
             <!-- Botones -->
             <div class="d-flex flex-wrap justify-content-between">
-                <a href="{% url 'expedientes' %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
+                <a href="{% url 'clientes' %}" class="btn btn-outline-dark btn-lg mb-2 mb-md-0">
                     <i class="bi bi-box-arrow-left"></i> Volver
                 </a>
                 <div class="d-flex flex-wrap gap-2">
-
-                    <button type="button" class="btn btn-outline-primary btn-lg mb-2 mb-md-0" id="btnRegistrar"
-                        onclick="confirmarRegistrar();">
+                    <button type="submit" class="btn btn-outline-primary btn-lg mb-2 mb-md-0" id="btnRegistrar">
                         <i class="bi bi-person-plus"></i> Registrar Expediente
                     </button>
-
+                    
                     <button type="button" class="btn btn-outline-danger btn-lg mb-2 mb-md-0" id="btnBorrar">
                         <i class="bi bi-eraser"></i> Borrar
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 </form>
 
 <script>
-    // Función para confirmar el registro de cliente
-    function confirmarRegistrar() {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¿Quieres generar este expediente?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745', // verde para confirmar
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, registrar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Envía el formulario después de la confirmación
-                document.getElementById('formRegistrarExpediente').submit();
-            }
-        });
+    // Función para generar el número de expediente de vista previa
+    function generarNumeroExpediente(tipoExpediente) {
+        if (tipoExpediente) {
+            fetch(`/expedientes/generar-numero-expediente/${tipoExpediente}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("id_numero_expediente_preview").value = data.numero_expediente;
+                })
+                .catch(error => console.error('Error al generar el número de expediente:', error));
+        }
     }
 
-    // boton borrar
+    // Capturamos el cambio en el select de tipo de expediente
+    document.getElementById("id_tipo_expediente").addEventListener("change", function () {
+        const tipoExpediente = this.value;
+        generarNumeroExpediente(tipoExpediente);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const tipoExpediente = document.getElementById("id_tipo_expediente").value;
+        if (tipoExpediente) {
+            generarNumeroExpediente(tipoExpediente);
+        }
+
+        // Obtén los elementos de los campos de fecha
+        var fechaInicio = document.getElementById("id_fecha_inicio");
+        var fechaFinalizacion = document.getElementById("id_fecha_finalizacion");
+
+        function actualizarFechaFinalizacion() {
+            if (fechaInicio.value) {
+                fechaFinalizacion.setAttribute("min", fechaInicio.value);
+            }
+        }
+
+        fechaInicio.addEventListener("change", actualizarFechaFinalizacion);
+        actualizarFechaFinalizacion();
+    });
+
+    // Validar campos obligatorios
+    function validarFormulario() {
+        let camposObligatorios = ['id_tipo_expediente', 'id_profesional', 'id_caratula', 'id_fecha_inicio', 'id_cliente'];
+        let camposFaltantes = [];
+
+        camposObligatorios.forEach(function (campo) {
+            let input = document.getElementById(campo);
+            if (!input.value.trim()) {
+                camposFaltantes.push(campo);
+                input.classList.add('border', 'border-danger'); // Resalta los campos faltantes con borde rojo
+            } else {
+                input.classList.remove('border', 'border-danger'); // Elimina el borde rojo si ya está completo
+            }
+        });
+
+        if (camposFaltantes.length > 0) {
+            Swal.fire({
+                title: 'Campos obligatorios faltantes',
+                text: 'Por favor complete los campos obligatorios.',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return false; // No enviamos el formulario
+        }
+
+        return true; // Si todos los campos obligatorios están completos, enviamos el formulario
+    }
+
+    // Función para confirmar el registro de cliente
+    function confirmarRegistrar() {
+        if (validarFormulario()) {
+            Swal.fire({
+                title: 'Confirmar registro',
+                text: "¿Desea generar el expediente con los datos proporcionados?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, generar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Envía el formulario
+                    document.getElementById('formRegistrarExpediente').submit();
+
+                    // Mostrar mensaje de éxito después del registro con tiempo de 30 segundos
+                    Swal.fire({
+                        title: 'Expediente generado',
+                        text: 'El expediente ha sido creado correctamente.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#28a745',
+                        timer: 30000, // 30 segundos
+                        timerProgressBar: true, // Muestra la barra de progreso
+                        didClose: () => {
+                            // Aquí podrías agregar una acción extra si es necesario después de que el mensaje se cierre
+                            // Por ejemplo, redirigir a otra página o actualizar el formulario
+                            // window.location.href = "/expedientes"; // Si quieres redirigir a otra página
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    // Botón borrar
     document.getElementById('btnBorrar').addEventListener('click', function () {
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción borrará todos los campos del formulario.",
+            title: 'Confirmar eliminación',
+            text: "¿Está seguro de borrar los datos del formulario?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, borrar',
             cancelButtonText: 'Cancelar',
-            reverseButtons: true
+            reverseButtons: false, // Cambiar para que el botón de confirmación esté a la izquierda
+            customClass: {
+                confirmButton: 'btn btn-success me-2', // Clase personalizada para botón "Sí, borrar"
+                cancelButton: 'btn btn-danger' // Clase personalizada para botón "Cancelar"
+            },
+            buttonsStyling: false // Para aplicar las clases personalizadas
         }).then((result) => {
             if (result.isConfirmed) {
-                // Resetea el formulario
                 const form = document.querySelector('#formRegistrarExpediente');
-                form.reset(); // Resetea los campos del formulario
+                form.reset(); // Limpia todos los campos del formulario
+                Swal.fire(
+                    'Formulario borrado',
+                    'Todos los campos han sido limpiados.',
+                    'success'
+                );
             }
         });
     });
+
 </script>
 
 {% endblock content %}

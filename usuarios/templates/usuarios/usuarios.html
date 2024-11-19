@@ -11,12 +11,14 @@
 
 <!-- Botones para crear nuevos usuarios -->
 <div class="botones-crear mb-3">
-    <a href="{% url 'crear_administrador' %}" class="btn btn-success">Crear Administrador</a>
-    <a href="{% url 'crear_profesional' %}" class="btn btn-success">Crear Profesional</a>
-    <a href="{% url 'crear_cliente' %}" class="btn btn-success">Crear Cliente</a>
-    <a href="{% url 'crear_secretaria' %}" class="btn btn-success">Crear Secretaria</a>
+    <a href="{% url 'crear_administrador' %}" class="btn btn-outline-success me-2">Crear Administrador</a>
+    <a href="{% url 'crear_profesional' %}" class="btn btn-outline-warning me-2">Crear Profesional</a>
+    <a href="{% url 'crear_secretaria' %}" class="btn btn-outline-danger me-2">Crear Secretaria</a>
+    <a href="{% url 'crear_cliente' %}" class="btn btn-outline-info">Crear Cliente</a>
+    
 </div>
 <hr>
+
 
 <!-- Contenedor principal -->
 <div class="container">
@@ -44,9 +46,9 @@
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a> {% endcomment %}
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -78,9 +80,9 @@
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a> {% endcomment %}
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -112,9 +114,9 @@
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a> {% endcomment %}
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -146,9 +148,9 @@
                     <a href="{% url 'actualizar-usuario' usuario.pk %}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pen"></i>
                     </a>
-                    {% comment %} <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'eliminar-usuario' usuario.pk %}" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash-fill"></i>
-                    </a> {% endcomment %}
+                    </a>
                 </td>
             </tr>
             {% endfor %}

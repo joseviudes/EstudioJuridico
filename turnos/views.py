@@ -239,7 +239,7 @@ def agendaView(request):
         turnos_proximos = Turno.objects.filter(dia__gt=hoy).order_by('dia', 'horario')
 
         # Filtrar turnos pasados (turnos previos)
-        turnos_pasados = Turno.objects.filter(dia__lt=hoy).order_by('dia', 'horario')
+        turnos_pasados = Turno.objects.filter(dia__lt=hoy).order_by('-dia', '-horario')
 
         # Obtener los años distintos de los turnos pasados
         anios = (
@@ -282,7 +282,7 @@ def agendaView(request):
         turnos_proximos = Turno.objects.filter(profesional=profesional, dia__gt=hoy).order_by('dia', 'horario')
 
         # Filtrar turnos pasados para este profesional
-        turnos_pasados = Turno.objects.filter(profesional=profesional, dia__lt=hoy).order_by('dia', 'horario')
+        turnos_pasados = Turno.objects.filter(profesional=profesional, dia__lt=hoy).order_by('-dia', '-horario')
 
         # Obtener los años distintos de los turnos pasados
         anios = (
@@ -326,7 +326,7 @@ def agendaView(request):
         turnos_proximos = Turno.objects.filter(profesional=profesional, dia__gt=hoy).order_by('dia', 'horario')
 
         # Filtrar turnos pasados para este profesional
-        turnos_pasados = Turno.objects.filter(profesional=profesional, dia__lt=hoy).order_by('dia', 'horario')
+        turnos_pasados = Turno.objects.filter(profesional=profesional, dia__lt=hoy).order_by('-dia', '-horario')
 
         # Obtener los años distintos de los turnos pasados
         anios = (
