@@ -17,7 +17,7 @@ class TurnoForm(ModelForm):
             'solicitante': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre del solicitante si es que no es un cliente registrado'}),
             'contacto_solicitante': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese telefono o email '}),
             'profesional': forms.Select(attrs={'class': 'form-control'}),
-            'dia': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'min': date.today().strftime('%Y-%m-%d'), 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
+            'dia': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'min': date.today().strftime('%Y-%m-%d'), 'id': 'id_dia', 'placeholder': 'YYYY-MM-DD'}, format='%Y-%m-%d'),
             'horario': forms.Select(attrs={'class': 'form-control'}),
             'motivo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el motivo de la consulta'}),
         }
@@ -51,12 +51,20 @@ class TurnoForm(ModelForm):
                 self.fields[field].widget.attrs.update({
                     'class': 'form-control'
                 })
-
+                
     def clean_dia(self):
         dia = self.cleaned_data.get('dia')
         if dia < date.today():
             raise forms.ValidationError("La fecha no puede ser pasada.")
+        
+        # Obtener el nombre del día
+        nombre_dia = dia.strftime("%A")  # Esto devuelve el día en texto como 'Monday', 'Tuesday', etc.
+        
+        if nombre_dia in ["Saturday", "Sunday"]:
+            raise forms.ValidationError("No se permiten turnos los sábados o domingos.")
+        
         return dia
+    
 
     def save(self, commit=True):
         instance = super(TurnoForm, self).save(commit=False)

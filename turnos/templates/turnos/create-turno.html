@@ -39,71 +39,94 @@
 </div>
 
 <script>
-    document.getElementById('id_dia').addEventListener('change', function () {
-        // Obtener los valores del día seleccionado y el profesional
-        var diaSeleccionado = this.value;
-        var profesionalSeleccionado = document.getElementById('id_profesional').value;
-        
-        // Verificar que ambos campos estén seleccionados
-        if (diaSeleccionado && profesionalSeleccionado) {
-            fetch(`/horarios_ocupados/?dia=${diaSeleccionado}&profesional_dni=${profesionalSeleccionado}`)
-                .then(response => response.json())
-                .then(data => {
-                    var horariosOcupadosList = document.getElementById('horariosOcupadosList');
-                    horariosOcupadosList.innerHTML = '';  // Limpiar la lista actual
+    document.addEventListener("DOMContentLoaded", function () {
+        // Elementos del DOM
+        const dateInput = document.getElementById("id_dia");
+        const profesionalInput = document.getElementById("id_profesional"); // Puede ser null si no está en el formulario
+        const horariosOcupadosList = document.getElementById("horariosOcupadosList");
 
-                    if (data.horarios_ocupados && data.horarios_ocupados.length > 0) {
-                        data.horarios_ocupados.forEach(function (horario) {
-                            var listItem = document.createElement('li');
-                            listItem.textContent = horario;
-                            listItem.classList.add('list-group-item');
-                            horariosOcupadosList.appendChild(listItem);
-                        });
-                    } else {
-                        var listItem = document.createElement('li');
-                        listItem.textContent = 'No hay horarios ocupados para este día.';
-                        listItem.classList.add('list-group-item');
-                        horariosOcupadosList.appendChild(listItem);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al obtener los horarios ocupados:', error);
-                });
+        // Verificar que el campo de fecha exista
+        if (!dateInput) {
+            console.error("No se encontró el elemento con ID 'id_dia'.");
+            return;
         }
-    });
 
-    // También actualizar los horarios ocupados si cambia el profesional
-    document.getElementById('id_profesional').addEventListener('change', function () {
-        var profesionalSeleccionado = this.value;
-        var diaSeleccionado = document.getElementById('id_dia').value;
+        // Función para obtener los horarios ocupados
+        function actualizarHorariosOcupados() {
+            const diaSeleccionado = dateInput.value;
+            const profesionalSeleccionado = profesionalInput ? profesionalInput.value : null;
 
-        // Solo realizar la búsqueda si la fecha también está seleccionada
-        if (diaSeleccionado && profesionalSeleccionado) {
-            fetch(`/horarios_ocupados/?dia=${diaSeleccionado}&profesional_dni=${profesionalSeleccionado}`)
-                .then(response => response.json())
-                .then(data => {
-                    var horariosOcupadosList = document.getElementById('horariosOcupadosList');
-                    horariosOcupadosList.innerHTML = '';  // Limpiar la lista actual
+            if (diaSeleccionado && profesionalSeleccionado) {
+                fetch(`/horarios_ocupados/?dia=${diaSeleccionado}&profesional_dni=${profesionalSeleccionado}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        horariosOcupadosList.innerHTML = ""; // Limpiar la lista actual
 
-                    if (data.horarios_ocupados && data.horarios_ocupados.length > 0) {
-                        data.horarios_ocupados.forEach(function (horario) {
-                            var listItem = document.createElement('li');
-                            listItem.textContent = horario;
-                            listItem.classList.add('list-group-item');
+                        if (data.horarios_ocupados && data.horarios_ocupados.length > 0) {
+                            data.horarios_ocupados.forEach(function (horario) {
+                                const listItem = document.createElement("li");
+                                listItem.textContent = horario;
+                                listItem.classList.add("list-group-item");
+                                horariosOcupadosList.appendChild(listItem);
+                            });
+                        } else {
+                            const listItem = document.createElement("li");
+                            listItem.textContent = "No hay horarios ocupados para este día.";
+                            listItem.classList.add("list-group-item");
                             horariosOcupadosList.appendChild(listItem);
-                        });
-                    } else {
-                        var listItem = document.createElement('li');
-                        listItem.textContent = 'No hay horarios ocupados para este día.';
-                        listItem.classList.add('list-group-item');
-                        horariosOcupadosList.appendChild(listItem);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al obtener los horarios ocupados:', error);
-                });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al obtener los horarios ocupados:", error);
+                    });
+            } else if (!profesionalSeleccionado) {
+                console.warn("El campo 'profesional' no está presente o seleccionado. No se actualizarán los horarios ocupados.");
+            }
         }
+
+        // Escuchar cambios en el campo "id_dia"
+        dateInput.addEventListener("change", function () {
+            const selectedDate = new Date(this.value);
+            const day = selectedDate.getDay(); // 0 = Domingo, 6 = Sábado
+
+            if (day === 0 || day === 6) {
+                alert("No se permiten turnos los sábados o domingos.");
+                this.value = ""; // Limpia el valor si es un fin de semana
+                return;
+            }
+
+            // Actualizar horarios ocupados al seleccionar fecha
+            actualizarHorariosOcupados();
+        });
+
+        // Escuchar cambios en el campo "id_profesional" (si existe)
+        if (profesionalInput) {
+            profesionalInput.addEventListener("change", function () {
+                // Actualizar horarios ocupados al seleccionar profesional
+                actualizarHorariosOcupados();
+            });
+        }
+
+        // Bloquear entrada manual y deshabilitar días no permitidos (para navegadores avanzados)
+        dateInput.addEventListener("click", function () {
+            const minDate = new Date(); // Fecha mínima (hoy)
+            const maxDate = new Date(minDate.getFullYear() + 1, 11, 31); // Fecha máxima (1 año desde hoy)
+            const datesToDisable = []; // Días a deshabilitar
+
+            for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
+                if (d.getDay() === 0 || d.getDay() === 6) {
+                    datesToDisable.push(new Date(d));
+                }
+            }
+
+            // Bloqueo de entrada manual
+            this.setAttribute("onkeydown", "return false;");
+        });
+
+        // Debugging: Verificar si el elemento 'id_dia' se encuentra correctamente
+        console.log("Elemento 'id_dia':", dateInput);
     });
 </script>
+
 
 {% endblock content %}

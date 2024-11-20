@@ -16,10 +16,10 @@ ESTADOS = (
 
 # Tipos de expediente disponibles
 TIPOS_EXPEDIENTE = (
-    ("DOC", "Documento"),
-    ("INV", "Investigación"),
-    ("CON", "Contrato"),
-    ("TRA", "Tratado"),
+    ("FAM", "Familia"),
+    ("LAB", "Laboral"),
+    ("JUB", "Jubilación"),
+    ("SUC", "Sucesorios"),
     # Agregar más tipos según se necesiten
 )
 
